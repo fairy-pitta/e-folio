@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import BlogClient from '../../components/blog-client';
+import ScrollToTop from '../../components/scroll-to-top';
+import Navbar from '../../components/navbar';
+import Footer from '../../components/footer';
+import { getAllBlogPosts, getAllTags } from '../../lib/content';
+import '../../styles/globals.css';
+
+const posts = getAllBlogPosts();
+const tags = getAllTags();
+---
+
+<Layout title="Blog | SingBirds" description="Latest blog posts about environmental technology and bird research">
+  <Navbar client:load />
+  <ScrollToTop client:load>
+    <BlogClient initialPosts={posts} initialTags={tags} client:load />
+  </ScrollToTop>
+  <Footer client:load />
+</Layout>

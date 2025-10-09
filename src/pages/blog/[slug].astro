@@ -1,0 +1,91 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { Button } from '../../components/ui/button';
+import { Badge } from '../../components/ui/badge';
+import { getBlogPost, getAllBlogSlugs } from '../../lib/content';
+import { markdownToHtml } from '../../lib/markdown';
+import BlogNewsletter from '../../components/blog-newsletter';
+import ScrollToTop from '../../components/scroll-to-top';
+import Navbar from '../../components/navbar';
+import Footer from '../../components/footer';
+import { ArrowLeftIcon, CalendarIcon, ClockIcon } from 'lucide-react';
+import '../../styles/globals.css';
+
+export async function getStaticPaths() {
+  const slugs = getAllBlogSlugs();
+  return slugs.map((slug) => ({
+    params: { slug: slug.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const post = await getBlogPost(slug!);
+
+if (!post) {
+  return Astro.redirect('/404');
+}
+
+const contentHtml = await markdownToHtml(post.content);
+const title = `${post.frontmatter.title} | SingBirds`;
+const description = post.frontmatter.excerpt;
+---
+
+<Layout title={title} description={description}>
+  <Navbar client:load />
+  <ScrollToTop client:load>
+    <div class="min-h-screen bg-background">
+      <!-- ナビバーの高さを考慮したパディング -->
+      <div class="pt-14 md:pt-16">
+        <div class="container mx-auto px-4 py-12">
+          <div class="max-w-3xl mx-auto">
+            <Button variant="ghost" className="mb-6" client:load>
+              <a href="/blog" class="flex items-center">
+                <ArrowLeftIcon className="h-4 w-4 mr-2" />
+                Back to Blog
+              </a>
+            </Button>
+
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">{post.frontmatter.title}</h1>
+
+            <div class="flex flex-wrap items-center gap-4 mb-6">
+              <span class="flex items-center text-muted-foreground">
+                <CalendarIcon className="h-4 w-4 mr-1" />
+                {post.frontmatter.date}
+              </span>
+              <span class="flex items-center text-muted-foreground">
+                <ClockIcon className="h-4 w-4 mr-1" />
+                {post.frontmatter.readTime}
+              </span>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mb-8">
+              {post.frontmatter.tags.map((tag: string) => (
+                <a href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}`}>
+                  <Badge variant="secondary" className="hover:bg-sky-100 transition-colors">
+                    {tag}
+                  </Badge>
+                </a>
+              ))}
+            </div>
+
+            <div class="mb-8">
+              <img
+                src={post.frontmatter.coverImage || "/placeholder.svg"}
+                alt={post.frontmatter.title}
+                class="w-full rounded-lg"
+              />
+            </div>
+
+            <div class="prose prose-sky prose-img:rounded-xl prose-headings:scroll-mt-8 prose-a:text-sky-600 max-w-none sm:prose-lg" set:html={contentHtml} />
+
+            <div class="my-12">
+              <BlogNewsletter client:load />
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </ScrollToTop>
+  <Footer client:load />
+</Layout>

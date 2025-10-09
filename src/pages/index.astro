@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Hero from '../components/hero';
+import Skills from '../components/skills';
+import Projects from '../components/projects';
+import QiitaArticles from '../components/qiita';
+import Contact from '../components/contact';
+import ScrollIndicator from '../components/scroll-indicator';
+import Navbar from '../components/navbar';
+import Footer from '../components/footer';
+import { getAllProjects } from '../lib/content';
+import '../styles/globals.css';
+
+// サーバーサイドでデータを取得
+const projects = getAllProjects();
+---
+
+<Layout title="fairy-pitta | Software Engineer">
+  <Navbar client:load />
+  <ScrollIndicator client:load />
+  <main>
+    <Hero client:load />
+    <Skills client:load />
+    <Projects client:load projects={projects} />
+    <QiitaArticles client:load />
+    <Contact client:load />
+  </main>
+  <Footer client:load />
+</Layout>

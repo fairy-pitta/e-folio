@@ -1,0 +1,49 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/navbar';
+import Footer from '../components/footer';
+import '../styles/globals.css';
+---
+
+<Layout title="Privacy Policy | SingBirds" description="Privacy policy for SingBirds portfolio website">
+  <Navbar client:load />
+  <div class="min-h-screen bg-background">
+    <div class="pt-14 md:pt-16">
+      <div class="container mx-auto px-4 py-12">
+        <div class="max-w-3xl mx-auto">
+          <h1 class="text-3xl md:text-4xl font-bold mb-8">Privacy Policy</h1>
+          
+          <div class="prose prose-sky max-w-none">
+            <p class="text-lg text-muted-foreground mb-6">
+              Last updated: {new Date().toLocaleDateString()}
+            </p>
+            
+            <h2>Information We Collect</h2>
+            <p>
+              This website may collect basic analytics information to understand how visitors interact with the site. 
+              We do not collect personal information unless you voluntarily provide it through contact forms.
+            </p>
+            
+            <h2>How We Use Information</h2>
+            <p>
+              Any information collected is used solely to improve the website experience and respond to inquiries. 
+              We do not sell, trade, or share your information with third parties.
+            </p>
+            
+            <h2>Cookies</h2>
+            <p>
+              This website may use cookies to enhance user experience and for basic analytics. 
+              You can disable cookies in your browser settings if you prefer.
+            </p>
+            
+            <h2>Contact</h2>
+            <p>
+              If you have any questions about this privacy policy, please contact us through the contact form on this website.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <Footer client:load />
+</Layout>

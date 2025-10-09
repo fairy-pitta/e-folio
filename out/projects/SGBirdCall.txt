@@ -1,0 +1,93 @@
+1:"$Sreact.fragment"
+2:I[9304,["874","static/chunks/874-564943c90346e675.js","497","static/chunks/497-8f454888f232b3fa.js","766","static/chunks/766-98bd1540b448b2b9.js","177","static/chunks/app/layout-83c85cf5db64605f.js"],"ThemeProvider"]
+3:I[9578,["874","static/chunks/874-564943c90346e675.js","497","static/chunks/497-8f454888f232b3fa.js","766","static/chunks/766-98bd1540b448b2b9.js","177","static/chunks/app/layout-83c85cf5db64605f.js"],"default"]
+4:I[7555,[],""]
+5:I[1295,[],""]
+6:I[3063,["874","static/chunks/874-564943c90346e675.js","497","static/chunks/497-8f454888f232b3fa.js","766","static/chunks/766-98bd1540b448b2b9.js","177","static/chunks/app/layout-83c85cf5db64605f.js"],"Image"]
+8:I[9665,[],"OutletBoundary"]
+b:I[9665,[],"ViewportBoundary"]
+d:I[9665,[],"MetadataBoundary"]
+f:I[6614,[],""]
+:HL["/_next/static/media/a34f9d1faa5f3315-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/_next/static/css/730b9168ceaa3868.css","style"]
+:HL["/_next/static/css/b3cbcd051438d1d5.css","style"]
+0:{"P":null,"b":"nli5VSm0dNMiC8p1OoAct","p":"","c":["","projects","SGBirdCall"],"i":false,"f":[[["",{"children":["projects",{"children":[["slug","SGBirdCall","d"],{"children":["__PAGE__",{}]}]}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/_next/static/css/730b9168ceaa3868.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}],["$","link","1",{"rel":"stylesheet","href":"/_next/static/css/b3cbcd051438d1d5.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"en","suppressHydrationWarning":true,"children":["$","body",null,{"className":"__className_d65c78","children":["$","$L2",null,{"attribute":"class","defaultTheme":"light","enableSystem":false,"disableTransitionOnChange":true,"children":[["$","$L3",null,{}],["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[[["$","title",null,{"children":"404: This page could not be found."}],["$","div",null,{"style":{"fontFamily":"system-ui,\"Segoe UI\",Roboto,Helvetica,Arial,sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\"","height":"100vh","textAlign":"center","display":"flex","flexDirection":"column","alignItems":"center","justifyContent":"center"},"children":["$","div",null,{"children":[["$","style",null,{"dangerouslySetInnerHTML":{"__html":"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}"}}],["$","h1",null,{"className":"next-error-h1","style":{"display":"inline-block","margin":"0 20px 0 0","padding":"0 23px 0 0","fontSize":24,"fontWeight":500,"verticalAlign":"top","lineHeight":"49px"},"children":404}],["$","div",null,{"style":{"display":"inline-block"},"children":["$","h2",null,{"style":{"fontSize":14,"fontWeight":400,"lineHeight":"49px","margin":0},"children":"This page could not be found."}]}]]}]}]],[]],"forbidden":"$undefined","unauthorized":"$undefined"}],["$","footer",null,{"className":"py-8 border-t","children":["$","div",null,{"className":"container mx-auto px-4","children":[["$","div",null,{"className":"flex flex-col md:flex-row justify-between items-center gap-6","children":[["$","div",null,{"className":"flex flex-col items-center md:items-start","children":[["$","div",null,{"className":"flex items-center gap-2 mb-2","children":[["$","div",null,{"className":"w-8 h-8 rounded-full overflow-hidden mr-2","children":["$","$L6",null,{"src":"/pitta-gpt.png","alt":"SingBirds Logo","width":32,"height":32,"className":"w-full h-full object-cover"}]}],["$","h3",null,{"className":"text-xl font-bold gradient-text","children":"SingBirds"}]]}],["$","p",null,{"className":"text-sm text-muted-foreground text-center md:text-left","children":"I Code Birds."}]]}],["$","div",null,{"className":"flex gap-4","children":["$","a",null,{"href":"https://github.com/fairy-pitta","target":"_blank","rel":"noopener noreferrer","className":"text-muted-foreground hover:text-sky-500 transition-colors","aria-label":"GitHub","children":["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-github h-6 w-6","children":[["$","path","tonef",{"d":"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"}],["$","path","9comsn",{"d":"M9 18c-4.51 2-5-2-7-2"}],"$undefined"]}]}]}]]}],["$","div",null,{"className":"border-t mt-6 pt-6 flex flex-col md:flex-row justify-between items-center gap-4","children":[["$","div",null,{"className":"text-sm text-muted-foreground","children":["© ",2025," SingBirds. All rights reserved."]}],["$","div",null,{"className":"flex gap-6 text-sm","children":[["$","a",null,{"href":"/privacy","className":"text-muted-foreground hover:text-sky-500 transition-colors","children":"Privacy Policy"}],["$","a",null,{"href":"/terms","className":"text-muted-foreground hover:text-sky-500 transition-colors","children":"Terms of Service"}]]}]]}]]}]}]]}]}]}]]}],{"children":["projects",["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":[["slug","SGBirdCall","d"],["$","$1","c",{"children":[null,["$","$L4",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L5",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":"$undefined","forbidden":"$undefined","unauthorized":"$undefined"}]]}],{"children":["__PAGE__",["$","$1","c",{"children":["$L7","$undefined",null,["$","$L8",null,{"children":["$L9","$La",null]}]]}],{},null,false]},null,false]},null,false]},null,false],["$","$1","h",{"children":[null,["$","$1","41bKXB_8smUsLAT95J9TH",{"children":[["$","$Lb",null,{"children":"$Lc"}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],["$","$Ld",null,{"children":"$Le"}]]}],false]],"m":"$undefined","G":["$f","$undefined"],"s":false,"S":true}
+10:I[3440,["874","static/chunks/874-564943c90346e675.js","419","static/chunks/app/projects/%5Bslug%5D/page-65a27d692f1939d4.js"],"default"]
+11:I[6874,["874","static/chunks/874-564943c90346e675.js","419","static/chunks/app/projects/%5Bslug%5D/page-65a27d692f1939d4.js"],""]
+12:Tc32,<h1>Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz</h1>
+<h2>Overview</h2>
+<p>SingBirds Call Quiz is an interactive web application that challenges players to identify bird species by their songs. The game is centered around birds found in <strong>Singapore</strong>, making it both a fun and educational experience.</p>
+<p>Players view a <strong>spectrogram</strong> of a bird call and listen to the audio recording before choosing the correct bird species from multiple-choice options. After submitting an answer, they can view detailed information and a photo of the bird.</p>
+<hr>
+<h2>Features</h2>
+<ul>
+<li>🎧 <strong>Bird Call Audio</strong>: Listen to real bird recordings.</li>
+<li>📈 <strong>Spectrogram Display</strong>: Visualize bird calls using spectrograms.</li>
+<li>❓ <strong>Multiple-Choice Questions</strong>: Pick the correct species from a list of options.</li>
+<li>📝 <strong>Detailed Feedback</strong>:
+<ul>
+<li>See which birds you identified correctly or incorrectly.</li>
+<li>Access bird information via Wikipedia API after answering.</li>
+<li>View bird images dynamically pulled from Wikipedia.</li>
+</ul>
+</li>
+<li>🌎 <strong>Hotspot and Country Selection</strong>: Select specific countries (currently only Singapore) and birding hotspots.</li>
+<li>🎚️ <strong>Adjustable Quiz Settings</strong>: Set the number of questions.</li>
+<li>📊 <strong>Quiz Result Summary</strong>: Review your score, accuracy, and species performance.</li>
+</ul>
+<hr>
+<h2>Tech Stack</h2>
+<h3>Frontend</h3>
+<ul>
+<li><a href="https://react.dev/">React</a></li>
+<li><a href="https://tailwindcss.com/">Tailwind CSS</a> for styling</li>
+</ul>
+<h3>Backend</h3>
+<ul>
+<li><a href="https://www.djangoproject.com/">Django</a> with Django REST Framework</li>
+<li>Custom APIs serving species lists, hotspot data, and bird observation records</li>
+</ul>
+<h3>Audio Processing</h3>
+<ul>
+<li><a href="https://librosa.org/">Librosa</a> for audio analysis</li>
+<li><a href="https://matplotlib.org/">Matplotlib</a> for spectrogram generation</li>
+</ul>
+<hr>
+<h2>Data Sources</h2>
+<ul>
+<li>
+<p><strong>eBird API</strong>:</p>
+<ul>
+<li>Retrieves Singapore hotspots</li>
+<li>Gets bird species observed at hotspots over the past 30 days (snapshot taken in October)</li>
+</ul>
+</li>
+<li>
+<p><strong>Xeno-Canto API</strong>:</p>
+<ul>
+<li>Provides bird song recordings</li>
+<li>Filters recordings with <strong>Quality A</strong> and durations between <strong>0–30 seconds</strong></li>
+</ul>
+</li>
+<li>
+<p><strong>Wikipedia API</strong>:</p>
+<ul>
+<li>Fetches species descriptions and images dynamically</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2>App Flow</h2>
+<ol>
+<li>Player selects a country (currently only Singapore) and a hotspot.</li>
+<li>App retrieves a list of birds based on recent observations (snapshot taken in Oct 2024).</li>
+<li>Spectrogram and audio are displayed.</li>
+<li>Player submits an answer.</li>
+<li>App shows feedback, Wikipedia information, and bird photo.</li>
+<li>After the quiz, a final score and breakdown are shown.</li>
+</ol>
+<p>Made with ❤️ for bird lovers around the world.</p>7:["$","$L10",null,{"children":["$","div",null,{"className":"min-h-screen bg-background","children":[["$","div",null,{"className":"pt-16 md:pt-20","children":["$","div",null,{"className":"relative bg-gradient-to-r from-green-500 to-green-600 text-white","children":[["$","div",null,{"className":"absolute inset-0 bg-grid-white/[0.1] bg-[length:20px_20px]"}],["$","div",null,{"className":"absolute inset-0 bg-gradient-to-b from-transparent to-blue-500/30"}],["$","div",null,{"className":"container mx-auto px-4 py-12 relative z-10","children":["$","div",null,{"className":"max-w-4xl mx-auto","children":[["$","$L11",null,{"href":"/projects","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-arrow-left h-4 w-4 mr-2","children":[["$","path","1l729n",{"d":"m12 19-7-7 7-7"}],["$","path","x3x0zl",{"d":"M19 12H5"}],"$undefined"]}],"Back to Projects"],"className":"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 mb-4 text-green-100 hover:text-white hover:bg-white/10","ref":null}],["$","h1",null,{"className":"text-2xl md:text-3xl font-bold mb-2","children":"Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz"}],["$","p",null,{"className":"text-blue-100 max-w-xl mb-4","children":"An interactive quiz web app to test out your bird call knowledge"}],["$","div",null,{"className":"flex flex-wrap items-center gap-4","children":[["$","span",null,{"className":"flex items-center text-blue-100","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-calendar h-4 w-4 mr-1","children":[["$","path","1cmpym",{"d":"M8 2v4"}],["$","path","4m81vk",{"d":"M16 2v4"}],["$","rect","1hopcy",{"width":"18","height":"18","x":"3","y":"4","rx":"2"}],["$","path","8toen8",{"d":"M3 10h18"}],"$undefined"]}],"Oct 15, 2024"]}],["$","div",null,{"className":"flex flex-wrap gap-2","children":[["$","div","React",{"className":"inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-green-300 text-green-50","children":"React"}],["$","div","Django",{"className":"inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-green-300 text-green-50","children":"Django"}],["$","div","Birds",{"className":"inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-green-300 text-green-50","children":"Birds"}]]}]]}]]}]}]]}]}],["$","div",null,{"className":"container mx-auto px-4 py-8","children":["$","div",null,{"className":"max-w-4xl mx-auto","children":[["$","div",null,{"className":"mb-8","children":["$","img",null,{"src":"/projects/callquiz/CallQuiz_main.png","alt":"Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz","className":"w-full rounded-lg shadow-lg"}]}],["$","div",null,{"className":"flex gap-4 mb-8","children":[["$","a",null,{"href":"https://quiz.singbirds.net/","target":"_blank","rel":"noopener noreferrer","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-eye h-4 w-4 mr-1","children":[["$","path","1nclc0",{"d":"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"}],["$","circle","1v7zrd",{"cx":"12","cy":"12","r":"3"}],"$undefined"]}],"Live Demo"],"className":"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 text-primary-foreground h-10 px-4 py-2 bg-green-500 hover:bg-green-600","ref":null}],["$","a",null,{"href":"https://github.com/fairy-pitta/Singbirds-frontend","target":"_blank","rel":"noopener noreferrer","children":[["$","svg",null,{"ref":"$undefined","xmlns":"http://www.w3.org/2000/svg","width":24,"height":24,"viewBox":"0 0 24 24","fill":"none","stroke":"currentColor","strokeWidth":2,"strokeLinecap":"round","strokeLinejoin":"round","className":"lucide lucide-github h-4 w-4 mr-1","children":[["$","path","tonef",{"d":"M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"}],["$","path","9comsn",{"d":"M9 18c-4.51 2-5-2-7-2"}],"$undefined"]}],"View Code"],"className":"inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 border bg-background hover:text-accent-foreground h-10 px-4 py-2 border-green-300 text-green-600 hover:bg-green-50","ref":null}]]}],["$","div",null,{"className":"prose prose-green prose-img:rounded-xl  prose-headings:scroll-mt-8 prose-a:text-green-600  max-w-none sm:prose-lg","dangerouslySetInnerHTML":{"__html":"$12"}}],["$","div",null,{"className":"mt-12","children":[["$","h2",null,{"className":"text-2xl font-bold mb-6","children":"Project Gallery"}],["$","div",null,{"className":"grid grid-cols-1 md:grid-cols-2 gap-4","children":[["$","img","0",{"src":"/projects/callquiz/CallQuiz_correct.png","alt":"Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz screenshot 1","className":"rounded-lg shadow-md"}],["$","img","1",{"src":"/projects/callquiz/CallQuiz_home.png","alt":"Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz screenshot 2","className":"rounded-lg shadow-md"}],["$","img","2",{"src":"/projects/callquiz/CallQuiz_result.png","alt":"Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz screenshot 3","className":"rounded-lg shadow-md"}],["$","img","3",{"src":"/projects/callquiz/CallQuiz_top.png","alt":"Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz screenshot 4","className":"rounded-lg shadow-md"}]]}]]}]]}]}]]}]}]
+c:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+9:null
+a:null
+e:[["$","title","0",{"children":"Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz | SingBirds"}],["$","meta","1",{"name":"description","content":"An interactive quiz web app to test out your bird call knowledge"}],["$","meta","2",{"name":"application-name","content":"SingBirds"}],["$","meta","3",{"name":"author","content":"SingBirds"}],["$","meta","4",{"name":"generator","content":"v0.dev"}],["$","link","5",{"rel":"shortcut icon","href":"/favicon.ico"}],["$","link","6",{"rel":"icon","href":"/fairy-pitta.png"}],["$","link","7",{"rel":"apple-touch-icon","href":"/apple-icon.png"}]]

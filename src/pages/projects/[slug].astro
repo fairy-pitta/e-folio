@@ -1,0 +1,100 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { Button } from '../../components/ui/button';
+import { Badge } from '../../components/ui/badge';
+import { getProject, getAllProjectSlugs } from '../../lib/content';
+import { markdownToHtml } from '../../lib/markdown';
+import ScrollToTop from '../../components/scroll-to-top';
+import Navbar from '../../components/navbar';
+import Footer from '../../components/footer';
+import { ArrowLeftIcon, Github, CalendarIcon, EyeIcon } from 'lucide-react';
+import '../../styles/globals.css';
+
+export async function getStaticPaths() {
+  const slugs = getAllProjectSlugs();
+  return slugs.map((slug) => ({
+    params: { slug: slug.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const project = getProject(slug!);
+
+if (!project) {
+  return Astro.redirect('/404');
+}
+
+const contentHtml = await markdownToHtml(project.content);
+const title = `${project.frontmatter.title} | SingBirds`;
+const description = project.frontmatter.description;
+---
+
+<Layout title={title} description={description}>
+  <Navbar client:load />
+  <ScrollToTop client:load>
+    <div class="min-h-screen bg-background">
+      <div class="pt-14 md:pt-16">
+        <div class="container mx-auto px-4 py-12">
+          <div class="max-w-4xl mx-auto">
+            <Button variant="ghost" className="mb-6" client:load>
+              <a href="/projects" class="flex items-center">
+                <ArrowLeftIcon className="h-4 w-4 mr-2" />
+                Back to Projects
+              </a>
+            </Button>
+
+            <div class="grid md:grid-cols-2 gap-8 mb-8">
+              <div>
+                <h1 class="text-3xl md:text-4xl font-bold mb-4">{project.frontmatter.title}</h1>
+                <p class="text-lg text-muted-foreground mb-6">{project.frontmatter.description}</p>
+                
+                <div class="flex flex-wrap gap-2 mb-6">
+                  {project.frontmatter.tags.map((tech: string) => (
+                    <Badge variant="secondary">{tech}</Badge>
+                  ))}
+                </div>
+
+                <div class="flex flex-wrap items-center gap-4 mb-6">
+                  <span class="flex items-center text-muted-foreground">
+                    <CalendarIcon className="h-4 w-4 mr-1" />
+                    {project.frontmatter.date}
+                  </span>
+                </div>
+
+                <div class="flex gap-4">
+                  {project.frontmatter.githubUrl && (
+                    <Button asChild client:load>
+                      <a href={project.frontmatter.githubUrl} target="_blank" rel="noopener noreferrer" class="flex items-center">
+                        <Github className="h-4 w-4 mr-2" />
+                        View Code
+                      </a>
+                    </Button>
+                  )}
+                  {project.frontmatter.liveUrl && (
+                    <Button variant="outline" asChild client:load>
+                      <a href={project.frontmatter.liveUrl} target="_blank" rel="noopener noreferrer" class="flex items-center">
+                        <EyeIcon className="h-4 w-4 mr-2" />
+                        Live Demo
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <img
+                  src={project.frontmatter.coverImage || "/placeholder.svg"}
+                  alt={project.frontmatter.title}
+                  class="w-full rounded-lg shadow-lg"
+                />
+              </div>
+            </div>
+
+            <div class="prose prose-sky prose-img:rounded-xl prose-headings:scroll-mt-8 prose-a:text-sky-600 max-w-none sm:prose-lg" set:html={contentHtml} />
+          </div>
+        </div>
+      </div>
+    </div>
+  </ScrollToTop>
+  <Footer client:load />
+</Layout>

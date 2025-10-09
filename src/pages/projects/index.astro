@@ -1,0 +1,19 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProjectsClient from '../../components/projects-client';
+import ScrollToTop from '../../components/scroll-to-top';
+import Navbar from '../../components/navbar';
+import Footer from '../../components/footer';
+import { getAllProjects } from '../../lib/content';
+import '../../styles/globals.css';
+
+const projects = getAllProjects();
+---
+
+<Layout title="Projects | SingBirds" description="Portfolio of environmental technology projects and research">
+  <Navbar client:load />
+  <ScrollToTop client:load>
+    <ProjectsClient initialProjects={projects} client:load />
+  </ScrollToTop>
+  <Footer client:load />
+</Layout>
