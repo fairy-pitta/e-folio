@@ -71,14 +71,12 @@ export default function Navbar() {
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <a href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-              <img
-                src="/fairy-pitta.png"
-                alt="fairy-pitta Logo"
-                className="w-8 h-8 object-cover"
-              />
-            </div>
-            <span className="text-2xl font-bold gradient-text">fairy-pitta</span>
+            <img
+              src="/new-favicon_t.png"
+              alt="SingBirds"
+              className="h-8 w-auto object-contain mr-2"
+            />
+            <span className="text-2xl font-normal gradient-text font-caveat">Fairy Pitta</span>
           </a>
 
         {isMobile ? (

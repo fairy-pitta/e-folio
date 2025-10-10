@@ -71,7 +71,8 @@ export default function QiitaArticles() {
                       {article.title}
                     </h3>
                     
-                    <div className="flex flex-wrap gap-2 mb-4">
+                    {/* Tags hidden per request */}
+                    {/* <div className="flex flex-wrap gap-2 mb-4">
                       {article.tags.slice(0, 3).map((tag) => (
                         <Badge 
                           key={tag.name} 
@@ -89,7 +90,7 @@ export default function QiitaArticles() {
                           +{article.tags.length - 3}
                         </Badge>
                       )}
-                    </div>
+                    </div> */}
                     
                     <div className="flex items-center text-sm text-gray-600 mt-auto">
                       <ExternalLinkIcon className="h-4 w-4 mr-1" />
@@ -107,11 +108,11 @@ export default function QiitaArticles() {
             href="https://qiita.com/Pitta"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors rounded-lg"
+            className="inline-flex items-center px-6 py-3 bg-black text-white hover:bg-white hover:text-black border border-black transition-colors rounded-lg"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            View All Articles on Qiita
+            View all articles on Qiita
             <ExternalLinkIcon className="h-4 w-4 ml-2" />
           </motion.a>
         </div>

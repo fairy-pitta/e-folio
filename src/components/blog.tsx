@@ -1,5 +1,3 @@
-"use client"
-
 import { motion } from "framer-motion"
 import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -27,6 +25,64 @@ export interface BlogPost {
 interface BlogProps {
   posts: BlogPost[]
 }
+
+
+
+export function BlogCardList({ posts }: { posts: any[] }) {
+  return (
+    <div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {posts.map((post) => (
+          <Card key={post.slug} className="h-full flex flex-col hover:shadow-md transition-shadow">
+            <div className="aspect-video overflow-hidden">
+              <img
+                src={post.frontmatter.coverImage || "/placeholder.svg"}
+                alt={post.frontmatter.title}
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              />
+            </div>
+            <CardContent className="p-6 flex-grow">
+              <div className="flex items-center gap-3 text-sm text-muted-foreground mb-3">
+                <span className="flex items-center">
+                  <CalendarIcon className="h-4 w-4 mr-1" />
+                  {post.frontmatter.date}
+                </span>
+                <span className="flex items-center">
+                  <ClockIcon className="h-4 w-4 mr-1" />
+                  {post.frontmatter.readTime}
+                </span>
+              </div>
+              <h2 className="text-xl font-semibold mb-2">{post.frontmatter.title}</h2>
+              <p className="text-muted-foreground mb-4">{post.frontmatter.excerpt}</p>
+              {/* タグ非表示 */}
+              {/* <div className="flex flex-wrap gap-2">
+                {post.frontmatter.tags.map((tag) => (
+                  <Link href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}`} key={tag}>
+                    <Badge variant="outline" className="cursor-pointer hover:bg-sky-50">
+                      <TagIcon className="h-3 w-3 mr-1" />
+                      {tag}
+                    </Badge>
+                  </Link>
+                ))}
+              </div> */}
+            </CardContent>
+            <CardFooter className="px-6 pb-6 pt-0">
+              <Button variant="ghost" className="p-0 h-auto text-sky-500 hover:text-sky-600" asChild>
+                <a href={`/blog/${post.slug}`}>Read more</a>
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+      <div className="flex justify-center mt-8">
+        <Button asChild className="bg-black text-white hover:bg-white hover:text-black border border-black transition-colors">
+          <a href="/blog">View all articles</a>
+        </Button>
+      </div>
+    </div>
+  )
+}
+
 
 export default function Blog({ posts = [] }: BlogProps) {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -274,7 +330,7 @@ export default function Blog({ posts = [] }: BlogProps) {
 
         <div className="flex justify-center mt-10">
           <Button asChild className="bg-sky-500 hover:bg-sky-600">
-            <a href="/blog">View All Articles</a>
+            <a href="/blog">View all articles</a>
           </Button>
         </div>
       </div>

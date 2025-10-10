@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ベースは Source Sans 3、見出しは Caveat */
+html, body {
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+}
+
+/* ローカルTTFの @font-face を無効化（Google Fonts 経由に統一） */
+/*
+@font-face {
+  font-family: 'Caveat';
+  src: url('/Caveat-Regular.ttf?v=1') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  src: url('/Caveat-Bold.ttf?v=1') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+*/
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -73,9 +97,13 @@
     --sidebar-border: 0 0% 14.9%;
     --sidebar-ring: 0 0% 83.1%;
   }
-}
 
-@layer base {
+  /* Headings use Caveat Regular with Noto Sans fallback */
+  h1, h2, h3 {
+    font-family: 'Caveat', 'Source Sans 3', system-ui, sans-serif;
+    /* font-weight: 400; */
+  }
+
   * {
     @apply border-border;
   }
@@ -84,6 +112,7 @@
   }
 }
 
+/* Title gradient keeps. Apply Caveat to hero titles */
 .gradient-text {
   background: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%);
   -webkit-background-clip: text;
@@ -96,4 +125,15 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Utility to apply Caveat */
+@layer utilities {
+  .font-caveat {
+    font-family: 'Caveat', 'Source Sans 3', system-ui, sans-serif;
+    font-weight: 400;
+  }
+  .font-source-sans {
+    font-family: 'Source Sans 3', system-ui, sans-serif;
+  }
 }

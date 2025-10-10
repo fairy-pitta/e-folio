@@ -53,7 +53,10 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
   const isHome = mode === 'home'
   const postsPerPage = 5
   const showPagination = !isHome
-  const showImages = isHome
+  const showImages = !isHome
+  const showSearch = !isHome
+  const showTagFilter = !isHome
+  const showLanguageFilter = true
 
   // Qiita記事を取得
   useEffect(() => {
@@ -179,7 +182,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">記事を読み込み中...</p>
+          <p className="mt-4 text-gray-600">Loading articles...</p>
         </div>
       </div>
     )
@@ -196,70 +199,64 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
         </div>
       )}
 
-      {/* 言語フィルター */}
-      <div className="flex justify-center mb-8">
-        <div className="flex bg-gray-100 rounded-lg p-1">
-          {(['both', 'japanese', 'english'] as const).map((filter) => (
-            <button
-              key={filter}
-              onClick={() => {
-                setLanguageFilter(filter)
-                setCurrentPage(1)
-              }}
-              className={`px-4 py-2 rounded-md transition-colors ${
-                languageFilter === filter
-                  ? 'bg-white shadow-sm text-gray-900'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              {filter === 'both' ? '全て' : filter === 'japanese' ? '日本語' : 'English'}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 検索バー */}
-      <div className="max-w-md mx-auto mb-8">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            type="text"
-            placeholder="記事を検索..."
-            value={searchQuery}
-            onChange={(e) => {
-              setSearchQuery(e.target.value)
-              setCurrentPage(1)
-            }}
-            className="pl-10"
-          />
-        </div>
-      </div>
-
-      {/* タグフィルター */}
-      <div className="mb-8">
-        <div className="flex flex-wrap justify-center gap-2 mb-4">
-          {allTags.slice(0, 20).map((tag) => (
-            <Badge
-              key={tag}
-              variant={selectedTags.includes(tag) ? "default" : "secondary"}
-              className="cursor-pointer hover:bg-gray-200 transition-colors"
-              onClick={() => toggleTag(tag)}
-            >
-              <Tag className="h-3 w-3 mr-1" />
-              {tag}
-            </Badge>
-          ))}
-        </div>
-        
-        {(searchQuery || selectedTags.length > 0) && (
-          <div className="text-center">
-            <Button variant="outline" size="sm" onClick={resetFilters}>
-              <X className="h-4 w-4 mr-2" />
-              フィルターをクリア
+      {/* 言語フィルター（ホーム/一覧ともに表示） */}
+      {showLanguageFilter && (
+        <div className="flex justify-center mb-8">
+          <div className="inline-flex items-center gap-2">
+            <Button variant={languageFilter === 'japanese' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('japanese'); setCurrentPage(1) }}>
+              日本語
+            </Button>
+            <Button variant={languageFilter === 'english' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('english'); setCurrentPage(1) }}>
+              English
+            </Button>
+            <Button variant={languageFilter === 'both' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('both'); setCurrentPage(1) }}>
+              All
             </Button>
           </div>
-        )}
-      </div>
+        </div>
+      )}
+
+      {/* ホーム見出し: latest articles（Caveat） */}
+      {isHome && (
+        <h2 className="text-3xl md:text-4xl font-caveat tracking-tight mb-6">latest articles</h2>
+      )}
+
+      {/* 検索バー（一覧のみ表示） */}
+      {showSearch && (
+        <div className="max-w-md mx-auto mb-8">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="Search articles..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value)
+                setCurrentPage(1)
+              }}
+              className="pl-10"
+            />
+          </div>
+        </div>
+      )}
+
+      {/* タグフィルター（一覧のみ表示） */}
+      {showTagFilter && (
+        <div className="mb-8">
+          <div className="flex flex-wrap gap-2 justify-center">
+            {allTags.map((tag) => (
+              <Badge
+                key={tag}
+                variant={selectedTags.includes(tag) ? 'default' : 'outline'}
+                className="cursor-pointer"
+                onClick={() => toggleTag(tag)}
+              >
+                {tag}
+              </Badge>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* 記事一覧 */}
       <div className="space-y-6 mb-8">
@@ -289,38 +286,69 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                     )}
                     
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant={article.type === 'blog' ? 'default' : 'secondary'}>
-                          {article.type === 'blog' ? 'Blog' : 'Qiita'}
-                        </Badge>
-                        <Badge variant="outline">
-                          {article.language === 'english' ? 'EN' : 'JP'}
-                        </Badge>
-                      </div>
+                      {/* バッジ＋タイトルを1行に（ホームのみ） */}
+                      {isHome ? (
+                        <h3 className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors font-source-sans flex items-center gap-2">
+                          <Badge variant={article.type === 'blog' ? 'default' : 'secondary'}>
+                            {article.type === 'blog' ? 'Blog' : 'Qiita'}
+                          </Badge>
+                          <a
+                            href={article.url}
+                            target={article.type === 'qiita' ? '_blank' : '_self'}
+                            rel={article.type === 'qiita' ? 'noopener noreferrer' : undefined}
+                            className="flex items-center gap-2"
+                          >
+                            {article.title}
+                            {article.type === 'qiita' && <ExternalLinkIcon className="h-4 w-4" />}
+                          </a>
+                        </h3>
+                      ) : (
+                        <>
+                          <div className="flex items-center gap-2 mb-2">
+                            <Badge variant={article.type === 'blog' ? 'default' : 'secondary'}>
+                              {article.type === 'blog' ? 'Blog' : 'Qiita'}
+                            </Badge>
+                            {/* 言語バッジ（一覧のみ表示、ホームでは非表示）*/}
+                            {!isHome && (
+                              <Badge variant="outline">
+                                {article.language === 'english' ? 'EN' : 'JP'}
+                              </Badge>
+                            )}
+                          </div>
+                          
+                          <h3 className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors font-source-sans">
+                            <a
+                              href={article.url}
+                              target={article.type === 'qiita' ? '_blank' : '_self'}
+                              rel={article.type === 'qiita' ? 'noopener noreferrer' : undefined}
+                              className="flex items-center gap-2"
+                            >
+                              {article.title}
+                              {article.type === 'qiita' && <ExternalLinkIcon className="h-4 w-4" />}
+                            </a>
+                          </h3>
+                        </>
+                      )}
                       
-                      <h3 className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors">
-                        <a
-                          href={article.url}
-                          target={article.type === 'qiita' ? '_blank' : '_self'}
-                          rel={article.type === 'qiita' ? 'noopener noreferrer' : undefined}
-                          className="flex items-center gap-2"
-                        >
-                          {article.title}
-                          {article.type === 'qiita' && <ExternalLinkIcon className="h-4 w-4" />}
-                        </a>
-                      </h3>
-                      
-                      <p className="text-gray-600 mb-3 line-clamp-2">{article.excerpt}</p>
+                      {/* 抜粋（一覧のみ表示、ホームでは非表示） */}
+                      {!isHome && (
+                        <p className="text-gray-600 mb-3 line-clamp-2">{article.excerpt}</p>
+                      )}
                       
                       <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-3">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          {new Date(article.date).toLocaleDateString('ja-JP')}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <User className="h-4 w-4" />
-                          {article.readTime}
-                        </div>
+                        {/* 日付/所要時間（一覧のみ表示、ホームでは非表示） */}
+                        {!isHome && (
+                          <>
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-4 w-4" />
+                              {new Date(article.date).toLocaleDateString('ja-JP')}
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <User className="h-4 w-4" />
+                              {article.readTime}
+                            </div>
+                          </>
+                        )}
                         {article.likes !== undefined && (
                           <div className="flex items-center gap-1">
                             <Heart className="h-4 w-4" />
@@ -328,14 +356,16 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                           </div>
                         )}
                       </div>
-                      
-                      <div className="flex flex-wrap gap-2">
-                        {article.tags.slice(0, 5).map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
+                      {/* タグチップ（一覧のみ表示、ホームでは非表示） */}
+                      {!isHome && (
+                        <div className="flex flex-wrap gap-2">
+                          {article.tags.slice(0, 5).map((tag) => (
+                            <Badge key={tag} variant="outline" className="text-xs">
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </CardContent>
@@ -347,8 +377,10 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
 
       {/* ホーム用: 全記事へのリンク */}
       {isHome && (
-        <div className="text-center mb-8">
-          <a href="/blog" className="text-blue-600 hover:underline">View all articles</a>
+        <div className="flex justify-center mb-8">
+          <Button asChild className="bg-black text-white hover:bg-white hover:text-black border border-black transition-colors">
+            <a href="/blog">View all articles</a>
+          </Button>
         </div>
       )}
 
@@ -362,7 +394,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
             disabled={currentPage === 1}
           >
             <ChevronLeft className="h-4 w-4" />
-            前へ
+            Prev
           </Button>
           
           <div className="flex gap-1">
@@ -385,7 +417,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
           >
-            次へ
+            Next
             <ChevronRight className="h-4 w-4" />
           </Button>
         </div>

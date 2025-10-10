@@ -1,40 +1,19 @@
 ---
-export interface Props {
-  title?: string;
-  description?: string;
-}
-
-const { title = "fairy-pitta | Software Engineer", description = "Portfolio of fairy-pitta - Software Engineer and Developer" } = Astro.props;
+import '../styles/globals.css';
 ---
 
-<!DOCTYPE html>
-<html lang="en" class="light">
+<html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="description" content={description} />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/fairy-pitta.png" />
-    <link rel="shortcut icon" href="/favicon.ico" />
-    <link rel="apple-touch-icon" href="/apple-icon.png" />
-    <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" href="/favicon.svg"/>
+    <!-- Google Fonts: Caveat 400..700 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <!-- Using Google Fonts Caveat; removed inline Noto Sans override and local TTF FontFace script -->
   </head>
-  <body class="font-noto-sans">
-    <div id="theme-provider" class="light">
-      <slot />
-    </div>
+  <body>
+    <slot />
   </body>
 </html>
-
-<style is:global>
-  html {
-    font-family: 'Noto Sans', system-ui, sans-serif;
-  }
-  
-  .font-noto-sans {
-    font-family: 'Noto Sans', system-ui, sans-serif;
-  }
-</style>

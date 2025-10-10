@@ -6,15 +6,15 @@ export default function Hero() {
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
       <div className="container mx-auto px-4 text-center z-10">
         <div className="max-w-4xl mx-auto">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 gradient-text">
-            fairy-pitta
+          <h1 className="relative z-20 text-6xl md:text-8xl font-normal mb-6 gradient-text font-caveat">
+            fairy pitta
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Software Engineer & Developer
           </p>
           <p className="text-lg md:text-xl text-muted-foreground mb-12 max-w-3xl mx-auto">
-            Creating elegant solutions through clean code and innovative technology.
-            Passionate about building scalable applications and solving complex problems.
+            Creating solutions through clean code and technology. 
+            Passionate about building educational & nature-related applications.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="text-lg px-8 py-3">

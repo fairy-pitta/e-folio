@@ -20,11 +20,22 @@ const englishPosts = getAllBlogPosts();
   <Navbar client:load />
   <ScrollIndicator client:load />
   <main>
-    <Hero client:load />
-    <Skills client:load />
-    <Projects client:load projects={projects} />
-    <EnhancedBlogClient client:load englishPosts={englishPosts} mode="home" />
-    <Contact client:load />
+    <section id="about">
+      <!-- Heroのh1には.font-caveatが適用済み -->
+      <Hero client:load />
+    </section>
+    <section id="skills">
+      <Skills client:load />
+    </section>
+    <section id="projects">
+      <Projects client:load projects={projects} />
+    </section>
+    <section id="blog">
+      <EnhancedBlogClient client:load englishPosts={englishPosts} mode="home" />
+    </section>
+    <section id="contact">
+      <Contact client:load />
+    </section>
   </main>
   <Footer client:load />
 </Layout>

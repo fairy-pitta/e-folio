@@ -74,7 +74,7 @@ export default function Projects({ projects = [] }: ProjectsProps) {
                       </div>
                     </div>
                     
-                    <h3 className="text-xl font-semibold mb-3 text-gray-900 hover:text-sky-600 transition-colors">
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900 hover:text-sky-600 transition-colors font-source-sans">
                       <a href={`/projects/${project.slug}`}>
                         {project.frontmatter.title}
                       </a>

@@ -9,16 +9,12 @@ export default function Footer() {
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex flex-col items-center md:items-start">
             <div className="flex items-center gap-2 mb-2">
-                <div className="w-8 h-8 rounded-full overflow-hidden mr-2">
-                  <img
-                    src="/fairy-pitta.png"
-                    alt="fairy-pitta Logo"
-                    width={32}
-                    height={32}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              <h3 className="text-xl font-bold gradient-text">fairy-pitta</h3>
+                <img
+                  src="/new-favicon_t.png"
+                  alt="SingBirds"
+                  className="h-8 w-auto object-contain mr-2"
+                />
+               <h3 className="text-xl font-bold gradient-text">fairy-pitta</h3>
             </div>
             <p className="text-sm text-muted-foreground text-center md:text-left">
               I Code Birds.
