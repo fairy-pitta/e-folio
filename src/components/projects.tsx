@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLinkIcon, Github } from "lucide-react"
@@ -57,7 +57,7 @@ export default function Projects({ projects = [] }: ProjectsProps) {
             <p className="mt-4 text-muted-foreground">Loading projects...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="space-y-4">
             {displayedProjects.map((project) => (
               <motion.div
                 key={project.slug}
@@ -66,41 +66,59 @@ export default function Projects({ projects = [] }: ProjectsProps) {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
               >
-                <Card className="hover-card h-full flex flex-col bg-white border-gray-200 hover:border-gray-300 transition-colors">
-                  <CardContent className="p-6 flex-1">
-                    <h3 className="text-xl font-semibold mb-3 text-gray-900">{project.frontmatter.title}</h3>
+                <Card className="hover:shadow-lg transition-shadow duration-300 border-gray-200">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center text-sm text-gray-500">
+                        <span>{project.frontmatter.date}</span>
+                      </div>
+                    </div>
+                    
+                    <h3 className="text-xl font-semibold mb-3 text-gray-900 hover:text-sky-600 transition-colors">
+                      <a href={`/projects/${project.slug}`}>
+                        {project.frontmatter.title}
+                      </a>
+                    </h3>
+                    
                     <p className="text-gray-700 mb-4 line-clamp-3">{project.frontmatter.description}</p>
+                    
                     <div className="flex flex-wrap gap-2 mb-4">
-                      {project.frontmatter.tags.map((tag) => (
-                        <Badge key={tag} variant="secondary" className="text-xs bg-gray-100 text-gray-700 hover:bg-gray-200">
+                      {project.frontmatter.tags.slice(0, 5).map((tag) => (
+                        <Badge key={tag} variant="outline" className="text-xs">
                           {tag}
                         </Badge>
                       ))}
+                      {project.frontmatter.tags.length > 5 && (
+                        <Badge variant="outline" className="text-xs">
+                          +{project.frontmatter.tags.length - 5}
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="flex gap-2">
+                      <Button asChild size="sm" className="bg-gray-900 hover:bg-gray-800 text-white">
+                        <a href={`/projects/${project.slug}`}>
+                          View Details
+                        </a>
+                      </Button>
+                      {project.frontmatter.githubUrl && (
+                        <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                          <a href={project.frontmatter.githubUrl} target="_blank" rel="noopener noreferrer">
+                            <Github className="h-3.5 w-3.5 mr-1" />
+                            Code
+                          </a>
+                        </Button>
+                      )}
+                      {project.frontmatter.liveUrl && (
+                        <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+                          <a href={project.frontmatter.liveUrl} target="_blank" rel="noopener noreferrer">
+                            <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
+                            Live
+                          </a>
+                        </Button>
+                      )}
                     </div>
                   </CardContent>
-                  <CardFooter className="p-6 pt-0 flex gap-2">
-                    <Button asChild size="sm" className="flex-1 bg-gray-900 hover:bg-gray-800 text-white">
-                      <a href={`/projects/${project.slug}`}>
-                        View Details
-                      </a>
-                    </Button>
-                    {project.frontmatter.githubUrl && (
-                      <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
-                        <a href={project.frontmatter.githubUrl} target="_blank" rel="noopener noreferrer">
-                          <Github className="h-3.5 w-3.5 mr-1" />
-                          Code
-                        </a>
-                      </Button>
-                    )}
-                    {project.frontmatter.liveUrl && (
-                      <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
-                        <a href={project.frontmatter.liveUrl} target="_blank" rel="noopener noreferrer">
-                          <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
-                          Live
-                        </a>
-                      </Button>
-                    )}
-                  </CardFooter>
                 </Card>
               </motion.div>
             ))}

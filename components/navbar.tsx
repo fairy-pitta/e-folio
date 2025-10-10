@@ -96,18 +96,18 @@ export default function Navbar() {
                 size="icon"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Toggle menu"
-                className={scrolled || !isHomePage ? "" : "bg-sky-600/80 hover:bg-sky-700/80 text-white"}
+                className={scrolled || !isHomePage ? "" : "bg-gray-600/80 hover:bg-gray-700/80 text-white"}
               >
                 {isMenuOpen ? (
                   <XIcon
                     className={`h-5 w-5 ${
-                      scrolled || !isHomePage ? "text-sky-600" : "text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]"
+                      scrolled || !isHomePage ? "text-gray-900" : "text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]"
                     }`}
                   />
                 ) : (
                   <MenuIcon
                     className={`h-5 w-5 ${
-                      scrolled || !isHomePage ? "text-sky-600" : "text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]"
+                      scrolled || !isHomePage ? "text-gray-900" : "text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]"
                     }`}
                   />
                 )}
@@ -115,20 +115,20 @@ export default function Navbar() {
             </div>
 
             {isMenuOpen && (
-              <div className="absolute top-full left-0 right-0 bg-sky-50/95 backdrop-blur-md shadow-md p-4 flex flex-col gap-2">
+              <div className="absolute top-full left-0 right-0 bg-gray-50/95 backdrop-blur-md shadow-md p-4 flex flex-col gap-2">
                 {navLinks.map((link) => (
                   <div key={link.name}>
                     {link.isSection ? (
                       <button
                         onClick={() => navigateToSection(link.sectionId)}
-                        className="w-full text-left px-4 py-2 text-sky-700 hover:bg-sky-100 rounded-md transition-colors"
+                        className="w-full text-left px-4 py-2 text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
                       >
                         {link.name}
                       </button>
                     ) : (
                       <Link
                         href={link.href}
-                        className="px-4 py-2 text-sky-700 hover:bg-sky-100 rounded-md transition-colors block"
+                        className="px-4 py-2 text-gray-900 hover:bg-gray-100 rounded-md transition-colors block"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         {link.name}
@@ -154,8 +154,8 @@ export default function Navbar() {
                     onClick={() => navigateToSection(link.sectionId)}
                     className={`text-sm font-medium transition-colors ${
                       scrolled || !isHomePage
-                        ? "text-sky-600 hover:text-sky-800"
-                        : "text-white hover:text-sky-100 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] font-semibold"
+                        ? "text-gray-900 hover:text-gray-700"
+                        : "text-white hover:text-gray-100 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] font-semibold"
                     }`}
                   >
                     {link.name}
@@ -169,10 +169,10 @@ export default function Navbar() {
                   href={link.href}
                   className={`text-sm font-medium transition-colors ${
                     isActive
-                      ? "text-sky-800 font-semibold"
+                      ? "text-gray-900 font-semibold"
                       : scrolled || !isHomePage
-                        ? "text-sky-600 hover:text-sky-800"
-                        : "text-white hover:text-sky-100 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] font-semibold"
+                        ? "text-gray-900 hover:text-gray-700"
+                        : "text-white hover:text-gray-100 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] font-semibold"
                   }`}
                 >
                   {link.name}

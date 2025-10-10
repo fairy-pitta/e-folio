@@ -1,46 +1,13 @@
 "use client"
 
-import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { ExternalLinkIcon, Heart } from "lucide-react"
-
-interface QiitaArticle {
-  id: string
-  title: string
-  url: string
-  created_at: string
-  likes_count: number
-  tags: Array<{
-    name: string
-  }>
-}
+import { useQiita } from "../contexts/QiitaContext"
 
 export default function QiitaArticles() {
-  const [articles, setArticles] = useState<QiitaArticle[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    const fetchQiitaArticles = async () => {
-      try {
-        const response = await fetch('https://qiita.com/api/v2/items?query=user%3APitta')
-        if (!response.ok) {
-          throw new Error('Failed to fetch articles')
-        }
-        const data = await response.json()
-        setArticles(data.slice(0, 6)) // 最新6記事を表示
-      } catch (err) {
-        setError('記事の取得に失敗しました')
-        console.error('Error fetching Qiita articles:', err)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchQiitaArticles()
-  }, [])
+  const { articles, loading, error } = useQiita()
 
   const handleArticleClick = (url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer')
@@ -77,7 +44,7 @@ export default function QiitaArticles() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article) => (
+            {articles.slice(0, 6).map((article) => (
               <motion.div
                 key={article.id}
                 initial={false}
