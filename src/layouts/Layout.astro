@@ -1,11 +1,14 @@
 ---
 import '../styles/globals.css';
+const { title = 'fairy-pitta | Software Engineer', description = 'Portfolio of fairy-pitta, a software engineer crafting modern web apps in Astro and React.' } = Astro.props;
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
     <link rel="icon" href="/favicon.svg"/>
     <!-- Google Fonts: Caveat 400..700 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">

@@ -1,0 +1,10 @@
+# robots.txt for e-folio
+# Allow all crawlers to access everything by default
+User-agent: *
+Allow: /
+
+# Disallow build and internal assets if needed (adjust as appropriate)
+# Disallow: /_astro/
+# Disallow: /assets/
+
+Sitemap: https://your-domain.example/sitemap.xml
