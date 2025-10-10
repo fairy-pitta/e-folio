@@ -4,8 +4,9 @@ import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLinkIcon, Github } from "lucide-react"
+import { ExternalLinkIcon } from "lucide-react"
 import { useMobile } from "@/hooks/use-mobile"
+import { SiGithub } from "react-icons/si"
 
 // 型定義を追加
 export interface ProjectFrontmatter {
@@ -104,7 +105,7 @@ export default function Projects({ projects = [] }: ProjectsProps) {
                       {project.frontmatter.githubUrl && (
                         <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
                           <a href={project.frontmatter.githubUrl} target="_blank" rel="noopener noreferrer">
-                            <Github className="h-3.5 w-3.5 mr-1" />
+                            <SiGithub className="h-3.5 w-3.5 mr-1" />
                             Code
                           </a>
                         </Button>

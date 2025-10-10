@@ -1,4 +1,4 @@
-import { Github } from "lucide-react"
+import { SiGithub } from "react-icons/si"
 
 export default function Footer() {
   const currentYear = new Date().getFullYear()
@@ -29,7 +29,7 @@ export default function Footer() {
               className="text-muted-foreground hover:text-sky-500 transition-colors"
               aria-label="GitHub"
             >
-              <Github className="h-6 w-6" />
+              <SiGithub className="h-6 w-6" />
             </a>
           </div>
         </div>
