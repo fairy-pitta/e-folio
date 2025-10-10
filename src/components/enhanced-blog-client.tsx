@@ -56,7 +56,6 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
   const postsPerPage = 5
   const showPagination = !isHome
   // 一覧ページでもサムネイル非表示の要望に合わせて画像は常に非表示
-  const showImages = false
   const showSearch = !isHome
   const showTagFilter = !isHome
   const showLanguageFilter = true
