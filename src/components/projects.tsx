@@ -28,9 +28,10 @@ export interface Project {
 
 interface ProjectsProps {
   projects: Project[]
+  showTags?: boolean
 }
 
-export default function Projects({ projects = [] }: ProjectsProps) {
+export default function Projects({ projects = [], showTags = true }: ProjectsProps) {
   const isMobile = useMobile()
 
   // モバイル表示用に表示するプロジェクト数を制限
@@ -83,18 +84,20 @@ export default function Projects({ projects = [] }: ProjectsProps) {
                     
                     <p className="text-gray-700 mb-4 line-clamp-3">{project.frontmatter.description}</p>
                     
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {project.frontmatter.tags.slice(0, 5).map((tag) => (
-                        <Badge key={tag} variant="outline" className="text-xs">
-                          {tag}
-                        </Badge>
-                      ))}
-                      {project.frontmatter.tags.length > 5 && (
-                        <Badge variant="outline" className="text-xs">
-                          +{project.frontmatter.tags.length - 5}
-                        </Badge>
-                      )}
-                    </div>
+                    {showTags && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.frontmatter.tags.slice(0, 5).map((tag) => (
+                          <Badge key={tag} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                        {project.frontmatter.tags.length > 5 && (
+                          <Badge variant="outline" className="text-xs">
+                            +{project.frontmatter.tags.length - 5}
+                          </Badge>
+                        )}
+                      </div>
+                    )}
                     
                     <div className="flex gap-2">
                       <Button asChild size="sm" className="bg-gray-900 hover:bg-gray-800 text-white">

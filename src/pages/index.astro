@@ -1,41 +1,24 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Hero from '../components/hero';
-import Skills from '../components/skills';
-import Projects from '../components/projects';
-import EnhancedBlogClient from '../components/enhanced-blog-client';
-import Contact from '../components/contact';
-import ScrollIndicator from '../components/scroll-indicator';
-import Navbar from '../components/navbar';
-import Footer from '../components/footer';
-import { getAllProjects, getAllBlogPosts } from '../lib/content';
-import '../styles/globals.css';
+import Layout from '../layouts/Layout.astro'
+import Projects from '../components/projects'
+import EnhancedBlogClient from '../components/enhanced-blog-client'
+import Hero from '../components/hero'
+import Skills from '../components/skills'
+import Contact from '../components/contact'
+import { getAllProjects, getAllBlogPosts } from '../lib/content'
 
-// サーバーサイドでデータを取得
-const projects = getAllProjects();
-const englishPosts = getAllBlogPosts();
+const projects = getAllProjects()
+const englishPosts = getAllBlogPosts()
 ---
 
-<Layout title="Fairy Pitta | Software Engineer" description="Portfolio of Fairy Pitta, a software engineer crafting modern web apps in Astro and React.">
-  <Navbar client:idle />
-  <ScrollIndicator client:visible />
-  <main>
-    <section id="about">
-      <!-- Heroのh1には.font-caveatが適用済み -->
-      <Hero client:visible />
-    </section>
-    <section id="skills">
-      <Skills client:visible />
-    </section>
-    <section id="projects">
-      <Projects client:visible projects={projects} />
-    </section>
-    <section id="blog">
-      <EnhancedBlogClient client:visible englishPosts={englishPosts} mode="home" />
-    </section>
-    <section id="contact">
-      <Contact client:visible />
-    </section>
-  </main>
-  <Footer />
+<Layout title="Home">
+  <Hero />
+  <Skills />
+  <section id="projects">
+    <Projects client:visible projects={projects} showTags={false} />
+  </section>
+  <section id="blog">
+    <EnhancedBlogClient client:visible englishPosts={englishPosts} mode="home" />
+  </section>
+  <Contact />
 </Layout>

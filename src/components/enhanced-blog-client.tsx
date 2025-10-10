@@ -218,6 +218,11 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
         </div>
       )}
 
+      {/* ホーム見出しを言語トグルの上に配置して中央揃え */}
+      {isHome && (
+        <h2 className="text-3xl font-bold mb-6 text-gray-900 text-center">Blog & Articles</h2>
+      )}
+
       {/* 言語フィルター（ホーム/一覧ともに表示） */}
       {showLanguageFilter && (
         <div className="flex justify-center mb-8">
@@ -233,11 +238,6 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
             </Button>
           </div>
         </div>
-      )}
-
-      {/* ホーム見出し: latest articles（Caveat） */}
-      {isHome && (
-        <h2 className="text-3xl md:text-4xl font-caveat tracking-tight mb-6">latest articles</h2>
       )}
 
       {/* 検索バー（一覧のみ表示） */}
@@ -313,10 +313,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                     <div className="flex-1">
                       {/* バッジ＋タイトルを1行に（ホームのみ） */}
                       {isHome ? (
-                        <h3 className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors font-source-sans flex items-center gap-2">
-                          <Badge variant={article.type === 'blog' ? 'default' : 'secondary'}>
-                            {article.type === 'blog' ? 'Blog' : 'Qiita'}
-                          </Badge>
+                        <h3 className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors font-source-sans">
                           <a
                             href={article.url}
                             target={article.type === 'qiita' ? '_blank' : '_self'}
@@ -329,18 +326,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                         </h3>
                       ) : (
                         <>
-                          <div className="flex items-center gap-2 mb-2">
-                            <Badge variant={article.type === 'blog' ? 'default' : 'secondary'}>
-                              {article.type === 'blog' ? 'Blog' : 'Qiita'}
-                            </Badge>
-                            {/* 言語バッジ（一覧のみ表示、ホームでは非表示）*/}
-                            {!isHome && (
-                              <Badge variant="outline">
-                                {article.language === 'english' ? 'EN' : 'JP'}
-                              </Badge>
-                            )}
-                          </div>
-                          
+                          {/* 先頭のタイプバッジ行を削除 */}
                           <h3 className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors font-source-sans">
                             <a
                               href={article.url}
@@ -392,6 +378,12 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                         </div>
                       )}
                     </div>
+                  </div>
+                  {/* カード末尾にタイプバッジ（白背景・黒文字）を配置 */}
+                  <div className="mt-4 flex justify-end">
+                    <Badge variant="outline" className="bg-white text-black border-gray-300">
+                      {article.type === 'blog' ? 'Blog' : 'Qiita'}
+                    </Badge>
                   </div>
                 </CardContent>
               </Card>
