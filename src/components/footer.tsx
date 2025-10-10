@@ -18,7 +18,7 @@ export default function Footer() {
                   loading="lazy"
                   decoding="async"
                 />
-               <h3 className="text-xl font-bold gradient-text">fairy-pitta</h3>
+               <h3 className="text-xl font-bold gradient-text">Fairy Pitta</h3>
             </div>
             <p className="text-sm text-muted-foreground text-center md:text-left">
               I Code Birds.

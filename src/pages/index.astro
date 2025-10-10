@@ -14,7 +14,7 @@ const englishPosts = getAllBlogPosts()
 ---
 
 <Layout title="Home">
-  <Navbar client:idle />
+  <Navbar client:load />
   <Hero />
   <Skills client:visible />
   <section id="projects">
@@ -24,5 +24,5 @@ const englishPosts = getAllBlogPosts()
     <EnhancedBlogClient client:visible englishPosts={englishPosts} mode="home" />
   </section>
   <Contact client:visible />
-  <Footer client:idle />
+  <Footer client:load />
 </Layout>
