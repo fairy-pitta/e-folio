@@ -5,8 +5,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CalendarIcon, ClockIcon, TagIcon, ExternalLinkIcon } from "lucide-react"
-import { useRef, useState, useEffect } from "react"
-import { useMobile } from "@/hooks/use-mobile"
+import { useState } from "react"
+// (removed) import { useMobile } from "@/hooks/use-mobile"
 
 // 型定義
 export interface BlogFrontmatter {
@@ -48,11 +48,8 @@ export default function BlogWithLanguageToggle({
   englishPosts = [], 
   qiitaArticles = [] 
 }: BlogWithLanguageToggleProps) {
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
-  const [canScrollLeft, setCanScrollLeft] = useState(false)
-  const [canScrollRight, setCanScrollRight] = useState(true)
   const [languageFilter, setLanguageFilter] = useState<LanguageFilter>('both')
-  const isMobile = useMobile()
+  // (removed) const isMobile = useMobile()
 
   // 記事の型定義
   interface FilteredArticle {
@@ -118,38 +115,7 @@ export default function BlogWithLanguageToggle({
   const filteredArticles = getFilteredArticles()
   const displayedArticles = filteredArticles
 
-  // スクロール位置を監視
-  useEffect(() => {
-    if (isMobile) return
 
-    const checkScroll = () => {
-      if (scrollContainerRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = scrollContainerRef.current
-        setCanScrollLeft(scrollLeft > 0)
-        setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 10)
-      }
-    }
-
-    const container = scrollContainerRef.current
-    if (container) {
-      container.addEventListener('scroll', checkScroll)
-      checkScroll()
-      return () => container.removeEventListener('scroll', checkScroll)
-    }
-  }, [isMobile, filteredArticles])
-
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = 400
-      const newScrollLeft = scrollContainerRef.current.scrollLeft + 
-        (direction === 'left' ? -scrollAmount : scrollAmount)
-      
-      scrollContainerRef.current.scrollTo({
-        left: newScrollLeft,
-        behavior: 'smooth'
-      })
-    }
-  }
 
   const formatDate = (dateString: string) => {
     try {

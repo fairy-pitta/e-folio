@@ -15,20 +15,12 @@ interface NavLink {
 export default function Navbar() {
   const isMobile = useMobile()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
   const [pathname, setPathname] = useState("")
   const isHomePage = pathname === "/"
 
   useEffect(() => {
     // クライアントサイドでpathnameを設定
     setPathname(window.location.pathname)
-    
-    // スクロールに関係なく常時黒背景にするため、スクロールイベントは維持するが見た目は固定
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10)
-    }
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   // セクションへのナビゲーション処理

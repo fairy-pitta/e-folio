@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ExternalLinkIcon, Heart, Search, Calendar, User, ChevronLeft, ChevronRight, X, Tag } from "lucide-react"
+import { ExternalLinkIcon, Heart, Search, Calendar, User, ChevronLeft, ChevronRight } from "lucide-react"
 import { fetchQiitaArticles, QiitaArticle } from "../lib/qiita"
 
 interface BlogPost {
@@ -170,12 +170,6 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
     setCurrentPage(1)
   }
 
-  // 検索とフィルタのリセット
-  const resetFilters = () => {
-    setSearchQuery("")
-    setSelectedTags([])
-    setCurrentPage(1)
-  }
 
   if (loading) {
     return (
