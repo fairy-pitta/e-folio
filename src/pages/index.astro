@@ -17,25 +17,25 @@ const englishPosts = getAllBlogPosts();
 ---
 
 <Layout title="Fairy Pitta | Software Engineer" description="Portfolio of Fairy Pitta, a software engineer crafting modern web apps in Astro and React.">
-  <Navbar client:load />
-  <ScrollIndicator client:load />
+  <Navbar client:idle />
+  <ScrollIndicator client:visible />
   <main>
     <section id="about">
       <!-- Heroのh1には.font-caveatが適用済み -->
-      <Hero client:load />
+      <Hero client:visible />
     </section>
     <section id="skills">
-      <Skills client:load />
+      <Skills client:visible />
     </section>
     <section id="projects">
-      <Projects client:load projects={projects} />
+      <Projects client:visible projects={projects} />
     </section>
     <section id="blog">
-      <EnhancedBlogClient client:load englishPosts={englishPosts} mode="home" />
+      <EnhancedBlogClient client:visible englishPosts={englishPosts} mode="home" />
     </section>
     <section id="contact">
-      <Contact client:load />
+      <Contact client:visible />
     </section>
   </main>
-  <Footer client:load />
+  <Footer />
 </Layout>

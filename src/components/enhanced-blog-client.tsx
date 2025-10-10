@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -44,13 +44,15 @@ interface EnhancedBlogClientProps {
 
 export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }: EnhancedBlogClientProps) {
   const [qiitaArticles, setQiitaArticles] = useState<QiitaArticle[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(mode === 'home' ? false : true)
   const [error, setError] = useState<string | null>(null)
-  const [languageFilter, setLanguageFilter] = useState<LanguageFilter>('both')
+  const [languageFilter, setLanguageFilter] = useState<LanguageFilter>(mode === 'home' ? 'english' : 'both')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
   const isHome = mode === 'home'
+  const [inView, setInView] = useState(false)
+  const containerRef = useRef<HTMLDivElement | null>(null)
   const postsPerPage = 5
   const showPagination = !isHome
   const showImages = !isHome
@@ -58,7 +60,24 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
   const showTagFilter = !isHome
   const showLanguageFilter = true
 
-  // Qiita記事を取得
+  // Qiita記事を取得（ホームでは言語選択や可視時にのみフェッチ）
+  useEffect(() => {
+    // IntersectionObserverで可視判定（ホームのみ）
+    if (isHome) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0]?.isIntersecting) {
+            setInView(true)
+            observer.disconnect()
+          }
+        },
+        { rootMargin: '200px' }
+      )
+      if (containerRef.current) observer.observe(containerRef.current)
+      return () => observer.disconnect()
+    }
+  }, [isHome])
+
   useEffect(() => {
     const loadQiitaArticles = async () => {
       setLoading(true)
@@ -67,11 +86,17 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
       setError(result.error)
       setLoading(false)
     }
-    
-    loadQiitaArticles()
-  }, [])
 
-  // 統合記事リストを作成
+    if (isHome) {
+      // ホームでは、日本語表示を選択し、かつコンポーネントが可視になった場合のみQiitaをフェッチ
+      if ((languageFilter === 'japanese' || languageFilter === 'both') && inView) {
+        loadQiitaArticles()
+      }
+    } else {
+      // 一覧ページでは即座にフェッチ
+      loadQiitaArticles()
+    }
+  }, [isHome, languageFilter, inView])
   const getUnifiedArticles = (): UnifiedArticle[] => {
     const allArticles: UnifiedArticle[] = []
 
@@ -183,7 +208,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div ref={containerRef} className="container mx-auto px-4 py-8">
       {/* ヘッダー削除（要望により非表示） */}
 
       {/* エラー表示 */}
@@ -274,6 +299,8 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                         <img
                           src={article.coverImage}
                           alt={article.title}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover"
                         />
                       </div>

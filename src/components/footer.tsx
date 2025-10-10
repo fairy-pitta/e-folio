@@ -13,6 +13,8 @@ export default function Footer() {
                   src="/new-favicon_t.png"
                   alt="SingBirds"
                   className="h-8 w-auto object-contain mr-2"
+                  loading="lazy"
+                  decoding="async"
                 />
                <h3 className="text-xl font-bold gradient-text">fairy-pitta</h3>
             </div>

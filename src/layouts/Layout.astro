@@ -13,7 +13,9 @@ const { title = 'Fairy Pitta | Software Engineer', description = 'Portfolio of F
     <!-- Google Fonts: Caveat 400..700 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" rel="stylesheet">
+    <!-- Preload Google Fonts stylesheet to avoid render-blocking; swap to stylesheet on load -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"></noscript>
     <!-- Using Google Fonts Caveat; removed inline Noto Sans override and local TTF FontFace script -->
   </head>
   <body>

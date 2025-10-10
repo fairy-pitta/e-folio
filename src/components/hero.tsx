@@ -7,7 +7,7 @@ export default function Hero() {
       <div className="container mx-auto px-4 text-center z-10">
         <div className="max-w-4xl mx-auto">
           <h1 className="relative z-20 text-6xl md:text-8xl font-normal mb-6 gradient-text font-caveat">
-            fairy pitta
+            Fairy Pitta
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
             Software Engineer & Developer

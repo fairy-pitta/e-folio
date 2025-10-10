@@ -67,6 +67,8 @@ export default function Navbar() {
               src="/new-favicon_t.png"
               alt="SingBirds"
               className="h-8 w-auto object-contain mr-2"
+              loading="lazy"
+              decoding="async"
             />
             <span className="text-2xl font-normal gradient-text font-caveat">Fairy Pitta</span>
           </a>

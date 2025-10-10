@@ -10,13 +10,13 @@ const posts = await getAllBlogPosts()
 ---
 
 <Layout title="Blog & Articles">
-  <Navbar client:load />
+  <Navbar client:idle />
   <div class="min-h-screen bg-background">
     <div class="pt-16 md:pt-20">
       <div class="container mx-auto px-4 py-12">
         <div class="max-w-6xl mx-auto">
           <!-- 拡張されたブログクライアント -->
-          <EnhancedBlogClient englishPosts={posts} client:load mode="index" />
+          <EnhancedBlogClient englishPosts={posts} client:visible mode="index" />
         </div>
       </div>
     </div>
