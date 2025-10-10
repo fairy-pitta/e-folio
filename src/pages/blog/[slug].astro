@@ -72,6 +72,12 @@ const description = post.frontmatter.excerpt;
               <img
                 src={post.frontmatter.coverImage || "/placeholder.svg"}
                 alt={post.frontmatter.title}
+                width="1280"
+                height="720"
+                loading="eager"
+                decoding="async"
+                fetchpriority="high"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1280px"
                 class="w-full rounded-lg"
               />
             </div>

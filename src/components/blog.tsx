@@ -172,6 +172,9 @@ export default function Blog({ posts = [] }: BlogProps) {
                     <img
                       src={post.frontmatter.coverImage || "/placeholder.svg?height=400&width=600&query=nature blog"}
                       alt={post.frontmatter.title}
+                      loading="lazy"
+                      decoding="async"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                     />
                   </div>
@@ -248,6 +251,9 @@ export default function Blog({ posts = [] }: BlogProps) {
                       <img
                         src={post.frontmatter.coverImage || "/placeholder.svg?height=400&width=600&query=nature blog"}
                         alt={post.frontmatter.title}
+                        loading="lazy"
+                        decoding="async"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                       />
                     </div>

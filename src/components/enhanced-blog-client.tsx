@@ -299,8 +299,12 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                         <img
                           src={article.coverImage}
                           alt={article.title}
+                          width={192}
+                          height={128}
                           loading="lazy"
                           decoding="async"
+                          fetchPriority="low"
+                          sizes="(max-width: 768px) 100vw, 192px"
                           className="w-full h-full object-cover"
                         />
                       </div>

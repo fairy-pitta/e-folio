@@ -73,7 +73,7 @@ export default function BlogClient({ initialPosts, initialTags }: BlogClientProp
         <div className="relative overflow-hidden">
           {/* 鳥の背景画像を更新 */}
           <div className="absolute inset-0 z-0">
-            <img src="/article_hero.webp" alt="Bird perched on grass" className="w-full h-full object-cover" loading="lazy" decoding="async" />
+            <img src="/article_hero.webp" alt="Bird perched on grass" className="w-full h-full object-cover" loading="eager" decoding="async" fetchPriority="high" />
             {/* ヘッダー部分の背景グラデーションを緑色に調整 */}
             <div className="absolute inset-0 bg-gradient-to-r from-green-800/70 via-green-700/60 to-green-600/50"></div>
           </div>
@@ -163,6 +163,8 @@ export default function BlogClient({ initialPosts, initialTags }: BlogClientProp
                           alt={post.frontmatter.title}
                           loading="lazy"
                           decoding="async"
+                          fetchPriority="low"
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                           className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
                         />
                       </div>
