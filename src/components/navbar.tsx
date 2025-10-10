@@ -108,14 +108,14 @@ export default function Navbar() {
                     {link.isSection ? (
                       <button
                         onClick={() => navigateToSection(link.sectionId)}
-                        className="w-full text-left px-4 py-2 text-gray-900 hover:bg-gray-100 rounded-md transition-colors"
+                        className="w-full text-left px-4 py-2 text-gray-900 hover:bg-gray-100 rounded-md transition-colors font-semibold"
                       >
                         {link.name}
                       </button>
                     ) : (
                       <a
                         href={link.href}
-                        className="px-4 py-2 text-gray-900 hover:bg-gray-100 rounded-md transition-colors block"
+                        className="px-4 py-2 text-gray-900 hover:bg-gray-100 rounded-md transition-colors block font-semibold"
                         onClick={() => setIsMenuOpen(false)}
                       >
                         {link.name}
@@ -151,7 +151,7 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   className={`text-sm font-medium transition-colors ${
-                    isActive ? "text-gray-900 font-semibold" : "text-gray-900 hover:text-gray-700"
+                    isActive ? "text-gray-900 font-semibold" : "text-gray-900 hover:text-gray-700 font-semibold"
                   }`}
                 >
                   {link.name}
