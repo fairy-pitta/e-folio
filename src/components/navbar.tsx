@@ -64,9 +64,11 @@ export default function Navbar() {
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <a href="/" className="flex items-center gap-2">
             <img
-              src="/new-favicon_t.png"
+              src="/new-favicon_svg.svg"
               alt="SingBirds"
-              className="h-8 w-auto object-contain mr-2"
+              className="h-8 w-8 object-contain mr-2"
+              width="32"
+              height="32"
               loading="lazy"
               decoding="async"
             />
