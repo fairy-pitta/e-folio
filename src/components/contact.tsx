@@ -102,7 +102,7 @@ export default function Contact() {
   }
 
   return (
-    <div className="min-h-screen py-20 relative overflow-hidden flex items-center">
+    <section id="contact" className="min-h-screen py-20 relative overflow-hidden flex items-center">
       <div className="container mx-auto px-4 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -317,6 +317,6 @@ export default function Contact() {
           </motion.div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

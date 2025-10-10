@@ -5,6 +5,7 @@ import EnhancedBlogClient from '../components/enhanced-blog-client'
 import Hero from '../components/hero'
 import Skills from '../components/skills'
 import Contact from '../components/contact'
+import Navbar from '../components/navbar'
 import { getAllProjects, getAllBlogPosts } from '../lib/content'
 
 const projects = getAllProjects()
@@ -12,6 +13,7 @@ const englishPosts = getAllBlogPosts()
 ---
 
 <Layout title="Home">
+  <Navbar client:idle />
   <Hero />
   <Skills />
   <section id="projects">
