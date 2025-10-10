@@ -34,7 +34,7 @@ export default function BlogNewsletter() {
   }
 
   return (
-    <Card className="bg-green-50 border-green-100">
+    <Card className="bg-gray-50 border-gray-200">
       <CardContent className="p-6">
         <div className="text-center max-w-xl mx-auto">
           <h3 className="text-xl font-bold mb-2">Stay Updated</h3>
@@ -46,7 +46,7 @@ export default function BlogNewsletter() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center gap-2 text-green-600 p-2 bg-green-50 rounded-md"
+              className="flex items-center justify-center gap-2 text-gray-700 p-2 bg-gray-100 rounded-md"
             >
               <CheckCircle className="h-5 w-5" />
               <span>Thanks for subscribing!</span>
@@ -66,7 +66,7 @@ export default function BlogNewsletter() {
                   />
                   <MailIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 </div>
-                <Button type="submit" className="bg-green-500 hover:bg-green-600 flex-shrink-0" disabled={isSubmitting}>
+                <Button type="submit" className="bg-gray-900 hover:bg-gray-800 text-white flex-shrink-0" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <>
                       <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />

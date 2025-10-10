@@ -1,6 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { getProject, getAllProjectSlugs } from '../../lib/content';
 import { markdownToHtml } from '../../lib/markdown';
@@ -37,15 +36,27 @@ const description = project.frontmatter.description;
       <div class="pt-14 md:pt-16">
         <div class="container mx-auto px-4 py-12">
           <div class="max-w-4xl mx-auto">
-            <Button variant="ghost" className="mb-6" client:load>
-              <a href="/projects" class="flex items-center">
-                <ArrowLeftIcon className="h-4 w-4 mr-2" />
-                Back to Projects
-              </a>
-            </Button>
+            <a
+              href="/projects"
+              class="mb-6 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 hover:bg-accent hover:text-accent-foreground"
+            >
+              <ArrowLeftIcon className="h-4 w-4 mr-2" />
+              Back to Projects
+            </a>
 
             <div class="grid grid-cols-1 gap-8 mb-8">
               <div>
+                {project.frontmatter.coverImage && (
+                  <div class="mb-6">
+                    <img
+                      src={project.frontmatter.coverImage}
+                      alt={project.frontmatter.title}
+                      class="w-full rounded-xl border border-gray-200 shadow-sm object-cover"
+                      loading="eager"
+                      decoding="async"
+                    />
+                  </div>
+                )}
                 <h1 class="text-3xl md:text-4xl font-bold mb-4">{project.frontmatter.title}</h1>
                 <p class="text-lg text-muted-foreground mb-6">{project.frontmatter.description}</p>
                 
@@ -62,22 +73,28 @@ const description = project.frontmatter.description;
                   </span>
                 </div>
 
-                <div class="flex gap-4">
+                <div class="flex gap-3">
                   {project.frontmatter.githubUrl && (
-                    <Button asChild client:load>
-                      <a href={project.frontmatter.githubUrl} target="_blank" rel="noopener noreferrer" class="flex items-center">
-                        <SiGithub className="h-4 w-4 mr-2" />
-                        View Code
-                      </a>
-                    </Button>
+                    <a
+                      href={project.frontmatter.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 bg-black text-white hover:bg-white hover:text-black border border-black"
+                    >
+                      <SiGithub className="h-4 w-4 mr-2" />
+                      View Code
+                    </a>
                   )}
                   {project.frontmatter.liveUrl && (
-                    <Button variant="outline" asChild client:load>
-                      <a href={project.frontmatter.liveUrl} target="_blank" rel="noopener noreferrer" class="flex items-center">
-                        <EyeIcon className="h-4 w-4 mr-2" />
-                        Live Demo
-                      </a>
-                    </Button>
+                    <a
+                      href={project.frontmatter.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 border border-black text-black hover:bg-black hover:text-white"
+                    >
+                      <EyeIcon className="h-4 w-4 mr-2" />
+                      Live Demo
+                    </a>
                   )}
                 </div>
               </div>

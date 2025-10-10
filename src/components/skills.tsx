@@ -62,11 +62,11 @@ export default function Skills() {
     {
       title: "Tools",
       items: [
-        { name: "SQLite", description: "Lightweight relational database", icon: SiSqlite },
-        { name: "Tailwind CSS", description: "Utility-first CSS framework", icon: SiTailwindcss },
-        { name: "Vite", description: "Fast frontend tooling and dev server", icon: SiVite },
-        { name: "LaTeX", description: "Typesetting for documents and research", icon: SiLatex },
-        { name: "Nginx", description: "High-performance web server and proxy", icon: SiNginx },
+        { name: "SQLite", description: "", icon: SiSqlite },
+        { name: "Tailwind CSS", description: "", icon: SiTailwindcss },
+        { name: "Vite", description: "", icon: SiVite },
+        { name: "LaTeX", description: "", icon: SiLatex },
+        { name: "Nginx", description: "", icon: SiNginx },
       ]
     },
     {
@@ -124,7 +124,9 @@ export default function Skills() {
                           </div>
                           <div>
                             <h4 className="font-medium text-black">{skill.name}</h4>
-                            <p className="text-sm text-gray-600 mt-1">{skill.description}</p>
+                            {skill.description && (
+                              <p className="text-sm text-gray-600 mt-1">{skill.description}</p>
+                            )}
                           </div>
                         </motion.div>
                       );

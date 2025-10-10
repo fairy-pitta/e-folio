@@ -8,11 +8,11 @@ export default function Footer() {
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="flex flex-col items-center md:items-start">
-            <div className="flex items-center gap-2 mb-2">
+            <div className="flex items-center gap-2 mb-1 md:mb-2">
                 <img
-                  src="/new-favicon_svg.svg"
-                  alt="SingBirds"
-                  className="h-8 w-8 object-contain mr-2"
+                  src="/new-favicon.png"
+                  alt="Fairy Pitta"
+                  className="h-8 w-8 object-contain"
                   width="32"
                   height="32"
                   loading="lazy"
@@ -20,9 +20,7 @@ export default function Footer() {
                 />
                <h3 className="text-xl font-bold gradient-text">Fairy Pitta</h3>
             </div>
-            <p className="text-sm text-muted-foreground text-center md:text-left">
-              I Code Birds.
-            </p>
+            <p className="text-sm text-muted-foreground text-center md:text-left">I Code Birds.</p>
           </div>
 
           <div className="flex gap-4">
@@ -38,16 +36,20 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="border-t mt-6 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="text-sm text-muted-foreground">&copy; {currentYear} fairy-pitta. All rights reserved.</div>
-
-          <div className="flex gap-6 text-sm">
-            <a href="/privacy" className="text-muted-foreground hover:text-sky-500 transition-colors">
-              Privacy Policy
-            </a>
-            <a href="/terms" className="text-muted-foreground hover:text-sky-500 transition-colors">
-              Terms of Service
-            </a>
+        <div className="border-t mt-6 pt-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+            <div className="text-sm text-muted-foreground">&copy; {currentYear} fairy-pitta. All rights reserved.</div>
+            <div className="flex gap-6 text-sm">
+              <a href="/privacy" className="text-muted-foreground hover:text-sky-500 transition-colors">
+                Privacy Policy
+              </a>
+              <a href="/terms" className="text-muted-foreground hover:text-sky-500 transition-colors">
+                Terms of Service
+              </a>
+            </div>
+          </div>
+          <div className="mt-4 flex justify-center">
+            <span className="text-sm font-semibold">Fairy Pitta</span>
           </div>
         </div>
       </div>

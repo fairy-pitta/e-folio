@@ -55,7 +55,8 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
   const containerRef = useRef<HTMLDivElement | null>(null)
   const postsPerPage = 5
   const showPagination = !isHome
-  const showImages = !isHome
+  // 一覧ページでもサムネイル非表示の要望に合わせて画像は常に非表示
+  const showImages = false
   const showSearch = !isHome
   const showTagFilter = !isHome
   const showLanguageFilter = true
@@ -208,7 +209,14 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
   }
 
   return (
-    <div ref={containerRef} className="container mx-auto px-4 py-8">
+    <div
+      ref={containerRef}
+      className={
+        isHome
+          ? "container mx-auto px-4 py-8"
+          : "mx-auto max-w-screen-2xl px-2 md:px-4 py-8"
+      }
+    >
       {/* ヘッダー削除（要望により非表示） */}
 
       {/* エラー表示 */}
@@ -293,40 +301,32 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
             >
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row gap-4">
-                    {showImages && article.coverImage && (
-                      <div className="md:w-48 h-32 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
-                        <img
-                          src={article.coverImage}
-                          alt={article.title}
-                          width={192}
-                          height={128}
-                          loading="lazy"
-                          decoding="async"
-                          fetchPriority="low"
-                          sizes="(max-width: 768px) 100vw, 192px"
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    )}
+                  <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+                    {/* 画像は非表示 */}
                     
                     <div className="flex-1">
-                      {/* バッジ＋タイトルを1行に（ホームのみ） */}
+                      {/* タイトル行に日付を表示（ホームのみ） */}
                       {isHome ? (
-                        <h3 className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors font-source-sans">
+                        <h3 className="text-xl font-semibold mb-1 font-source-sans flex items-center justify-between">
                           <a
                             href={article.url}
                             target={article.type === 'qiita' ? '_blank' : '_self'}
                             rel={article.type === 'qiita' ? 'noopener noreferrer' : undefined}
-                            className="flex items-center gap-2"
+                            className="flex items-center gap-2 hover:text-blue-600 transition-colors"
                           >
                             {article.title}
+                            <Badge variant="outline" className="text-xs px-2 py-0.5">
+                              {article.type === 'blog' ? 'Blog' : 'Qiita'}
+                            </Badge>
                             {article.type === 'qiita' && <ExternalLinkIcon className="h-4 w-4" />}
                           </a>
+                          <span className="flex items-center gap-1 text-sm text-gray-500">
+                            <Calendar className="h-4 w-4" />
+                            {new Date(article.date).toLocaleDateString('ja-JP')}
+                          </span>
                         </h3>
                       ) : (
                         <>
-                          {/* 先頭のタイプバッジ行を削除 */}
                           <h3 className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors font-source-sans">
                             <a
                               href={article.url}
@@ -335,6 +335,9 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                               className="flex items-center gap-2"
                             >
                               {article.title}
+                              <Badge variant="outline" className="text-xs px-2 py-0.5">
+                                {article.type === 'blog' ? 'Blog' : 'Qiita'}
+                              </Badge>
                               {article.type === 'qiita' && <ExternalLinkIcon className="h-4 w-4" />}
                             </a>
                           </h3>
@@ -346,27 +349,26 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                         <p className="text-gray-600 mb-3 line-clamp-2">{article.excerpt}</p>
                       )}
                       
-                      <div className="flex flex-wrap items-center gap-4 text-sm text-gray-500 mb-3">
-                        {/* 日付/所要時間（一覧のみ表示、ホームでは非表示） */}
-                        {!isHome && (
-                          <>
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              {new Date(article.date).toLocaleDateString('ja-JP')}
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <User className="h-4 w-4" />
-                              {article.readTime}
-                            </div>
-                          </>
-                        )}
-                        {article.likes !== undefined && (
+                      {!isHome && (
+                        <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                          {/* 所要時間は一覧のみ表示 */}
                           <div className="flex items-center gap-1">
-                            <Heart className="h-4 w-4" />
-                            {article.likes}
+                            <User className="h-4 w-4" />
+                            {article.readTime}
                           </div>
-                        )}
-                      </div>
+                          {article.likes !== undefined && (
+                            <div className="flex items-center gap-1">
+                              <Heart className="h-4 w-4" />
+                              {article.likes}
+                            </div>
+                          )}
+                          {/* 日付は右端に配置 */}
+                          <div className="flex items-center gap-1 ml-auto">
+                            <Calendar className="h-4 w-4" />
+                            {new Date(article.date).toLocaleDateString('ja-JP')}
+                          </div>
+                        </div>
+                      )}
                       {/* タグチップ（一覧のみ表示、ホームでは非表示） */}
                       {!isHome && (
                         <div className="flex flex-wrap gap-2">
@@ -379,12 +381,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                       )}
                     </div>
                   </div>
-                  {/* カード末尾にタイプバッジ（白背景・黒文字）を配置 */}
-                  <div className="mt-4 flex justify-end">
-                    <Badge variant="outline" className="bg-white text-black border-gray-300">
-                      {article.type === 'blog' ? 'Blog' : 'Qiita'}
-                    </Badge>
-                  </div>
+                  {/* タイプバッジはタイトル横に統合済み */}
                 </CardContent>
               </Card>
             </motion.div>

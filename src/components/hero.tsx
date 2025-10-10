@@ -6,7 +6,7 @@ export default function Hero() {
     <section className="min-h-screen flex items-center justify-center relative overflow-hidden">
       <div className="container mx-auto px-4 text-center z-10">
         <div className="max-w-4xl mx-auto">
-          <h1 className="relative z-20 text-6xl md:text-8xl font-normal mb-6 gradient-text font-caveat">
+          <h1 className="relative z-20 text-6xl md:text-8xl md:leading-[2] font-normal mb-0 leading-[2] gradient-text font-caveat">
             Fairy Pitta
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto">
@@ -17,11 +17,11 @@ export default function Hero() {
             Passionate about building educational & nature-related applications.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg px-8 py-3">
-              View My Work
+            <Button size="lg" className="text-lg px-8 py-3" asChild>
+              <a href="#projects">View My Work</a>
             </Button>
-            <Button variant="outline" size="lg" className="text-lg px-8 py-3">
-              Get In Touch
+            <Button variant="outline" size="lg" className="text-lg px-8 py-3" asChild>
+              <a href="#contact">Get In Touch</a>
             </Button>
           </div>
         </div>
