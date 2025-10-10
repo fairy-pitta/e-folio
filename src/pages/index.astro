@@ -15,12 +15,12 @@ const englishPosts = getAllBlogPosts()
 <Layout title="Home">
   <Navbar client:idle />
   <Hero />
-  <Skills />
+  <Skills client:visible />
   <section id="projects">
     <Projects client:visible projects={projects} showTags={false} />
   </section>
   <section id="blog">
     <EnhancedBlogClient client:visible englishPosts={englishPosts} mode="home" />
   </section>
-  <Contact />
+  <Contact client:visible />
 </Layout>
