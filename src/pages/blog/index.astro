@@ -15,18 +15,8 @@ const posts = await getAllBlogPosts()
     <div class="pt-16 md:pt-20">
       <div class="container mx-auto px-4 py-12">
         <div class="max-w-6xl mx-auto">
-          <!-- ヘッダー -->
-          <div class="text-center mb-12">
-            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-              Blog & Articles
-            </h1>
-            <p class="text-xl text-gray-600 max-w-2xl mx-auto">
-              Explore my thoughts on technology, research, and development
-            </p>
-          </div>
-          
           <!-- 拡張されたブログクライアント -->
-          <EnhancedBlogClient englishPosts={posts} client:load />
+          <EnhancedBlogClient englishPosts={posts} client:load mode="index" />
         </div>
       </div>
     </div>

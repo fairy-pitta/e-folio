@@ -4,7 +4,6 @@ import ProjectsClient from '../../components/projects-client';
 import ScrollToTop from '../../components/scroll-to-top';
 import Navbar from '../../components/navbar';
 import Footer from '../../components/footer';
-import QiitaProviderWrapper from '../../components/QiitaProviderWrapper';
 import { getAllProjects } from '../../lib/content';
 import '../../styles/globals.css';
 
@@ -12,11 +11,9 @@ const projects = getAllProjects();
 ---
 
 <Layout title="Projects | SingBirds" description="Portfolio of environmental technology projects and research">
-  <QiitaProviderWrapper client:only="react">
-    <Navbar />
-    <ScrollToTop>
-      <ProjectsClient initialProjects={projects} />
-      <Footer />
-    </ScrollToTop>
-  </QiitaProviderWrapper>
+  <Navbar client:load />
+  <ScrollToTop client:load>
+    <ProjectsClient client:load initialProjects={projects} />
+  </ScrollToTop>
+  <Footer client:load />
 </Layout>

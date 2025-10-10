@@ -39,9 +39,10 @@ type LanguageFilter = 'japanese' | 'english' | 'both'
 
 interface EnhancedBlogClientProps {
   englishPosts: BlogPost[]
+  mode?: 'home' | 'index'
 }
 
-export default function EnhancedBlogClient({ englishPosts = [] }: EnhancedBlogClientProps) {
+export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }: EnhancedBlogClientProps) {
   const [qiitaArticles, setQiitaArticles] = useState<QiitaArticle[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -49,7 +50,10 @@ export default function EnhancedBlogClient({ englishPosts = [] }: EnhancedBlogCl
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
+  const isHome = mode === 'home'
   const postsPerPage = 5
+  const showPagination = !isHome
+  const showImages = isHome
 
   // Qiita記事を取得
   useEffect(() => {
@@ -183,13 +187,7 @@ export default function EnhancedBlogClient({ englishPosts = [] }: EnhancedBlogCl
 
   return (
     <div className="container mx-auto px-4 py-8">
-      {/* ヘッダー */}
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold mb-4">Blog & Articles</h1>
-        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          技術記事やブログ投稿をまとめて閲覧できます
-        </p>
-      </div>
+      {/* ヘッダー削除（要望により非表示） */}
 
       {/* エラー表示 */}
       {error && (
@@ -280,7 +278,7 @@ export default function EnhancedBlogClient({ englishPosts = [] }: EnhancedBlogCl
               <Card className="hover:shadow-lg transition-shadow">
                 <CardContent className="p-6">
                   <div className="flex flex-col md:flex-row gap-4">
-                    {article.coverImage && (
+                    {showImages && article.coverImage && (
                       <div className="md:w-48 h-32 bg-gray-200 rounded-lg overflow-hidden flex-shrink-0">
                         <img
                           src={article.coverImage}
@@ -347,8 +345,15 @@ export default function EnhancedBlogClient({ englishPosts = [] }: EnhancedBlogCl
         )}
       </div>
 
+      {/* ホーム用: 全記事へのリンク */}
+      {isHome && (
+        <div className="text-center mb-8">
+          <a href="/blog" className="text-blue-600 hover:underline">View all articles</a>
+        </div>
+      )}
+
       {/* ページネーション */}
-      {totalPages > 1 && (
+      {showPagination && totalPages > 1 && (
         <div className="flex justify-center items-center gap-2">
           <Button
             variant="outline"

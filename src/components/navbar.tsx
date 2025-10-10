@@ -23,6 +23,7 @@ export default function Navbar() {
     // クライアントサイドでpathnameを設定
     setPathname(window.location.pathname)
     
+    // スクロールに関係なく常時黒背景にするため、スクロールイベントは維持するが見た目は固定
     const handleScroll = () => {
       setScrolled(window.scrollY > 10)
     }
@@ -66,9 +67,7 @@ export default function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 ${
-        scrolled || !isHomePage ? "bg-background/80 backdrop-blur-md shadow-sm" : "bg-transparent"
-      }`}
+      className={`fixed top-0 w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm`}
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <a href="/" className="flex items-center gap-2">
@@ -90,26 +89,22 @@ export default function Navbar() {
                 size="icon"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 aria-label="Toggle menu"
-                className={scrolled || !isHomePage ? "" : "bg-gray-600/80 hover:bg-gray-700/80 text-white"}
+                className="bg-gray-100 hover:bg-gray-200 text-gray-900"
               >
                 {isMenuOpen ? (
                   <XIcon
-                    className={`h-5 w-5 ${
-                      scrolled || !isHomePage ? "text-gray-900" : "text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]"
-                    }`}
+                    className={`h-5 w-5 text-gray-900`}
                   />
                 ) : (
                   <MenuIcon
-                    className={`h-5 w-5 ${
-                      scrolled || !isHomePage ? "text-gray-900" : "text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]"
-                    }`}
+                    className={`h-5 w-5 text-gray-900`}
                   />
                 )}
               </Button>
             </div>
 
             {isMenuOpen && (
-              <div className="absolute top-full left-0 right-0 bg-gray-50/95 backdrop-blur-md shadow-md p-4 flex flex-col gap-2">
+              <div className="absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md shadow-md p-4 flex flex-col gap-2">
                 {navLinks.map((link) => (
                   <div key={link.name}>
                     {link.isSection ? (
@@ -146,11 +141,7 @@ export default function Navbar() {
                   <button
                     key={link.name}
                     onClick={() => navigateToSection(link.sectionId)}
-                    className={`text-sm font-medium transition-colors ${
-                      scrolled || !isHomePage
-                        ? "text-gray-900 hover:text-gray-700"
-                        : "text-white hover:text-gray-100 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] font-semibold"
-                    }`}
+                    className={`text-sm font-medium transition-colors text-gray-900 hover:text-gray-700 font-semibold`}
                   >
                     {link.name}
                   </button>
@@ -162,11 +153,7 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   className={`text-sm font-medium transition-colors ${
-                    isActive
-                      ? "text-gray-900 font-semibold"
-                      : scrolled || !isHomePage
-                        ? "text-gray-900 hover:text-gray-700"
-                        : "text-white hover:text-gray-100 drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] font-semibold"
+                    isActive ? "text-gray-900 font-semibold" : "text-gray-900 hover:text-gray-700"
                   }`}
                 >
                   {link.name}

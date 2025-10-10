@@ -3,12 +3,11 @@ import Layout from '../layouts/Layout.astro';
 import Hero from '../components/hero';
 import Skills from '../components/skills';
 import Projects from '../components/projects';
-import UnifiedBlog from '../components/unified-blog';
+import EnhancedBlogClient from '../components/enhanced-blog-client';
 import Contact from '../components/contact';
 import ScrollIndicator from '../components/scroll-indicator';
 import Navbar from '../components/navbar';
 import Footer from '../components/footer';
-import QiitaProviderWrapper from '../components/QiitaProviderWrapper';
 import { getAllProjects, getAllBlogPosts } from '../lib/content';
 import '../styles/globals.css';
 
@@ -18,16 +17,14 @@ const englishPosts = getAllBlogPosts();
 ---
 
 <Layout title="fairy-pitta | Software Engineer">
-  <QiitaProviderWrapper client:only="react">
-    <Navbar client:load />
-    <ScrollIndicator client:load />
-    <main>
-      <Hero client:load />
-      <Skills client:load />
-      <Projects client:load projects={projects} />
-      <UnifiedBlog client:load englishPosts={englishPosts} />
-      <Contact client:load />
-    </main>
-    <Footer client:load />
-  </QiitaProviderWrapper>
+  <Navbar client:load />
+  <ScrollIndicator client:load />
+  <main>
+    <Hero client:load />
+    <Skills client:load />
+    <Projects client:load projects={projects} />
+    <EnhancedBlogClient client:load englishPosts={englishPosts} mode="home" />
+    <Contact client:load />
+  </main>
+  <Footer client:load />
 </Layout>

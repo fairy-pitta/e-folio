@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { ExternalLinkIcon, Github, EyeIcon, SearchIcon, XIcon, ChevronLeft, ChevronRight } from "lucide-react"
+import { SearchIcon, XIcon, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardFooter } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { motion } from "framer-motion"
+import { Card, CardContent } from "@/components/ui/card"
 import type { Project } from "./projects"
 
 interface ProjectsClientProps {
@@ -59,39 +59,34 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
   return (
     <div className="min-h-screen bg-background">
       <div className="pt-14 md:pt-16">
-        <div className="relative overflow-hidden">
-          <div className="absolute inset-0 z-0">
-            <img src="/projects_hero.webp" alt="Bird on tree bark" className="w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-gradient-to-r from-green-800/40 via-green-700/30 to-green-600/20"></div>
-          </div>
-
-          <div className="container mx-auto px-4 py-16 md:py-20 relative z-10">
+        <div className="bg-gradient-to-r from-black via-gray-900 to-black">
+          <div className="container mx-auto px-4 py-12 md:py-16">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="max-w-4xl mx-auto"
+              className="max-w-6xl mx-auto"
             >
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                  <h1 className="text-2xl md:text-3xl font-bold mb-2 text-white">Projects</h1>
-                  <p className="text-gray-100 max-w-xl">
-                    A collection of work showcasing the intersection of environmental science and technology.
+                  <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white">Projects</h1>
+                  <p className="text-gray-300 max-w-2xl">
+                    Selected works spanning software, data, and environmental technology.
                   </p>
                 </div>
 
-                <div className="relative w-full md:w-64">
-                  <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-green-200 h-5 w-5 z-10" />
+                <div className="relative w-full md:w-80">
+                  <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 z-10" />
                   <Input
                     type="text"
                     placeholder="Search projects..."
-                    className="pl-10 py-2 text-sm bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-green-200 rounded-md w-full"
+                    className="pl-10 py-2 text-sm bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-gray-400 rounded-md w-full"
                     value={searchQuery}
                     onChange={handleSearchChange}
                   />
                   {searchQuery && (
                     <button
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-200 hover:text-white"
+                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-white"
                       onClick={() => {
                         setSearchQuery("")
                         setCurrentPage(1)
@@ -145,80 +140,27 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {currentProjects.map((project, index) => (
-                  <motion.div
-                    key={project.slug}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                  >
-                    <Card className="h-full flex flex-col overflow-hidden hover:shadow-md transition-shadow">
-                      <div className="aspect-video overflow-hidden">
-                        <img
-                          src={project.frontmatter.coverImage || "/placeholder.svg"}
-                          alt={project.frontmatter.title}
-                          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                        />
-                      </div>
-                      <CardContent className="p-4 flex-grow">
-                        <a href={`/projects/${project.slug}`} className="hover:text-green-600 transition-colors">
-                          <h2 className="text-lg font-semibold mb-2">{project.frontmatter.title}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentProjects.map((project) => (
+                  <Card key={project.slug} className="hover:shadow-md transition-shadow duration-300">
+                    <CardContent className="p-6">
+                      <h3 className="text-lg font-semibold mb-2">
+                        <a href={`/projects/${project.slug}`} className="hover:text-green-600">
+                          {project.frontmatter.title}
                         </a>
-                        <p className="text-muted-foreground mb-3 text-sm">{project.frontmatter.description}</p>
-                        <div className="flex flex-wrap gap-1">
-                          {project.frontmatter.tags.slice(0, 3).map((tag) => (
-                            <Badge
-                              key={tag}
-                              variant="secondary"
-                              className="text-xs bg-green-100 text-green-800"
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
-                          {project.frontmatter.tags.length > 3 && (
-                            <Badge variant="secondary" className="text-xs bg-gray-100 text-gray-600">
-                              +{project.frontmatter.tags.length - 3}
-                            </Badge>
-                          )}
-                        </div>
-                      </CardContent>
-                      <CardFooter className="px-4 pb-4 pt-0 flex gap-2">
-                        {project.frontmatter.githubUrl && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-green-300 text-green-600 hover:bg-green-50 text-xs"
-                            asChild
-                          >
-                            <a href={project.frontmatter.githubUrl} target="_blank" rel="noopener noreferrer">
-                              <Github className="h-3 w-3 mr-1" />
-                              Code
-                            </a>
-                          </Button>
-                        )}
-                        {project.frontmatter.liveUrl && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="border-green-300 text-green-600 hover:bg-green-50 text-xs"
-                            asChild
-                          >
-                            <a href={project.frontmatter.liveUrl} target="_blank" rel="noopener noreferrer">
-                              <ExternalLinkIcon className="h-3 w-3 mr-1" />
-                              Demo
-                            </a>
-                          </Button>
-                        )}
-                        <Button size="sm" className="bg-green-600 hover:bg-green-700 text-white ml-auto text-xs" asChild>
-                          <a href={`/projects/${project.slug}`}>
-                            <EyeIcon className="h-3 w-3 mr-1" />
-                            Details
-                          </a>
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                  </motion.div>
+                      </h3>
+                      <p className="text-muted-foreground text-sm mb-4">
+                        {project.frontmatter.description}
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {project.frontmatter.tags.slice(0, 5).map((tag) => (
+                          <Badge key={tag} variant="outline" className="text-xs">
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
 
