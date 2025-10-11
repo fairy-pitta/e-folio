@@ -6,8 +6,7 @@ import { markdownToHtml } from '../../lib/markdown';
 import ScrollToTop from '../../components/scroll-to-top';
 import Navbar from '../../components/navbar';
 import Footer from '../../components/footer';
-import { ArrowLeftIcon, CalendarIcon, EyeIcon } from 'lucide-react';
-import { SiGithub } from 'react-icons/si';
+import { ArrowLeftIcon, CalendarIcon, EyeIcon, Github } from 'lucide-react';
 import '../../styles/globals.css';
 
 export async function getStaticPaths() {
@@ -81,7 +80,7 @@ const description = project.frontmatter.description;
                       rel="noopener noreferrer"
                       class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 bg-black text-white hover:bg-white hover:text-black border border-black"
                     >
-                      <SiGithub className="h-4 w-4 mr-2" />
+                      <Github className="h-4 w-4 mr-2" />
                       View Code
                     </a>
                   )}
