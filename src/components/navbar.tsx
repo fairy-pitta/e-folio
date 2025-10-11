@@ -75,7 +75,7 @@ export default function Navbar() {
       className={`fixed top-0 w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm`}
     >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <a href="/" className="flex items-center gap-2">
+        <a href="/" className="flex items-center gap-2" data-astro-prefetch>
             <img
               src="/new-favicon.png"
               alt="Fairy Pitta"
@@ -126,6 +126,7 @@ export default function Navbar() {
                         href={link.href}
                         className="px-4 py-2 text-gray-900 hover:bg-gray-100 rounded-md transition-colors block font-semibold"
                         onClick={() => setIsMenuOpen(false)}
+                        data-astro-prefetch
                       >
                         {link.name}
                       </a>
@@ -162,6 +163,7 @@ export default function Navbar() {
                   className={`text-sm font-medium transition-colors ${
                     isActive ? "text-gray-900 font-semibold" : "text-gray-900 hover:text-gray-700 font-semibold"
                   }`}
+                  data-astro-prefetch
                 >
                   {link.name}
                 </a>

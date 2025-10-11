@@ -312,6 +312,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                             target={article.type === 'qiita' ? '_blank' : '_self'}
                             rel={article.type === 'qiita' ? 'noopener noreferrer' : undefined}
                             className="flex items-center gap-2 hover:text-blue-600 transition-colors"
+                            {...(article.type === 'blog' ? { 'data-astro-prefetch': true } : {})}
                           >
                             {article.title}
                             <Badge variant="outline" className="text-xs px-2 py-0.5">
@@ -332,6 +333,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                               target={article.type === 'qiita' ? '_blank' : '_self'}
                               rel={article.type === 'qiita' ? 'noopener noreferrer' : undefined}
                               className="flex items-center gap-2"
+                              {...(article.type === 'blog' ? { 'data-astro-prefetch': true } : {})}
                             >
                               {article.title}
                               <Badge variant="outline" className="text-xs px-2 py-0.5">
@@ -392,7 +394,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
       {isHome && (
         <div className="flex justify-center mb-8">
           <Button asChild className="bg-black text-white hover:bg-white hover:text-black border border-black transition-colors">
-            <a href="/blog">View all articles</a>
+            <a href="/blog" data-astro-prefetch>View all articles</a>
           </Button>
         </div>
       )}

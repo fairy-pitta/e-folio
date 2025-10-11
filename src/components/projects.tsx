@@ -77,7 +77,7 @@ export default function Projects({ projects = [], showTags = true }: ProjectsPro
                     </div>
                     
                     <h3 className="text-xl font-semibold mb-3 text-gray-900 hover:text-sky-600 transition-colors font-source-sans">
-                      <a href={`/projects/${project.slug}`}>
+                      <a href={`/projects/${project.slug}`} data-astro-prefetch>
                         {project.frontmatter.title}
                       </a>
                     </h3>
@@ -101,7 +101,7 @@ export default function Projects({ projects = [], showTags = true }: ProjectsPro
                     
                     <div className="flex gap-2">
                       <Button asChild size="sm" className="bg-gray-900 hover:bg-gray-800 text-white">
-                        <a href={`/projects/${project.slug}`}>
+                        <a href={`/projects/${project.slug}`} data-astro-prefetch>
                           View Details
                         </a>
                       </Button>
@@ -131,7 +131,7 @@ export default function Projects({ projects = [], showTags = true }: ProjectsPro
 
         <div className="text-center mt-12">
           <Button asChild variant="outline" size="lg" className="border-gray-300 text-gray-700 hover:bg-gray-50">
-            <a href="/projects">
+            <a href="/projects" data-astro-prefetch>
               View All Projects
               <ExternalLinkIcon className="h-4 w-4 ml-2" />
             </a>

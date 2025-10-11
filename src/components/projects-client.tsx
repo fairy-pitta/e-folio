@@ -145,7 +145,7 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
                   <Card key={project.slug} className="hover:shadow-md transition-shadow duration-300">
                     <CardContent className="p-6">
                       <h3 className="text-lg font-semibold mb-2">
-                        <a href={`/projects/${project.slug}`} className="hover:text-green-600">
+                        <a href={`/projects/${project.slug}`} className="hover:text-green-600" data-astro-prefetch>
                           {project.frontmatter.title}
                         </a>
                       </h3>

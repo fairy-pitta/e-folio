@@ -37,7 +37,8 @@ const description = project.frontmatter.description;
           <div class="max-w-4xl mx-auto">
             <a
               href="/projects"
-              class="mb-6 inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 hover:bg-accent hover:text-accent-foreground"
+              data-astro-prefetch
+              class="mb-6 inline-flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900"
             >
               <ArrowLeftIcon className="h-4 w-4 mr-2" />
               Back to Projects
@@ -50,6 +51,8 @@ const description = project.frontmatter.description;
                     <img
                       src={project.frontmatter.coverImage}
                       alt={project.frontmatter.title}
+                      width="1280"
+                      height="720"
                       class="w-full rounded-xl border border-gray-200 shadow-sm object-cover"
                       loading="eager"
                       decoding="async"
