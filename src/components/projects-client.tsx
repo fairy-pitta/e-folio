@@ -1,11 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { SearchIcon, XIcon, ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import type { Project } from "./projects"
 
@@ -14,7 +12,7 @@ interface ProjectsClientProps {
 }
 
 export default function ProjectsClient({ initialProjects }: ProjectsClientProps) {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery] = useState("")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
   const projectsPerPage = 6
@@ -50,60 +48,12 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
   const endIndex = startIndex + projectsPerPage
   const currentProjects = filteredProjects.slice(startIndex, endIndex)
 
-  // Handle search query change
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value)
-    setCurrentPage(1) // Reset to first page when searching
-  }
-
   return (
     <div className="min-h-screen bg-background">
-      <div className="pt-14 md:pt-16">
-        <div className="bg-gradient-to-r from-black via-gray-900 to-black">
-          <div className="container mx-auto px-4 py-12 md:py-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="max-w-6xl mx-auto"
-            >
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                  <h1 className="text-3xl md:text-4xl font-bold mb-2 text-white">Projects</h1>
-                  <p className="text-gray-300 max-w-2xl">
-                    Selected works spanning software, data, and environmental technology.
-                  </p>
-                </div>
-
-                <div className="relative w-full md:w-80">
-                  <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 z-10" />
-                  <Input
-                    type="text"
-                    placeholder="Search projects..."
-                    className="pl-10 py-2 text-sm bg-white/10 backdrop-blur-sm border-white/20 text-white placeholder:text-gray-400 rounded-md w-full"
-                    value={searchQuery}
-                    onChange={handleSearchChange}
-                  />
-                  {searchQuery && (
-                    <button
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-300 hover:text-white"
-                      onClick={() => {
-                        setSearchQuery("")
-                        setCurrentPage(1)
-                      }}
-                    >
-                      <XIcon className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </div>
-
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold mb-6">Projects</h1>
+
           <div className="mb-6">
             <div className="flex flex-wrap gap-2 mb-4">
               <span className="text-sm font-medium py-1">Filter by technologies:</span>
