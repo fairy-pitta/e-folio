@@ -52,7 +52,7 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
     <div className="min-h-screen bg-background pt-24 md:pt-28">
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-6">Projects</h1>
+          <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">Projects</h1>
 
           <div className="mb-6">
             <div className="flex flex-wrap gap-2 mb-4">
