@@ -31,14 +31,14 @@ const description = post.frontmatter.excerpt;
 ---
 
 <Layout title={title} description={description}>
-  <Navbar client:load />
-  <ScrollToTop client:load>
+  <Navbar client:idle />
+  <ScrollToTop client:visible>
     <div class="min-h-screen bg-background">
       <!-- ナビバーの高さを考慮したパディング -->
       <div class="pt-14 md:pt-16">
         <div class="container mx-auto px-4 py-12">
           <div class="max-w-3xl mx-auto">
-            <Button variant="ghost" className="mb-6" client:load>
+            <Button variant="ghost" className="mb-6" client:idle>
               <a href="/blog" class="flex items-center">
                 <ArrowLeftIcon className="h-4 w-4 mr-2" />
                 Back to Blog
@@ -85,7 +85,7 @@ const description = post.frontmatter.excerpt;
             <div class="prose prose-sky prose-img:rounded-xl prose-headings:scroll-mt-8 prose-a:text-sky-600 max-w-none sm:prose-lg" set:html={contentHtml} />
 
             <div class="my-12">
-              <BlogNewsletter client:load />
+              <BlogNewsletter client:idle />
             </div>
 
           </div>
@@ -93,5 +93,5 @@ const description = post.frontmatter.excerpt;
       </div>
     </div>
   </ScrollToTop>
-  <Footer client:load />
+  <Footer client:idle />
 </Layout>

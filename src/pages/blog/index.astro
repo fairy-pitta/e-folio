@@ -19,8 +19,8 @@ const posts = getAllBlogPosts()
       </div>
     </div>
   </div>
-  <Footer />
-  <ScrollToTop client:load>
+  <Footer client:idle />
+  <ScrollToTop client:visible>
     <div></div>
   </ScrollToTop>
 </Layout>

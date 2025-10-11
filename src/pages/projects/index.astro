@@ -11,9 +11,9 @@ const projects = getAllProjects();
 ---
 
 <Layout title="Projects | SingBirds" description="Portfolio of environmental technology projects and research">
-  <Navbar client:load />
-  <ScrollToTop client:load>
-    <ProjectsClient client:load initialProjects={projects} />
+  <Navbar client:idle />
+  <ScrollToTop client:visible>
+    <ProjectsClient client:visible initialProjects={projects} />
   </ScrollToTop>
-  <Footer client:load />
+  <Footer client:idle />
 </Layout>
