@@ -26,22 +26,35 @@ export default function Navbar() {
   // セクションへのナビゲーション処理
   const navigateToSection = (sectionId: string) => {
     if (isHomePage) {
-      // ホームページにいる場合は、直接スクロール
-      const element = document.getElementById(sectionId)
-      if (element) {
-        const navbarHeight = 80 // ナビバーの高さを適宜調整
-        const elementPosition = element.getBoundingClientRect().top + window.scrollY
-        const offsetPosition = elementPosition - navbarHeight
-
+      // ホームページにいる場合の特別処理: Aboutはトップへスクロール
+      if (sectionId === "about") {
         window.scrollTo({
-          top: offsetPosition,
+          top: 0,
           behavior: "smooth",
         })
+      } else {
+        // それ以外のセクションは要素までスクロール
+        const element = document.getElementById(sectionId)
+        if (element) {
+          const navbarHeight = 80 // ナビバーの高さを適宜調整
+          const elementPosition = element.getBoundingClientRect().top + window.scrollY
+          const offsetPosition = elementPosition - navbarHeight
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth",
+          })
+        }
       }
     } else {
-      // 他のページにいる場合は、クエリパラメータ付きでホームページに移動
-      // URLにハッシュも追加して、JavaScriptが無効な場合でも動作するようにする
-      window.location.href = `/?section=${sectionId}#${sectionId}`
+      // 他のページにいる場合
+      if (sectionId === "about") {
+        // Aboutはホームのトップへ
+        window.location.href = "/"
+      } else {
+        // クエリパラメータ付きでホームページに移動
+        window.location.href = `/?section=${sectionId}#${sectionId}`
+      }
     }
 
     // モバイルメニューを閉じる
