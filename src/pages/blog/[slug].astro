@@ -39,7 +39,7 @@ const description = post.frontmatter.excerpt;
         <div class="container mx-auto px-4 py-12">
           <div class="max-w-3xl mx-auto">
             <Button variant="ghost" className="mb-6" client:idle>
-              <a href="/blog" class="flex items-center">
+              <a href="/blog" class="flex items-center" data-astro-prefetch>
                 <ArrowLeftIcon className="h-4 w-4 mr-2" />
                 Back to Blog
               </a>
@@ -60,7 +60,7 @@ const description = post.frontmatter.excerpt;
 
             <div class="flex flex-wrap gap-2 mb-8">
               {post.frontmatter.tags.map((tag: string) => (
-                <a href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}`}>
+                <a href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}`} data-astro-prefetch>
                   <Badge variant="secondary" className="hover:bg-sky-100 transition-colors">
                     {tag}
                   </Badge>
