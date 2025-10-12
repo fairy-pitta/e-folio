@@ -8,9 +8,10 @@ const {
 // OGP画像は常にロゴを使用
 const ogImagePath = '/new-favicon.png';
 
-// 絶対URL化（開発/本番で適切に解決されるように現在ページURL基準）
-const fullUrl = Astro.url.href;
-const imageUrl = new URL(ogImagePath, Astro.url).href;
+// URL生成: devではAstro.url基準の絶対URL、本番ではAstro.siteを使用
+const canonicalPath = Astro.url.pathname;
+const fullUrl = Astro.site ? new URL(canonicalPath, Astro.site).href : Astro.url.href;
+const imageUrl = Astro.site ? new URL(ogImagePath, Astro.site).href : new URL(ogImagePath, Astro.url).href;
 ---
 
 <html lang="en">
@@ -26,6 +27,10 @@ const imageUrl = new URL(ogImagePath, Astro.url).href;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={fullUrl} />
     <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
+    <meta property="og:image:alt" content="Fairy Pitta logo" />
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
