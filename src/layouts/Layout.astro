@@ -1,6 +1,16 @@
 ---
 import '../styles/globals.css';
-const { title = 'Fairy Pitta | Software Engineer', description = 'Portfolio of Fairy Pitta, a software engineer based in Singapore.' } = Astro.props;
+const {
+  title = 'Fairy Pitta | Software Engineer',
+  description = 'Portfolio of Fairy Pitta, a software engineer based in Singapore.'
+} = Astro.props;
+
+// OGP画像は常にロゴを使用
+const ogImagePath = '/new-favicon.png';
+
+// 絶対URL化（開発/本番で適切に解決されるように現在ページURL基準）
+const fullUrl = Astro.url.href;
+const imageUrl = new URL(ogImagePath, Astro.url).href;
 ---
 
 <html lang="en">
@@ -9,6 +19,18 @@ const { title = 'Fairy Pitta | Software Engineer', description = 'Portfolio of F
     <meta name="viewport" content="width=device-width" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={fullUrl} />
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={fullUrl} />
+    <meta property="og:image" content={imageUrl} />
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
     <!-- Favicon and app icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/new-favicon_t.png" />
     <link rel="icon" type="image/svg+xml" href="/new-favicon_svg.svg" />
