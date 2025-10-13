@@ -1,20 +1,24 @@
 ---
-title: "Optimizing Bird Race Routes: hotspot_map"
-description: "A TSP-based route optimizer that orders birding hotspots by realistic travel time using Held–Karp and a distance matrix API."
-date: "13 Oct, 2025"
-coverImage: "/placeholder.svg"
-tags: ["Web App", "Next.js", "TypeScript", "Cloudflare Workers", "Algorithms", "TSP"]
-liveUrl: ""
-githubUrl: "https://github.com/fairy-pitta/hotspot_map"
-gallery: [
-]
+-title: "Optimizing Bird Race Routes: hotspot_map"
++title: "Held–Karp TSP Visualizer: hotspot_map"
+-description: "A TSP-based route optimizer that orders birding hotspots by realistic travel time using Held–Karp and a distance matrix API."
++description: "A Held–Karp TSP visualizer that uses realistic travel-time cost matrices; birding hotspots are shown as an example dataset."
+ date: "13 Oct, 2025"
+ coverImage: "/placeholder.svg"
+ tags: ["Web App", "Next.js", "TypeScript", "Cloudflare Workers", "Algorithms", "TSP"]
+ liveUrl: ""
+ githubUrl: "https://github.com/fairy-pitta/hotspot_map"
+ gallery: [
+ ]
 ---
 
 ## Overview
 
-**hotspot_map** helps bird racers plan the most efficient order to visit multiple hotspots by solving the Traveling Salesperson Problem (TSP) with real-world, traffic-aware travel times. Instead of relying on straight-line distance, it uses a distance matrix API to compute pairwise travel time and solves the exact TSP using the **Held–Karp** dynamic programming algorithm.
-
-The result is a ranked visit sequence and total travel time that better reflects on-the-ground conditions.
+-**hotspot_map** helps bird racers plan the most efficient order to visit multiple hotspots by solving the Traveling Salesperson Problem (TSP) with real-world, traffic-aware travel times. Instead of relying on straight-line distance, it uses a distance matrix API to compute pairwise travel time and solves the exact TSP using the **Held–Karp** dynamic programming algorithm.
++**hotspot_map** is a general TSP visualizer that solves the Traveling Salesperson Problem (TSP) exactly using the **Held–Karp** dynamic programming algorithm over a realistic, traffic-aware travel-time matrix. As a simple example, it visualizes how to efficiently visit birding hotspots, but bird race scenarios are not the main focus.
+ 
+-The result is a ranked visit sequence and total travel time that better reflects on-the-ground conditions.
++The result is a ranked visit sequence and total travel time that better reflects on-the-ground conditions.
 
 ---
 
