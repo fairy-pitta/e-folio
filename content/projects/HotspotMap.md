@@ -4,7 +4,7 @@ description: "A TSP-based route optimizer that orders birding hotspots by realis
 date: "13 Oct, 2025"
 coverImage: "/placeholder.svg"
 tags: ["Web App", "Next.js", "TypeScript", "Cloudflare Workers", "Algorithms", "TSP"]
-liveUrl: "https://github.com/fairy-pitta/hotspot_map"
+liveUrl: ""
 githubUrl: "https://github.com/fairy-pitta/hotspot_map"
 gallery: [
 ]
