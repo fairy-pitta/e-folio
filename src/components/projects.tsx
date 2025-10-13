@@ -100,7 +100,7 @@ export default function Projects({ projects = [], showTags = true }: ProjectsPro
                           </div>
                         )}
                       </div>
-                      <div className="mt-2 md:mt-0 flex gap-2 md:flex-col md:items-end md:gap-2 shrink-0">
+                      <div className="mt-2 md:mt-0 flex gap-2 md:flex-row md:flex-wrap md:justify-end md:gap-2 shrink-0">
                         <Button asChild size="sm" className="bg-gray-900 hover:bg-gray-800 text-white">
                           <a href={`/projects/${project.slug}`} data-astro-prefetch>
                             View Details
