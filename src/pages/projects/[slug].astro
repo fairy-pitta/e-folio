@@ -53,13 +53,28 @@ const description = project.frontmatter.description;
                       alt={project.frontmatter.title}
                       width="1280"
                       height="720"
-                      class="w-full rounded-xl border border-gray-200 shadow-sm object-cover"
+                      class="w-full rounded-xl border border-gray-200 shadow-sm object-cover cursor-zoom-in"
                       loading="eager"
                       decoding="async"
                       fetchpriority="high"
+                      onclick={`showImageModal('${project.frontmatter.coverImage}')`}
                     />
                   </div>
                 )}
+
+                <!-- Modal for image popup -->
+                <dialog id="image-modal" class="rounded-xl p-0 backdrop:bg-black/50">
+                  <div class="relative">
+                    <button
+                      class="absolute right-4 top-4 z-10 inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 py-1.5 bg-black text-white hover:bg-white hover:text-black border border-black"
+                      onclick="closeImageModal()"
+                    >
+                      Close
+                    </button>
+                    <img id="image-modal-img" src="" alt="Expanded image" class="max-h-[85vh] w-auto object-contain rounded-xl" />
+                  </div>
+                </dialog>
+
                 <h1 class="text-3xl md:text-4xl font-bold mb-4">{project.frontmatter.title}</h1>
                 <p class="text-lg text-muted-foreground mb-6">{project.frontmatter.description}</p>
                 
@@ -115,14 +130,30 @@ const description = project.frontmatter.description;
                     <img
                       src={img}
                       alt={`${project.frontmatter.title} gallery image`}
-                      class="w-full rounded-2xl border border-gray-200 shadow-md object-cover"
+                      class="w-full rounded-2xl border border-gray-200 shadow-md object-cover cursor-zoom-in"
                       loading="lazy"
                       decoding="async"
+                      onclick={`showImageModal('${img}')`}
                     />
                   ))}
                 </div>
               </div>
             )}
+
+            <script>
+              function showImageModal(src) {
+                const dialog = document.getElementById('image-modal')
+                const modalImg = document.getElementById('image-modal-img')
+                if (dialog && modalImg) {
+                  modalImg.src = src
+                  dialog.showModal()
+                }
+              }
+              function closeImageModal() {
+                const dialog = document.getElementById('image-modal')
+                if (dialog) dialog.close()
+              }
+            </script>
 
           </div>
         </div>

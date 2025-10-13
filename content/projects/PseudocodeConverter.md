@@ -81,6 +81,3 @@ Pseudocode Converter is a web application that transforms source code into stand
 - npm (Python → IB pseudocode): https://www.npmjs.com/package/python2ib
 
 ---
-
-// Remove mistakenly added gallery block at the end
-// (No content here after Links section; gallery is defined in frontmatter above)
