@@ -82,46 +82,88 @@ export default function Projects({ projects = [], showTags = true }: ProjectsPro
                       </a>
                     </h3>
                     
-                    <p className="text-gray-700 mb-4 line-clamp-3">{project.frontmatter.description}</p>
-                    
-                    {showTags && (
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.frontmatter.tags.slice(0, 5).map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
-                        {project.frontmatter.tags.length > 5 && (
-                          <Badge variant="outline" className="text-xs">
-                            +{project.frontmatter.tags.length - 5}
-                          </Badge>
-                        )}
-                      </div>
-                    )}
-                    
-                    <div className="flex gap-2">
-                      <Button asChild size="sm" className="bg-gray-900 hover:bg-gray-800 text-white">
-                        <a href={`/projects/${project.slug}`} data-astro-prefetch>
-                          View Details
-                        </a>
-                      </Button>
-                      {project.frontmatter.githubUrl && (
-                        <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
-                          <a href={project.frontmatter.githubUrl} target="_blank" rel="noopener noreferrer">
-                            <Github className="h-3.5 w-3.5 mr-1" />
-                            Code
-                          </a>
-                        </Button>
-                      )}
-                      {project.frontmatter.liveUrl && (
-                        <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
-                          <a href={project.frontmatter.liveUrl} target="_blank" rel="noopener noreferrer">
-                            <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
-                            Live
-                          </a>
-                        </Button>
-                      )}
-                    </div>
+-                    <p className="text-gray-700 mb-4 line-clamp-3">{project.frontmatter.description}</p>
+-                    
+-                    {showTags && (
+-                      <div className="flex flex-wrap gap-2 mb-4">
+-                        {project.frontmatter.tags.slice(0, 5).map((tag) => (
+-                          <Badge key={tag} variant="outline" className="text-xs">
+-                            {tag}
+-                          </Badge>
+-                        ))}
+-                        {project.frontmatter.tags.length > 5 && (
+-                          <Badge variant="outline" className="text-xs">
+-                            +{project.frontmatter.tags.length - 5}
+-                          </Badge>
+-                        )}
+-                      </div>
+-                    )}
+-                    
+-                    <div className="flex gap-2">
+-                      <Button asChild size="sm" className="bg-gray-900 hover:bg-gray-800 text-white">
+-                        <a href={`/projects/${project.slug}`} data-astro-prefetch>
+-                          View Details
+-                        </a>
+-                      </Button>
+-                      {project.frontmatter.githubUrl && (
+-                        <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+-                          <a href={project.frontmatter.githubUrl} target="_blank" rel="noopener noreferrer">
+-                            <Github className="h-3.5 w-3.5 mr-1" />
+-                            Code
+-                          </a>
+-                        </Button>
+-                      )}
+-                      {project.frontmatter.liveUrl && (
+-                        <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
+-                          <a href={project.frontmatter.liveUrl} target="_blank" rel="noopener noreferrer">
+-                            <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
+-                            Live
+-                          </a>
+-                        </Button>
+-                      )}
+-                    </div>
++                    <div className="md:flex md:items-start md:justify-between gap-6">
++                      <div className="flex-1">
++                        <p className="text-gray-700 mb-3 md:mb-2 line-clamp-3">{project.frontmatter.description}</p>
++                        {showTags && (
++                          <div className="flex flex-wrap gap-2 mb-4 md:mb-0">
++                            {project.frontmatter.tags.slice(0, 5).map((tag) => (
++                              <Badge key={tag} variant="outline" className="text-xs">
++                                {tag}
++                              </Badge>
++                            ))}
++                            {project.frontmatter.tags.length > 5 && (
++                              <Badge variant="outline" className="text-xs">
++                                +{project.frontmatter.tags.length - 5}
++                              </Badge>
++                            )}
++                          </div>
++                        )}
++                      </div>
++                      <div className="mt-2 md:mt-0 flex gap-2 md:flex-col md:items-end md:gap-2 shrink-0">
++                        <Button asChild size="sm" className="bg-gray-900 hover:bg-gray-800 text-white">
++                          <a href={`/projects/${project.slug}`} data-astro-prefetch>
++                            View Details
++                          </a>
++                        </Button>
++                        {project.frontmatter.githubUrl && (
++                          <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
++                            <a href={project.frontmatter.githubUrl} target="_blank" rel="noopener noreferrer">
++                              <Github className="h-3.5 w-3.5 mr-1" />
++                              Code
++                            </a>
++                          </Button>
++                        )}
++                        {project.frontmatter.liveUrl && (
++                          <Button asChild variant="outline" size="sm" className="border-gray-300 text-gray-700 hover:bg-gray-50">
++                            <a href={project.frontmatter.liveUrl} target="_blank" rel="noopener noreferrer">
++                              <ExternalLinkIcon className="h-3.5 w-3.5 mr-1" />
++                              Live
++                            </a>
++                          </Button>
++                        )}
++                      </div>
++                    </div>
                   </CardContent>
                 </Card>
               </motion.div>
