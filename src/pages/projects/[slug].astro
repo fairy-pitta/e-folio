@@ -57,7 +57,7 @@ const description = project.frontmatter.description;
                       loading="eager"
                       decoding="async"
                       fetchpriority="high"
-                      onclick={`showImageModal('${project.frontmatter.coverImage}')`}
+                      data-zoom="true"
                     />
                   </div>
                 )}
@@ -67,7 +67,7 @@ const description = project.frontmatter.description;
                   <div class="relative">
                     <button
                       class="absolute right-4 top-4 z-10 inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 py-1.5 bg-black text-white hover:bg-white hover:text-black border border-black"
-                      onclick="closeImageModal()"
+                      id="image-modal-close"
                     >
                       Close
                     </button>
@@ -133,7 +133,7 @@ const description = project.frontmatter.description;
                       class="w-full rounded-2xl border border-gray-200 shadow-md object-cover cursor-zoom-in"
                       loading="lazy"
                       decoding="async"
-                      onclick={`showImageModal('${img}')`}
+                      data-zoom="true"
                     />
                   ))}
                 </div>
@@ -141,20 +141,25 @@ const description = project.frontmatter.description;
             )}
 
             <script>
-              function showImageModal(src) {
-                const dialog = document.getElementById('image-modal')
-                const modalImg = document.getElementById('image-modal-img')
-                if (dialog && modalImg) {
-                  modalImg.src = src
-                  dialog.showModal()
-                }
-              }
-              function closeImageModal() {
-                const dialog = document.getElementById('image-modal')
-                if (dialog) dialog.close()
-              }
-            </script>
+              document.addEventListener('DOMContentLoaded', () => {
+                const dialog = document.getElementById('image-modal') as HTMLDialogElement | null;
+                const modalImg = document.getElementById('image-modal-img') as HTMLImageElement | null;
+                const closeBtn = document.getElementById('image-modal-close') as HTMLButtonElement | null;
 
+                document.querySelectorAll('img[data-zoom="true"]').forEach((el) => {
+                  el.addEventListener('click', () => {
+                    if (dialog && modalImg) {
+                      modalImg.src = (el as HTMLImageElement).src;
+                      dialog.showModal();
+                    }
+                  });
+                });
+
+                closeBtn?.addEventListener('click', () => {
+                  if (dialog) dialog.close();
+                });
+              });
+            </script>
           </div>
         </div>
       </div>
