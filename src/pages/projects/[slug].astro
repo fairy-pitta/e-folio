@@ -100,6 +100,22 @@ const description = project.frontmatter.description;
                     </a>
                   )}
                 </div>
+
+                {project.frontmatter.gallery && project.frontmatter.gallery.length > 0 && (
+                  <div class="mt-8">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                      {project.frontmatter.gallery.map((img: string) => (
+                        <img
+                          src={img}
+                          alt={`${project.frontmatter.title} gallery image`}
+                          class="w-full rounded-xl border border-gray-200 shadow-sm object-cover"
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
