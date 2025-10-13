@@ -14,9 +14,17 @@ gallery: [
 
 ## Overview
 
-This project visualizes an exact solution to the Traveling Salesperson Problem (TSP) using the Held–Karp dynamic programming algorithm over a realistic, traffic-aware travel-time matrix. The focus is on how the algorithm works internally and how the cost matrix is constructed.
+I wanted a small, honest demo of what an exact TSP looks like when you use real travel times instead of straight-line distances. So I built a visualizer that runs the classic Held–Karp dynamic programming algorithm on a cost matrix sourced from road networks and traffic.
+
+You pick points, it computes the optimal order, and it shows the route with the total travel time. No heuristics, no hand-waving—just a clear, step-by-step solution you can read and reason about.
 
 The result is a ranked visit sequence and total travel time that reflect on-the-ground conditions.
+
+---
+
+## Why Held–Karp?
+
+Heuristics are fast and often good enough, but they can be opaque when you want to understand “why this order?” This project favors clarity over raw speed: Held–Karp is exponential, yet for small to medium sets it’s fast enough and provides ground truth you can compare against or use to benchmark heuristics.
 
 ---
 
@@ -35,7 +43,7 @@ The result is a ranked visit sequence and total travel time that reflect on-the-
 ### Frontend
 * **Next.js (App Router)**
 * **TypeScript**
-* **Tailwind CSS** (planned)
+* **Tailwind CSS**
 
 ### Runtime & API
 * **Cloudflare Workers** for server-side execution
@@ -56,6 +64,8 @@ This approach provides correctness (exact TSP on the given matrix) and realism (
 
 ## Distance Matrix: Traffic-aware durations and batching
 
+In plain terms: we ask the distance matrix service for travel times that reflect road networks and current or predicted traffic, then stitch the responses into a full N×N cost matrix.
+
 - Traffic-aware travel time: Request driving mode with a departure time to obtain traffic-informed durations (commonly surfaced as duration_in_traffic in responses).
 - Request size limits: When requesting traffic-aware durations, per-request element limits apply. To fill an **N × N** matrix, split into **N** requests each with one origin and **N** destinations (or chunk destinations further) so each request stays under the element cap.
 - Aggregation: Combine all batched responses to assemble the full cost matrix, cache results, and proceed to optimization.
@@ -66,6 +76,8 @@ This approach provides correctness (exact TSP on the given matrix) and realism (
 ---
 
 ## Algorithm Details: Held–Karp DP
+
+Intuition: think of DP[S, j] as “the cheapest way to start at s, visit exactly the nodes in S, and arrive at j.” We grow subsets one node at a time and always pick the best predecessor, then backtrack to recover the optimal order.
 
 Held–Karp solves TSP exactly using dynamic programming over subsets:
 
@@ -101,13 +113,6 @@ Held–Karp solves TSP exactly using dynamic programming over subsets:
   - If constraints grow (e.g., time windows or very large n), consider heuristic/approximate methods layered on top of the same matrix.
 
 ---
-
-## Future Work
-
-* Time-of-day aware travel times (rush hour)
-* Weather effects and road incidents
-* Map visualization with mobile-first UX
-* Multi-objective optimization (e.g., location priority, constraints)
 
 ---
 
