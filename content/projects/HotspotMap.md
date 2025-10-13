@@ -59,6 +59,9 @@ This approach provides correctness (exact TSP on the given matrix) and realism (
 - Traffic-aware travel time: Request driving mode with a departure time to obtain traffic-informed durations (commonly surfaced as duration_in_traffic in responses).
 - Request size limits: When requesting traffic-aware durations, per-request element limits apply. To fill an **N × N** matrix, split into **N** requests each with one origin and **N** destinations (or chunk destinations further) so each request stays under the element cap.
 - Aggregation: Combine all batched responses to assemble the full cost matrix, cache results, and proceed to optimization.
+- Explicit configuration: Specify departure_time (for example, now) to enable traffic-aware calculations; without a departure_time, results are based on average time-independent traffic conditions.
+- Prediction model: When using driving mode with a departure_time, you can further specify traffic_model (best_guess, optimistic, pessimistic) to influence how duration_in_traffic is predicted.
+- Element limit detail: Requests that include departure_time with mode=driving are limited to a maximum of 100 elements per request; plan batching so each call remains under this cap.
 
 ---
 
