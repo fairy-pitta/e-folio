@@ -1,5 +1,5 @@
 ---
-title: "Python to Pseudocode Converter: Convert Code to IB‑Compliant Pseudocode"
+title: "Pseudocode Converter: Convert Code to IB‑Compliant Pseudocode"
 description: "A web tool that converts Python or Java code into IB‑compliant pseudocode for Computer Science courses and examinations."
 date: "Oct 13, 2025"
 coverImage: "/projects/Pseudocode/pseudocode.png"

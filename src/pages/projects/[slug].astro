@@ -101,25 +101,29 @@ const description = project.frontmatter.description;
                   )}
                 </div>
 
-                {project.frontmatter.gallery && project.frontmatter.gallery.length > 0 && (
-                  <div class="mt-8">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                      {project.frontmatter.gallery.map((img: string) => (
-                        <img
-                          src={img}
-                          alt={`${project.frontmatter.title} gallery image`}
-                          class="w-full rounded-xl border border-gray-200 shadow-sm object-cover"
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
+                
               </div>
             </div>
 
             <div class="prose prose-sky prose-img:rounded-xl prose-headings:scroll-mt-8 prose-a:text-sky-600 max-w-none sm:prose-lg" set:html={contentHtml} />
+
+            {project.frontmatter.gallery && project.frontmatter.gallery.length > 0 && (
+              <div class="mt-12">
+                <h2 class="text-2xl md:text-3xl font-bold mb-6">Gallery</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
+                  {project.frontmatter.gallery.map((img: string) => (
+                    <img
+                      src={img}
+                      alt={`${project.frontmatter.title} gallery image`}
+                      class="w-full rounded-2xl border border-gray-200 shadow-md object-cover"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
       </div>

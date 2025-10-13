@@ -175,7 +175,12 @@ export function getAllProjects(): Project[] {
         }
       })
 
-    return allProjectsData
+    // Sort by date (newest first)
+    return allProjectsData.sort((a, b) => {
+      const ad = new Date(a.frontmatter.date).getTime()
+      const bd = new Date(b.frontmatter.date).getTime()
+      return bd - ad
+    })
   } catch (error) {
     console.error("Error getting all projects:", error)
     return []
