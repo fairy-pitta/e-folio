@@ -2,7 +2,7 @@
 title: "Optimizing Bird Race Routes: hotspot_map"
 description: "A TSP-based route optimizer that orders birding hotspots by realistic travel time using Held–Karp and a distance matrix API."
 date: "13 Oct, 2025"
-coverImage: "/projects/placeholder.png"
+coverImage: "/placeholder.svg"
 tags: ["Web App", "Next.js", "TypeScript", "Cloudflare Workers", "Algorithms", "TSP"]
 liveUrl: "https://github.com/fairy-pitta/hotspot_map"
 githubUrl: "https://github.com/fairy-pitta/hotspot_map"
