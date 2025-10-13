@@ -1,32 +1,31 @@
 ---
--title: "Optimizing Bird Race Routes: hotspot_map"
-+title: "Held–Karp TSP Visualizer: hotspot_map"
--description: "A TSP-based route optimizer that orders birding hotspots by realistic travel time using Held–Karp and a distance matrix API."
-+description: "A Held–Karp TSP visualizer that uses realistic travel-time cost matrices; birding hotspots are shown as an example dataset."
- date: "13 Oct, 2025"
- coverImage: "/placeholder.svg"
- tags: ["Web App", "Next.js", "TypeScript", "Cloudflare Workers", "Algorithms", "TSP"]
- liveUrl: ""
- githubUrl: "https://github.com/fairy-pitta/hotspot_map"
- gallery: [
- ]
+title: "Held–Karp TSP Visualizer: hotspot_map"
+description: "A Held–Karp TSP visualizer that uses realistic travel-time cost matrices; birding hotspots are shown as an example dataset."
+date: "13 Oct, 2025"
+coverImage: "/projects/held-karp/hk.png"
+tags: ["Web App", "Next.js", "TypeScript", "Cloudflare Workers", "Algorithms", "TSP"]
+liveUrl: ""
+githubUrl: "https://github.com/fairy-pitta/hotspot_map"
+gallery: [
+  "/projects/held-karp/hk.png",
+  "/projects/held-karp/hk-2.png",
+  "/projects/held-karp/hk-3.png"
+]
 ---
 
 ## Overview
 
--**hotspot_map** helps bird racers plan the most efficient order to visit multiple hotspots by solving the Traveling Salesperson Problem (TSP) with real-world, traffic-aware travel times. Instead of relying on straight-line distance, it uses a distance matrix API to compute pairwise travel time and solves the exact TSP using the **Held–Karp** dynamic programming algorithm.
-+**hotspot_map** is a general TSP visualizer that solves the Traveling Salesperson Problem (TSP) exactly using the **Held–Karp** dynamic programming algorithm over a realistic, traffic-aware travel-time matrix. As a simple example, it visualizes how to efficiently visit birding hotspots, but bird race scenarios are not the main focus.
- 
--The result is a ranked visit sequence and total travel time that better reflects on-the-ground conditions.
-+The result is a ranked visit sequence and total travel time that better reflects on-the-ground conditions.
+**hotspot_map** is a general TSP visualizer that solves the Traveling Salesperson Problem (TSP) exactly using the **Held–Karp** dynamic programming algorithm over a realistic, traffic-aware travel-time matrix. As a simple example, it visualizes how to efficiently visit birding hotspots, but bird race scenarios are not the main focus.
+
+The result is a ranked visit sequence and total travel time that better reflects on-the-ground conditions.
 
 ---
 
 ## Features
 
-* Compute optimal hotspot visit order (minimize total travel time)
+* Compute optimal visit order (minimize total travel time)
 * Traffic-aware costs via distance matrix API
-* Choose start/end points and include/exclude hotspots
+* Choose start/end points and include/exclude locations
 * Visualize route order and total cost
 * Server-side computation on Cloudflare Workers
 
@@ -47,7 +46,7 @@
 
 ## How It Works
 
-1. User inputs hotspot coordinates (lat/lon) and options (start point, minimize time vs distance).
+1. User inputs coordinates (lat/lon) and options (start point, minimize time vs distance).
 2. The app fetches a pairwise **distance/time matrix** from the distance matrix API.
 3. The **Held–Karp** algorithm computes the exact TSP route over the matrix.
 4. Results (visit order, total travel time) are returned to the UI.
@@ -56,9 +55,40 @@ This approach provides correctness (exact TSP on the given matrix) and realism (
 
 ---
 
-## Algorithm: Held–Karp
+## Algorithm Details: Held–Karp DP
 
-Held–Karp solves TSP exactly via dynamic programming over subsets, storing best partial paths for each subset and terminal node. It avoids brute force by reusing sub-solutions, though complexity grows exponentially with the number of hotspots. For typical bird race planning sizes, this method is practical and guarantees optimality with the provided cost matrix.
+Held–Karp solves TSP exactly using dynamic programming over subsets:
+
+- State representation:
+  - Let n be the number of nodes and pick a start node s.
+  - Represent a subset S of nodes (including s) as a bitmask; a state is (S, j) meaning the best cost to start at s, visit all nodes in S, and finish at node j.
+
+- Base case:
+  - DP[{s}, s] = 0 and DP[{s}, j] = ∞ for j ≠ s.
+
+- Recurrence:
+  - For |S| ≥ 2 and j ∈ S, j ≠ s:
+  - DP[S, j] = min over i ∈ S \ {j} of (DP[S \ {j}, i] + cost[i][j]).
+  - Here cost[i][j] comes from the distance/time matrix (traffic-aware).
+
+- Tour closure (classic TSP):
+  - Optimal tour cost = min over j ≠ s of (DP[AllNodes, j] + cost[j][s]).
+  - Reconstruct the cycle by backtracking the chosen predecessors.
+
+- Open path (fixed start, free end):
+  - If you want a path from s that doesn’t need to return to s, use:
+  - Optimal path cost = min over j of DP[AllNodes, j].
+  - Backtracking reconstructs the path end j and the ordered sequence.
+
+- Complexity:
+  - Time: O(n^2 · 2^n) due to n · 2^n states and n transitions.
+  - Space: O(n · 2^n) to store DP states and predecessors for route reconstruction.
+
+- Practical notes:
+  - Use integer bitmasks for fast subset operations; index nodes 0..n-1.
+  - Precompute and cache cost[i][j] from the distance matrix API to avoid repeated calls.
+  - For small-to-medium n (e.g., typical hotspot counts), Held–Karp is practical and yields a provably optimal route on the provided matrix.
+  - If constraints grow (e.g., time windows or very large n), consider heuristic/approximate methods layered on top of the same matrix.
 
 ---
 
@@ -67,7 +97,7 @@ Held–Karp solves TSP exactly via dynamic programming over subsets, storing bes
 * Time-of-day aware travel times (rush hour)
 * Weather effects and road incidents
 * Map visualization with mobile-first UX
-* Multi-objective optimization (e.g., hotspot priority, expected species yield)
+* Multi-objective optimization (e.g., location priority, expected species yield)
 
 ---
 
