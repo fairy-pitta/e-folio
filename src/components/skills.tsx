@@ -3,13 +3,13 @@
 
 import { motion } from 'framer-motion';
 import { Card, CardContent } from "@/components/ui/card";
-import { 
+import {
   SiPython,
-  SiHtml5,
-  SiCss3,
   SiJavascript,
   SiTypescript,
   SiR,
+  SiGo,
+  SiRust,
   SiReact,
   SiNextdotjs,
   SiDjango,
@@ -18,6 +18,7 @@ import {
   SiCloudflare,
   SiGithub,
   SiVercel,
+  SiGooglechrome,
   SiSqlite,
   SiTailwindcss,
   SiVite,
@@ -33,11 +34,11 @@ export default function Skills() {
     {
       title: "Programming Languages",
       items: [
-        { name: "Python", description: "General-purpose scripting and data tasks", icon: SiPython },
-        { name: "HTML", description: "Semantic markup for the web", icon: SiHtml5 },
-        { name: "CSS", description: "Responsive styling and layout", icon: SiCss3 },
-        { name: "JavaScript", description: "Interactive frontend development", icon: SiJavascript },
         { name: "TypeScript", description: "Type-safe JavaScript for scalable apps", icon: SiTypescript },
+        { name: "JavaScript", description: "Interactive frontend development", icon: SiJavascript },
+        { name: "Python", description: "General-purpose scripting and data tasks", icon: SiPython },
+        { name: "Go", description: "CLI tools and backend services", icon: SiGo },
+        { name: "Rust", description: "High-performance WASM and systems code", icon: SiRust },
         { name: "R", description: "Statistical analysis and visualization", icon: SiR },
       ]
     },
@@ -52,11 +53,12 @@ export default function Skills() {
     {
       title: "Platforms",
       items: [
+        { name: "Cloudflare", description: "CDN, DNS, security and edge runtime", icon: SiCloudflare },
+        { name: "Vercel", description: "Deployment and hosting platform", icon: SiVercel },
         { name: "Supabase", description: "Auth, DB, storage for modern apps", icon: SiSupabase },
         { name: "AWS", description: "Cloud infrastructure and services", icon: SiAmazon },
-        { name: "Cloudflare", description: "CDN, DNS, security and edge runtime", icon: SiCloudflare },
         { name: "GitHub", description: "Code hosting and collaboration", icon: SiGithub },
-        { name: "Vercel", description: "Deployment and hosting platform", icon: SiVercel },
+        { name: "Chrome Extensions", description: "Browser extension development", icon: SiGooglechrome },
       ]
     },
     {
