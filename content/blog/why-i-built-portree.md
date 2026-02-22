@@ -1,124 +1,198 @@
 ---
-title: "Why I Built portree: A Love Letter to Git Worktrees (and a Breakup Letter to Port Conflicts)"
+title: "Why I Built portree — Git Worktree Server Manager"
 date: "February 6, 2026"
-excerpt: "The frustration of managing multiple dev servers across git worktrees led me to build portree."
+excerpt: "Managing multiple dev servers across git worktrees was annoying, so I built a CLI to automate it."
 coverImage: "/blogs/portree-cover.gif"
-readTime: "5 min read"
+readTime: "7 min read"
 tags: ["Developer Tools", "Go", "Git"]
 ---
 
-## The Dream of Parallel Development
+## "you should use worktrees"
 
-Git worktrees are amazing. The ability to have multiple branches checked out simultaneously, each in its own directory, feels like a superpower. You can work on a feature, switch to review a PR, hotfix something in production—all without stashing, committing half-done work, or losing your mental context.
+This tweet nails it:
 
-I fell in love with worktrees the moment I discovered them.
+<blockquote>
+you should use worktrees
 
-But then reality hit.
+you just have to..
+- npm install in the worktree
+- reinstall the pre-commit hooks
+- copy the env files
+- not use the same ports
+
+or realize this is not the right solution
+
+— <a href="https://x.com/_colemurray/status/2025170703448985849">@_colemurray</a>
+</blockquote>
+
+I laughed. Then I thought — **"Everything except that last line can be automated."**
 
 ---
 
-## The Nightmare Begins
+## The Port Problem
 
-Picture this: I'm working on a monorepo with a React frontend and a Python backend. I have three worktrees open—`main`, `feature/auth`, and `hotfix/login-bug`. Each needs its own frontend server. Each needs its own backend server.
-
-That's six dev servers.
-
-**"Port 3000 is already in use."**
-
-Okay, I'll use 3001 for the feature branch.
-
-**"Port 3001 is already in use."**
-
-Right, I forgot I left something running. Let me find a free port... 3002? 3003?
-
-Now my frontend on `feature/auth` is running on port 3003. But wait—my backend is on 8000, but which backend? The one for `main`? Or was that 8001?
-
-I open my browser. `localhost:3003`. Nothing. Oh, I stopped that server to restart the other one. Let me check which ports are actually running...
+If you work on a monorepo with, say, a React frontend on `:3000` and a Python backend on `:8000`, one branch is fine. But git worktree lets you check out multiple branches simultaneously, and that's where things get annoying.
 
 ```bash
-lsof -i :3000
-lsof -i :3001
-lsof -i :3002
-lsof -i :8000
-lsof -i :8001
+git worktree add ../myapp-feature-auth feature/auth
+git worktree add ../myapp-fix-header fix/header
 ```
 
-This is madness.
+Three branches, each needing its own frontend and backend. That's six dev servers. Port 3000 can only be used once.
+
+So you start manually offsetting ports — 3001, 3002, 3003. Thirty minutes later, you don't remember which port belongs to which branch. You update environment variables, change backend URLs in the frontend config, and repeat the process every time you switch context.
+
+The worst part: you run `feature/auth` frontend against `main` backend without realizing it, and spend 20 minutes debugging something that isn't a bug.
+
+**This should be automated.**
 
 ---
 
-## The Breaking Point
+## I Found portless After the Fact
 
-The final straw came when I spent 20 minutes debugging why my frontend couldn't reach the backend, only to realize I was running `feature/auth` frontend against `main` backend. The ports were mixed up. My environment variables were wrong. I had no idea which process belonged to which branch.
+After I'd nearly finished building portree, I found Vercel Labs' **[portless](https://github.com/vercel-labs/portless)**. Genuinely didn't know it existed until the day before.
 
-I had a Notion page—a NOTION PAGE—just to track which ports I was using for which worktree.
+It replaces port numbers with named `.localhost` URLs — `myapp.localhost:1355` instead of `localhost:3000`. The direction felt similar. For a moment I thought someone had already solved this.
 
-This wasn't sustainable. This wasn't the dream of parallel development. This was chaos with extra steps.
+But the scope is different. portless is a proxy layer over servers that are already running. It doesn't manage server lifecycle, and it has no concept of git worktrees.
 
----
-
-## What I Wanted
-
-I wanted something simple:
-
-1. **Automatic ports** — Don't make me think about port numbers. Just pick one that's free and remember it.
-2. **Consistent URLs** — I want `feature-auth.localhost:3000` to always point to my auth branch's frontend. Not localhost:3007. Not "whatever port I wrote down last Tuesday."
-3. **One command** — `portree up` and everything starts. `portree down` and everything stops. No hunting for PIDs.
-4. **Service discovery** — My frontend should automatically know where its backend is, without me hardcoding `localhost:8003` into seventeen different config files.
+What I wanted was: **"Add a worktree, and all services start on the right ports, accessible by branch name."** Port naming alone doesn't cover that. I needed port allocation, process management, and service discovery — all in one tool.
 
 ---
 
-## Building the Solution
+## What portree Does
 
-So I built portree.
+**[portree](https://github.com/fairy-pitta/portree)** — Git Worktree Server Manager. The name is port + tree. Written in Go.
 
-The core insight was simple: use a hash function. Given a branch name and service name, compute a deterministic port number. `FNV32("feature/auth:frontend") % 100 + 3100` always gives the same port. No conflicts (well, rarely—and when there are, linear probing handles it). No tracking. No Notion pages.
+```bash
+portree init          # Initialize
+portree up --all      # Start all services across all worktrees
+portree open          # → http://main.localhost:3000
+```
 
-Then I added a reverse proxy. One process listens on port 3000 and routes `main.localhost:3000` to wherever `main`'s frontend is actually running, and `feature-auth.localhost:3000` to the auth branch's frontend. Modern browsers resolve `*.localhost` automatically—no `/etc/hosts` editing needed.
+Three core ideas:
 
-Environment variables get injected automatically. `$PORT` tells your server which port to bind. `$PT_BACKEND_URL` tells your frontend where the backend lives. Services discover each other without configuration.
+### 1. Deterministic Port Allocation
 
-And for those moments when you want to see everything at a glance—a TUI dashboard. Start, stop, restart services with a keypress. See what's running, what's crashed, what's waiting.
+Branch name + service name → FNV32 hash → port number.
+
+```
+FNV32("main:frontend") % 100 + 3100 → 3100
+FNV32("feature/auth:frontend") % 100 + 3100 → 3117
+```
+
+Same branch, same service, same port every time. On hash collision, linear probing finds the next available port.
+
+### 2. Server Lifecycle Management
+
+Define services once in `.portree.toml`, and every worktree runs the same configuration:
+
+```toml
+[services.frontend]
+command = "pnpm run dev"
+dir = "frontend"
+port_range = { min = 3100, max = 3199 }
+proxy_port = 3000
+
+[services.backend]
+command = "python manage.py runserver 0.0.0.0:$PORT"
+dir = "backend"
+port_range = { min = 8100, max = 8199 }
+proxy_port = 8000
+```
+
+`portree up --all` starts everything. `portree down --all` stops everything. Processes are managed as groups — SIGTERM first, SIGKILL after timeout. No orphaned child processes.
+
+### 3. Branch-Name Routing
+
+`portree proxy start` runs a reverse proxy that routes based on the `Host` header subdomain:
+
+```
+http://main.localhost:3000          → frontend (main)
+http://feature-auth.localhost:3000  → frontend (feature/auth)
+http://main.localhost:8000          → backend (main)
+http://feature-auth.localhost:8000  → backend (feature/auth)
+```
+
+`*.localhost` resolves to `127.0.0.1` per [RFC 6761](https://tools.ietf.org/html/rfc6761) — no `/etc/hosts` editing needed.
+
+Environment variables are injected automatically. `$PORT` tells your server which port to bind. `$PT_BACKEND_URL` tells your frontend where the backend is. Services discover each other without manual configuration.
+
+---
+
+## Interesting Engineering Details
+
+### TOCTOU in Port Allocation
+
+There's a gap between checking if a port is free and the service actually binding it. Another process could take the port in between (Time-of-Check-Time-of-Use).
+
+File-level locking (`flock`) prevents race conditions between concurrent portree invocations. For external collisions, a clear error message tells you what happened.
+
+### Process Groups
+
+Dev servers often spawn child processes (e.g., Next.js SWC compiler). Killing only the parent leaves orphans.
+
+```go
+cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
+```
+
+`Setpgid: true` creates a process group. On shutdown, `syscall.Kill(-pgid, syscall.SIGTERM)` takes down everything cleanly.
+
+### WriteTimeout = 0
+
+Go's `http.Server` conventionally sets a `WriteTimeout`. For a dev server proxy, I intentionally set it to `0` (unlimited). Vite and webpack HMR use SSE with persistent connections — a fixed write deadline kills the stream.
+
+```go
+srv := &http.Server{
+    ReadTimeout:       30 * time.Second,
+    ReadHeaderTimeout: 10 * time.Second,
+    IdleTimeout:       120 * time.Second,
+    // WriteTimeout intentionally 0: don't kill HMR SSE streams
+}
+```
+
+Following security best practices vs. understanding your use case. For a local dev tool, the latter wins.
+
+---
+
+## TUI Dashboard
+
+A TUI to see all worktrees and services at a glance. Built with [Bubble Tea](https://github.com/charmbracelet/bubbletea) + [Lip Gloss](https://github.com/charmbracelet/lipgloss).
+
+```
+╭─ portree dashboard ────────────────────────────────╮
+│                                                     │
+│  WORKTREE        SERVICE    PORT   STATUS    PID    │
+│ ▸ main           frontend   3100   ● running 12345  │
+│   main           backend    8100   ● running 12346  │
+│   feature/auth   frontend   3117   ○ stopped —      │
+│                                                     │
+│  [s] start  [x] stop  [r] restart  [q] quit        │
+╰─────────────────────────────────────────────────────╯
+```
+
+`s` to start, `x` to stop, `o` to open in browser. Manage all branches without leaving the terminal.
 
 ![portree TUI dashboard](/blogs/portree-tui.gif)
 
 ---
 
-## The Result
+## portree vs portless
 
-Now my workflow looks like this:
+Same space, different approaches.
 
-```bash
-# Create a new worktree
-git worktree add ../my-project-feature feature/new-thing
+| | portless | portree |
+|---|---|---|
+| Philosophy | Replace ports with names | Manage dev environments per worktree |
+| Process management | None (proxy only) | Full lifecycle (start/stop/restart) |
+| Port allocation | Random | Deterministic (FNV32 hash) |
+| Named URLs | Yes | Yes (`branch-name.localhost`) |
+| Worktree support | No | Core feature |
+| HTTPS | Yes (auto-certs) | In progress |
+| TUI | No | Yes |
+| Language | TypeScript | Go (single binary) |
 
-# Start everything
-portree up --all
-
-# Open the dashboard
-portree dash
-```
-
-That's it. Six services across three worktrees, all running, all accessible via predictable URLs, all manageable from one terminal.
-
-`main.localhost:3000` — main frontend
-`main.localhost:8000` — main backend
-`feature-auth.localhost:3000` — auth feature frontend
-`feature-auth.localhost:8000` — auth feature backend
-
-![portree workflow](/blogs/portree-workflow.gif)
-
-No port conflicts. No confusion. No Notion pages.
-
----
-
-## The Emotional Payoff
-
-There's something deeply satisfying about solving your own problem. Every time I type `portree up` and watch my services spin up automatically, I feel a small spark of joy. Every time I open `feature-auth.localhost:3000` and it just works, I remember the hours I used to spend juggling ports.
-
-portree isn't a groundbreaking innovation. It's just a tool that removes friction from a workflow I love. Git worktrees are still amazing. Now I can actually enjoy using them.
-
-If you've ever maintained a spreadsheet of port numbers, if you've ever killed the wrong process and had to restart everything, if you've ever wondered "wait, which backend am I hitting?"—maybe portree can help you too.
+portless is a general-purpose tool. portree is built specifically for git worktree workflows. They share features like named URLs and HTTPS (portree's is in progress), but portree adds process management, automatic port allocation, worktree integration, and a TUI.
 
 ---
 
@@ -130,4 +204,4 @@ brew install fairy-pitta/tap/portree
 
 Or check it out on [GitHub](https://github.com/fairy-pitta/portree).
 
-The dream of parallel development is real. You just need the right tools.
+![portree workflow](/blogs/portree-workflow.gif)
