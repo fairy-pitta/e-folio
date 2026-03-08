@@ -1,6 +1,5 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { getBlogPost, getAllBlogSlugs } from '../../lib/content';
 import { markdownToHtml } from '../../lib/markdown';
@@ -38,14 +37,12 @@ const description = post.frontmatter.excerpt;
       <div class="pt-14 md:pt-16">
         <div class="container mx-auto px-4 py-12">
           <div class="max-w-3xl mx-auto">
-            <Button variant="ghost" className="mb-6" client:idle>
-              <a href="/blog" class="flex items-center" data-astro-prefetch>
-                <ArrowLeftIcon className="h-4 w-4 mr-2" />
-                Back to Blog
-              </a>
-            </Button>
+            <a href="/blog" class="inline-flex items-center text-sm font-mono text-muted-foreground hover:text-foreground transition-colors mb-8" data-astro-prefetch>
+              <ArrowLeftIcon className="h-3.5 w-3.5 mr-1.5" />
+              Back
+            </a>
 
-            <h1 class="text-3xl md:text-4xl font-normal mb-4 font-caveat">{post.frontmatter.title}</h1>
+            <h1 class="text-2xl md:text-3xl mb-4 font-mono-heading">{post.frontmatter.title}</h1>
 
             <div class="flex flex-wrap items-center gap-4 mb-6">
               <span class="flex items-center text-muted-foreground">
@@ -61,7 +58,7 @@ const description = post.frontmatter.excerpt;
             <div class="flex flex-wrap gap-2 mb-8">
               {post.frontmatter.tags.map((tag: string) => (
                 <a href={`/blog/tag/${tag.toLowerCase().replace(/\s+/g, "-")}`} data-astro-prefetch>
-                  <Badge variant="secondary" className="hover:bg-sky-100 transition-colors">
+                  <Badge variant="secondary" className="hover:bg-secondary/80 transition-colors text-xs font-mono">
                     {tag}
                   </Badge>
                 </a>
@@ -82,7 +79,7 @@ const description = post.frontmatter.excerpt;
               />
             </div>
 
-            <div class="prose prose-sky prose-img:rounded-xl prose-headings:scroll-mt-8 prose-a:text-sky-600 max-w-none sm:prose-lg" set:html={contentHtml} />
+            <div class="prose prose-neutral prose-img:rounded-sm prose-headings:scroll-mt-8 prose-headings:font-mono prose-headings:tracking-tight prose-a:text-[hsl(153,40%,28%)] prose-a:underline-offset-2 max-w-none sm:prose-lg" set:html={contentHtml} />
 
             <div class="my-12">
               <BlogNewsletter client:idle />

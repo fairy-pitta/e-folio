@@ -19,7 +19,8 @@ const config: Config = {
     },
     extend: {
       fontFamily: {
-        sans: ['Noto Sans', 'system-ui', 'sans-serif'],
+        sans: ['Source Sans 3', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",

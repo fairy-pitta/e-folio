@@ -1,10 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
+import { ChevronLeft, ChevronRight, Github, ExternalLinkIcon } from "lucide-react"
 import type { Project } from "./projects"
 
 interface ProjectsClientProps {
@@ -12,146 +9,161 @@ interface ProjectsClientProps {
 }
 
 export default function ProjectsClient({ initialProjects }: ProjectsClientProps) {
-  const [searchQuery] = useState("")
   const [selectedTags, setSelectedTags] = useState<string[]>([])
   const [currentPage, setCurrentPage] = useState(1)
-  const projectsPerPage = 6
+  const projectsPerPage = 8
 
-  // すべてのタグを抽出
   const allTags = Array.from(new Set(initialProjects.flatMap((project) => project.frontmatter.tags))).sort()
 
-  // Toggle tag selection/deselection
   const toggleTag = (tag: string) => {
     if (selectedTags.includes(tag)) {
       setSelectedTags(selectedTags.filter((t) => t !== tag))
     } else {
       setSelectedTags([...selectedTags, tag])
     }
-    setCurrentPage(1) // Reset to first page when filtering
+    setCurrentPage(1)
   }
 
-  // Filter projects by search query and tags
   const filteredProjects = initialProjects.filter((project) => {
-    const matchesSearch =
-      searchQuery === "" ||
-      project.frontmatter.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      project.frontmatter.description.toLowerCase().includes(searchQuery.toLowerCase())
-
-    const matchesTags = selectedTags.length === 0 || selectedTags.every((tag) => project.frontmatter.tags.includes(tag))
-
-    return matchesSearch && matchesTags
+    return selectedTags.length === 0 || selectedTags.every((tag) => project.frontmatter.tags.includes(tag))
   })
 
-  // Pagination calculations
   const totalPages = Math.ceil(filteredProjects.length / projectsPerPage)
   const startIndex = (currentPage - 1) * projectsPerPage
-  const endIndex = startIndex + projectsPerPage
-  const currentProjects = filteredProjects.slice(startIndex, endIndex)
+  const currentProjects = filteredProjects.slice(startIndex, startIndex + projectsPerPage)
 
   return (
     <div className="min-h-screen bg-background pt-24 md:pt-28">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          <h1 className="text-3xl md:text-4xl font-bold mb-6 text-center">Projects</h1>
+        <div className="max-w-3xl mx-auto">
+          <h1 className="text-2xl font-mono-heading mb-2">Projects</h1>
+          <div className="w-16 h-px bg-[hsl(var(--accent))] mb-8"></div>
 
-          <div className="mb-6">
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className="text-sm font-medium py-1">Filter by technologies:</span>
+          {/* Tag filter */}
+          <div className="mb-8">
+            <div className="flex flex-wrap gap-2">
               {allTags.map((tag) => (
-                <Badge
+                <button
                   key={tag}
-                  variant={selectedTags.includes(tag) ? "default" : "outline"}
-                  className={`cursor-pointer ${selectedTags.includes(tag) ? "bg-green-600 hover:bg-green-700" : "hover:bg-green-50"}`}
                   onClick={() => toggleTag(tag)}
+                  className={`text-xs font-mono px-2 py-1 border rounded-sm transition-colors ${
+                    selectedTags.includes(tag)
+                      ? 'bg-foreground text-background border-foreground'
+                      : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground'
+                  }`}
                 >
                   {tag}
-                </Badge>
+                </button>
               ))}
               {selectedTags.length > 0 && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-xs h-7 text-green-600 hover:text-green-700 hover:bg-green-50"
+                <button
+                  className="text-xs font-mono text-muted-foreground hover:text-foreground transition-colors px-2 py-1"
                   onClick={() => {
                     setSelectedTags([])
                     setCurrentPage(1)
                   }}
                 >
-                  Clear filters
-                </Button>
+                  Clear
+                </button>
               )}
             </div>
           </div>
 
           {filteredProjects.length === 0 ? (
-            <div className="text-center py-12">
-              <h3 className="text-xl font-semibold mb-2">No projects found</h3>
-              <p className="text-muted-foreground">Try adjusting your search criteria</p>
+            <div className="py-12">
+              <p className="text-sm text-muted-foreground">No projects found</p>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="divide-y divide-border">
                 {currentProjects.map((project) => (
-                  <Card key={project.slug} className="hover:shadow-md transition-shadow duration-300">
-                    <CardContent className="p-6">
-                      <h3 className="text-lg font-semibold mb-2">
-                        <a href={`/projects/${project.slug}`} className="hover:text-green-600" data-astro-prefetch>
+                  <article key={project.slug} className="py-6 first:pt-0 group">
+                    <div className="flex items-baseline gap-4 mb-2">
+                      <span className="text-xs font-mono text-muted-foreground shrink-0">
+                        {project.frontmatter.date}
+                      </span>
+                      <h3 className="text-base font-medium">
+                        <a
+                          href={`/projects/${project.slug}`}
+                          className="group-hover:text-[hsl(var(--accent))] transition-colors"
+                          data-astro-prefetch
+                        >
                           {project.frontmatter.title}
                         </a>
                       </h3>
-                      <p className="text-muted-foreground text-sm mb-4">
-                        {project.frontmatter.description}
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {project.frontmatter.tags.slice(0, 5).map((tag) => (
-                          <Badge key={tag} variant="outline" className="text-xs">
-                            {tag}
-                          </Badge>
-                        ))}
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3 max-w-2xl line-clamp-2">
+                      {project.frontmatter.description}
+                    </p>
+                    <div className="flex items-center gap-3 flex-wrap">
+                      {project.frontmatter.tags.slice(0, 5).map((tag) => (
+                        <span key={tag} className="text-xs font-mono text-muted-foreground">
+                          {tag}
+                        </span>
+                      ))}
+                      <div className="flex items-center gap-2 ml-auto">
+                        {project.frontmatter.githubUrl && (
+                          <a
+                            href={project.frontmatter.githubUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <Github className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                        {project.frontmatter.liveUrl && (
+                          <a
+                            href={project.frontmatter.liveUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <ExternalLinkIcon className="h-3.5 w-3.5" />
+                          </a>
+                        )}
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </article>
                 ))}
               </div>
 
               {/* Pagination */}
               {totalPages > 1 && (
-                <div className="flex justify-center items-center mt-8 gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
+                <div className="flex items-center gap-2 mt-8 pt-6 border-t">
+                  <button
                     onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                     disabled={currentPage === 1}
-                    className="border-green-300 text-green-600 hover:bg-green-50 disabled:opacity-50"
+                    className="text-xs font-mono text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors flex items-center gap-1"
                   >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <Button
-                      key={page}
-                      variant={currentPage === page ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(page)}
-                      className={
-                        currentPage === page
-                          ? "bg-green-600 hover:bg-green-700 text-white"
-                          : "border-green-300 text-green-600 hover:bg-green-50"
-                      }
-                    >
-                      {page}
-                    </Button>
-                  ))}
-                  
-                  <Button
-                    variant="outline"
-                    size="sm"
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                    Prev
+                  </button>
+
+                  <div className="flex gap-1 mx-2">
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                      <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        className={`text-xs font-mono w-7 h-7 transition-colors ${
+                          currentPage === page
+                            ? 'bg-foreground text-background'
+                            : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        {page}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
                     onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                     disabled={currentPage === totalPages}
-                    className="border-green-300 text-green-600 hover:bg-green-50 disabled:opacity-50"
+                    className="text-xs font-mono text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors flex items-center gap-1"
                   >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                    Next
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               )}
             </>

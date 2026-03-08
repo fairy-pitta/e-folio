@@ -38,10 +38,10 @@ const description = project.frontmatter.description;
             <a
               href="/projects"
               data-astro-prefetch
-              class="mb-6 inline-flex items-center gap-2 text-sm text-gray-700 hover:text-gray-900"
+              class="mb-8 inline-flex items-center gap-2 text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
             >
-              <ArrowLeftIcon className="h-4 w-4 mr-2" />
-              Back to Projects
+              <ArrowLeftIcon className="h-3.5 w-3.5 mr-1.5" />
+              Back
             </a>
 
             <div class="grid grid-cols-1 gap-8 mb-8">
@@ -53,7 +53,7 @@ const description = project.frontmatter.description;
                       alt={project.frontmatter.title}
                       width="1280"
                       height="720"
-                      class="w-full rounded-xl border border-gray-200 shadow-sm object-cover cursor-zoom-in"
+                      class="w-full rounded-sm border object-cover cursor-zoom-in"
                       loading="eager"
                       decoding="async"
                       fetchpriority="high"
@@ -63,24 +63,24 @@ const description = project.frontmatter.description;
                 )}
 
                 <!-- Modal for image popup -->
-                <dialog id="image-modal" class="rounded-xl p-0 backdrop:bg-black/50">
+                <dialog id="image-modal" class="rounded-sm p-0 backdrop:bg-black/60">
                   <div class="relative">
                     <button
-                      class="absolute right-4 top-4 z-10 inline-flex items-center justify-center rounded-md text-sm font-medium h-9 px-3 py-1.5 bg-black text-white hover:bg-white hover:text-black border border-black"
+                      class="absolute right-3 top-3 z-10 font-mono text-xs px-3 py-1.5 bg-foreground text-background hover:bg-[hsl(var(--accent))] transition-colors"
                       id="image-modal-close"
                     >
                       Close
                     </button>
-                    <img id="image-modal-img" src="" alt="Expanded image" class="max-h-[85vh] w-auto object-contain rounded-xl" />
+                    <img id="image-modal-img" src="" alt="Expanded image" class="max-h-[85vh] w-auto object-contain rounded-sm" />
                   </div>
                 </dialog>
 
-                <h1 class="text-3xl md:text-4xl font-bold mb-4">{project.frontmatter.title}</h1>
+                <h1 class="text-2xl md:text-3xl font-mono-heading mb-4">{project.frontmatter.title}</h1>
                 <p class="text-lg text-muted-foreground mb-6">{project.frontmatter.description}</p>
                 
                 <div class="flex flex-wrap gap-2 mb-6">
                   {project.frontmatter.tags.map((tech: string) => (
-                    <Badge variant="secondary">{tech}</Badge>
+                    <Badge variant="secondary" className="text-xs font-mono">{tech}</Badge>
                   ))}
                 </div>
 
@@ -97,10 +97,10 @@ const description = project.frontmatter.description;
                       href={project.frontmatter.githubUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 bg-black text-white hover:bg-white hover:text-black border border-black"
+                      class="inline-flex items-center gap-2 font-mono text-sm px-4 py-2 bg-foreground text-background hover:bg-[hsl(var(--accent))] transition-colors"
                     >
-                      <Github className="h-4 w-4 mr-2" />
-                      View Code
+                      <Github className="h-3.5 w-3.5" />
+                      Code
                     </a>
                   )}
                   {project.frontmatter.liveUrl && (
@@ -108,10 +108,10 @@ const description = project.frontmatter.description;
                       href={project.frontmatter.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 h-10 px-4 py-2 border border-black text-black hover:bg-black hover:text-white"
+                      class="inline-flex items-center gap-2 font-mono text-sm px-4 py-2 border border-foreground hover:border-[hsl(var(--accent))] hover:text-[hsl(var(--accent))] transition-colors"
                     >
-                      <EyeIcon className="h-4 w-4 mr-2" />
-                      Live Demo
+                      <EyeIcon className="h-3.5 w-3.5" />
+                      Live
                     </a>
                   )}
                 </div>
@@ -120,17 +120,17 @@ const description = project.frontmatter.description;
               </div>
             </div>
 
-            <div class="prose prose-sky prose-img:rounded-xl prose-headings:scroll-mt-8 prose-a:text-sky-600 max-w-none sm:prose-lg" set:html={contentHtml} />
+            <div class="prose prose-neutral prose-img:rounded-sm prose-headings:scroll-mt-8 prose-headings:font-mono prose-headings:tracking-tight prose-a:text-[hsl(153,40%,28%)] prose-a:underline-offset-2 max-w-none sm:prose-lg" set:html={contentHtml} />
 
             {project.frontmatter.gallery && project.frontmatter.gallery.length > 0 && (
               <div class="mt-12">
-                <h2 class="text-2xl md:text-3xl font-bold mb-6">Gallery</h2>
+                <h2 class="text-xl font-mono-heading mb-6">Gallery</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
                   {project.frontmatter.gallery.map((img: string) => (
                     <img
                       src={img}
                       alt={`${project.frontmatter.title} gallery image`}
-                      class="w-full rounded-2xl border border-gray-200 shadow-md object-cover cursor-zoom-in"
+                      class="w-full rounded-sm border object-cover cursor-zoom-in"
                       loading="lazy"
                       decoding="async"
                       data-zoom="true"

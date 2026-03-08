@@ -2,80 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ベースは Source Sans 3、見出しは Caveat */
 html, body {
   font-family: 'Source Sans 3', system-ui, sans-serif;
 }
 
-/* ローカルTTFの @font-face を無効化（Google Fonts 経由に統一） */
-/*
-@font-face {
-  font-family: 'Caveat';
-  src: url('/Caveat-Regular.ttf?v=1') format('truetype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Caveat';
-  src: url('/Caveat-Bold.ttf?v=1') format('truetype');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-*/
-
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 0 0% 3.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 3.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 3.9%;
-    --primary: 0 0% 9%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 0 0% 96.1%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 96.1%;
-    --muted-foreground: 0 0% 45.1%;
-    --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --background: 40 20% 98%;
+    --foreground: 30 10% 12%;
+    --card: 40 15% 97%;
+    --card-foreground: 30 10% 12%;
+    --popover: 40 20% 98%;
+    --popover-foreground: 30 10% 12%;
+    --primary: 153 40% 28%;
+    --primary-foreground: 40 20% 98%;
+    --secondary: 40 10% 93%;
+    --secondary-foreground: 30 10% 12%;
+    --muted: 40 10% 93%;
+    --muted-foreground: 30 5% 42%;
+    --accent: 153 40% 28%;
+    --accent-foreground: 40 20% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
-    --ring: 0 0% 3.9%;
-    --radius: 0.5rem;
+    --border: 35 10% 87%;
+    --input: 35 10% 87%;
+    --ring: 153 40% 28%;
+    --radius: 0.25rem;
   }
 
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
+    --background: 30 10% 8%;
+    --foreground: 40 15% 90%;
+    --card: 30 10% 10%;
+    --card-foreground: 40 15% 90%;
+    --popover: 30 10% 8%;
+    --popover-foreground: 40 15% 90%;
+    --primary: 153 35% 50%;
+    --primary-foreground: 30 10% 8%;
+    --secondary: 30 8% 15%;
+    --secondary-foreground: 40 15% 90%;
+    --muted: 30 8% 15%;
+    --muted-foreground: 30 5% 55%;
+    --accent: 153 35% 50%;
+    --accent-foreground: 30 10% 8%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
+    --border: 30 8% 18%;
+    --input: 30 8% 18%;
+    --ring: 153 35% 50%;
   }
 
-  /* Headings use Caveat Regular with Noto Sans fallback */
   h1, h2, h3 {
-    font-family: 'Caveat', 'Source Sans 3', system-ui, sans-serif;
-    /* font-weight: 400; */
+    font-family: 'JetBrains Mono', 'Source Sans 3', monospace;
+    font-weight: 500;
+    letter-spacing: -0.02em;
   }
 
   * {
@@ -86,58 +66,29 @@ html, body {
   }
 }
 
-/* Title gradient keeps. Apply Caveat to hero titles */
-.gradient-text {
-  background: linear-gradient(135deg, #000000 0%, #333333 50%, #000000 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-.dark .gradient-text {
-  background: linear-gradient(135deg, #ffffff 0%, #cccccc 50%, #ffffff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
-/* Scroll-triggered fade-in animations */
+/* Scroll-triggered fade-in */
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes fade-in-left {
-  from { opacity: 0; transform: translateX(-20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes fade-in-right {
-  from { opacity: 0; transform: translateX(20px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
 .animate-fade-in-up {
-  animation: fade-in-up 0.5s ease-out both;
-}
-
-.animate-fade-in-left {
-  animation: fade-in-left 0.5s ease-out both;
-}
-
-.animate-fade-in-right {
-  animation: fade-in-right 0.5s ease-out both;
+  animation: fade-in-up 0.4s ease-out both;
 }
 
 /* Stagger delays */
-.delay-100 { animation-delay: 100ms; }
-.delay-200 { animation-delay: 200ms; }
-.delay-300 { animation-delay: 300ms; }
+.delay-100 { animation-delay: 80ms; }
+.delay-200 { animation-delay: 160ms; }
+.delay-300 { animation-delay: 240ms; }
 
-/* Utility to apply Caveat */
 @layer utilities {
+  .font-mono-heading {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
   .font-caveat {
-    font-family: 'Caveat', 'Source Sans 3', system-ui, sans-serif;
+    font-family: 'Caveat', cursive;
     font-weight: 400;
   }
   .font-source-sans {

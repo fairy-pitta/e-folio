@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef } from 'react';
-import { Card, CardContent } from "@/components/ui/card";
 
 interface Skill {
   name: string
@@ -15,7 +14,7 @@ interface SkillCategory {
 
 const skillCategories: SkillCategory[] = [
   {
-    title: "Programming Languages",
+    title: "Languages",
     items: [
       { name: "TypeScript", description: "Type-safe JavaScript for scalable apps" },
       { name: "JavaScript", description: "Interactive frontend development" },
@@ -55,7 +54,7 @@ const skillCategories: SkillCategory[] = [
     ]
   },
   {
-    title: "Now Training",
+    title: "Learning",
     items: [
       { name: "Docker", description: "Containerization basics and best practices" },
       { name: "Vue.js", description: "Exploring reactive UI development" },
@@ -96,43 +95,36 @@ export default function Skills() {
   const containerRef = useIntersectionObserver();
 
   return (
-    <section id="skills" className="py-20 bg-white">
+    <section id="skills" className="py-20">
       <div className="container mx-auto px-4" ref={containerRef}>
-        <div data-animate className="text-center mb-16 opacity-0">
-          <h2 className="text-4xl font-bold text-black mb-4">Technical Skills</h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            A comprehensive overview of my technical expertise and the tools I use to build modern applications.
-          </p>
+        <div data-animate className="mb-12 opacity-0">
+          <h2 className="text-2xl font-mono-heading mb-2">Technical Skills</h2>
+          <div className="w-16 h-px bg-[hsl(var(--accent))]"></div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="space-y-0 divide-y divide-border">
           {skillCategories.map((category, categoryIndex) => (
             <div
               key={category.title}
               data-animate
-              className="opacity-0"
-              style={{ animationDelay: `${categoryIndex * 100}ms` }}
+              className="opacity-0 py-5 first:pt-0 grid grid-cols-[120px_1fr] md:grid-cols-[160px_1fr] gap-4 items-baseline"
+              style={{ animationDelay: `${categoryIndex * 80}ms` }}
             >
-              <Card className="h-full border-gray-200 hover:border-gray-400 transition-colors duration-300">
-                <CardContent className="p-6">
-                  <h3 className="text-xl font-semibold text-black mb-6">{category.title}</h3>
-                  <div className="space-y-4">
-                    {category.items.map((skill) => (
-                      <div
-                        key={skill.name}
-                        className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
-                      >
-                        <div>
-                          <h4 className="font-medium text-black">{skill.name}</h4>
-                          {skill.description && (
-                            <p className="text-sm text-gray-600 mt-1">{skill.description}</p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+              <h3 className="text-xs font-mono uppercase tracking-wider text-muted-foreground pt-0.5">
+                {category.title}
+              </h3>
+              <div className="flex flex-wrap gap-x-3 gap-y-1.5">
+                {category.items.map((skill, i) => (
+                  <span key={skill.name} className="text-sm group relative">
+                    <span className="hover:text-[hsl(var(--accent))] transition-colors cursor-default">
+                      {skill.name}
+                    </span>
+                    {i < category.items.length - 1 && (
+                      <span className="text-muted-foreground ml-1">/</span>
+                    )}
+                  </span>
+                ))}
+              </div>
             </div>
           ))}
         </div>
