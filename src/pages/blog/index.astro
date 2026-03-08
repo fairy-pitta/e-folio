@@ -18,10 +18,8 @@ const posts = getAllBlogPosts()
           <h1 class="text-2xl font-mono-heading mb-2">Blog</h1>
           <div class="w-16 h-px bg-[hsl(var(--accent))] mb-8"></div>
         </div>
-        <!-- 拡張されたブログクライアント -->
         <EnhancedBlogClient englishPosts={posts} client:visible mode="index" />
       </div>
-    </div>
     </div>
   </div>
   <Footer />
