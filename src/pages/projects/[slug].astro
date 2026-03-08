@@ -5,7 +5,7 @@ import { getProject, getAllProjectSlugs } from '../../lib/content';
 import { markdownToHtml } from '../../lib/markdown';
 import ScrollToTop from '../../components/scroll-to-top';
 import Navbar from '../../components/navbar';
-import Footer from '../../components/footer';
+import Footer from '../../components/Footer.astro';
 import { ArrowLeftIcon, CalendarIcon, EyeIcon, Github } from 'lucide-react';
 import '../../styles/globals.css';
 
@@ -165,5 +165,5 @@ const description = project.frontmatter.description;
       </div>
     </div>
   </ScrollToTop>
-  <Footer client:idle />
+  <Footer />
 </Layout>

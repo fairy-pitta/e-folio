@@ -7,7 +7,7 @@ import { markdownToHtml } from '../../lib/markdown';
 import BlogNewsletter from '../../components/blog-newsletter';
 import ScrollToTop from '../../components/scroll-to-top';
 import Navbar from '../../components/navbar';
-import Footer from '../../components/footer';
+import Footer from '../../components/Footer.astro';
 import { ArrowLeftIcon, CalendarIcon, ClockIcon } from 'lucide-react';
 import '../../styles/globals.css';
 
@@ -93,5 +93,5 @@ const description = post.frontmatter.excerpt;
       </div>
     </div>
   </ScrollToTop>
-  <Footer client:idle />
+  <Footer />
 </Layout>

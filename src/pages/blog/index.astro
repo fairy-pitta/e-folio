@@ -3,7 +3,7 @@ import Layout from '../../layouts/Layout.astro'
 import EnhancedBlogClient from '../../components/enhanced-blog-client'
 import ScrollToTop from '../../components/scroll-to-top'
 import Navbar from '../../components/navbar'
-import Footer from '../../components/footer'
+import Footer from '../../components/Footer.astro'
 import { getAllBlogPosts } from '../../lib/content'
 
 const posts = getAllBlogPosts()
@@ -20,7 +20,7 @@ const posts = getAllBlogPosts()
       </div>
     </div>
   </div>
-  <Footer client:idle />
+  <Footer />
   <ScrollToTop client:visible>
     <div></div>
   </ScrollToTop>

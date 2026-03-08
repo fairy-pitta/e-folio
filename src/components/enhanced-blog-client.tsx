@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useMemo, useEffect, useRef } from "react"
-import { motion } from "framer-motion"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -241,14 +240,13 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
           </div>
         ) : (
           paginatedArticles.map((article, index) => (
-            <motion.div
+            <div
               key={`${article.type}-${article.slug}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
+              className="animate-fade-in-up"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <ArticleCard article={article} isHome={isHome} />
-            </motion.div>
+            </div>
           ))
         )}
       </div>

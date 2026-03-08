@@ -6,7 +6,6 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MailIcon, CheckCircle } from "lucide-react"
-import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 
 export default function BlogNewsletter() {
@@ -43,14 +42,10 @@ export default function BlogNewsletter() {
           </p>
 
           {isSubscribed ? (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex items-center justify-center gap-2 text-gray-700 p-2 bg-gray-100 rounded-md"
-            >
+            <div className="flex items-center justify-center gap-2 text-gray-700 p-2 bg-gray-100 rounded-md animate-fade-in-up">
               <CheckCircle className="h-5 w-5" />
               <span>Thanks for subscribing!</span>
-            </motion.div>
+            </div>
           ) : (
             <form onSubmit={handleSubmit} className="max-w-md mx-auto">
               <div className="flex gap-2">
