@@ -1,12 +1,9 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { MailIcon, CheckCircle } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
 
 export default function BlogNewsletter() {
   const [email, setEmail] = useState("")
@@ -19,13 +16,11 @@ export default function BlogNewsletter() {
     setIsSubmitting(true)
     setError("")
 
-    // 送信シミュレーション
     setTimeout(() => {
       setIsSubmitting(false)
       setIsSubscribed(true)
       setEmail("")
 
-      // 3秒後に成功メッセージをリセット
       setTimeout(() => {
         setIsSubscribed(false)
       }, 3000)
@@ -33,51 +28,50 @@ export default function BlogNewsletter() {
   }
 
   return (
-    <Card className="bg-gray-50 border-gray-200">
-      <CardContent className="p-6">
-        <div className="text-center max-w-xl mx-auto">
-          <h3 className="text-xl font-bold mb-2">Stay Updated</h3>
-          <p className="text-muted-foreground mb-4">
-            Subscribe to our newsletter to receive new articles and updates directly in your inbox.
-          </p>
+    <div className="border-t pt-8">
+      <h3 className="text-xs font-mono uppercase tracking-wider text-muted-foreground mb-4">Newsletter</h3>
+      <p className="text-sm text-muted-foreground mb-4">
+        Subscribe to receive new articles directly in your inbox.
+      </p>
 
-          {isSubscribed ? (
-            <div className="flex items-center justify-center gap-2 text-gray-700 p-2 bg-gray-100 rounded-md animate-fade-in-up">
-              <CheckCircle className="h-5 w-5" />
-              <span>Thanks for subscribing!</span>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit} className="max-w-md mx-auto">
-              <div className="flex gap-2">
-                <div className="relative flex-grow">
-                  <Input
-                    type="email"
-                    placeholder="Your email"
-                    className="pl-9 bg-white"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    disabled={isSubmitting}
-                  />
-                  <MailIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                </div>
-                <Button type="submit" className="bg-gray-900 hover:bg-gray-800 text-white flex-shrink-0" disabled={isSubmitting}>
-                  {isSubmitting ? (
-                    <>
-                      <span className="h-4 w-4 border-2 border-current border-t-transparent rounded-full animate-spin mr-2" />
-                      Sending...
-                    </>
-                  ) : (
-                    "Subscribe"
-                  )}
-                </Button>
-              </div>
-
-              {error && <p className="text-sm text-red-600 mt-2">{error}</p>}
-            </form>
-          )}
+      {isSubscribed ? (
+        <div className="flex items-center gap-2 text-sm animate-fade-in-up">
+          <CheckCircle className="h-4 w-4 text-[hsl(var(--accent))]" />
+          <span>Subscribed</span>
         </div>
-      </CardContent>
-    </Card>
+      ) : (
+        <form onSubmit={handleSubmit} className="max-w-sm">
+          <div className="flex gap-2">
+            <Input
+              type="email"
+              placeholder="you@example.com"
+              className="rounded-sm text-sm"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              disabled={isSubmitting}
+            />
+            <button
+              type="submit"
+              className="inline-flex items-center gap-1.5 font-mono text-xs px-4 py-2 bg-foreground text-background hover:bg-[hsl(var(--accent))] transition-colors shrink-0 disabled:opacity-50"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <span className="h-3 w-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                  ...
+                </>
+              ) : (
+                <>
+                  <MailIcon className="h-3 w-3" />
+                  Subscribe
+                </>
+              )}
+            </button>
+          </div>
+          {error && <p className="text-xs text-destructive mt-2">{error}</p>}
+        </form>
+      )}
+    </div>
   )
 }

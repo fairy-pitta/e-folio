@@ -41,13 +41,11 @@ const imageUrl = Astro.site ? new URL(ogImagePath, Astro.site).href : new URL(og
     <link rel="icon" type="image/svg+xml" href="/new-favicon_svg.svg" />
     <link rel="apple-touch-icon" href="/apple-icon.png" />
     <link rel="manifest" href="/manifest.json" />
-    <!-- Google Fonts: Caveat 400..700 -->
+    <!-- Google Fonts: JetBrains Mono + Source Sans 3 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Preload Google Fonts stylesheet to avoid render-blocking; swap to stylesheet on load -->
-    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400..700&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap"></noscript>
-    <!-- Using Google Fonts Caveat; removed inline Noto Sans override and local TTF FontFace script -->
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Source+Sans+3:ital,wght@0,300..900;1,300..900&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=JetBrains+Mono:wght@400;500;700&family=Source+Sans+3:ital,wght@0,300..900;1,300..900&display=swap"></noscript>
   </head>
   <body>
     <slot />

@@ -1,8 +1,6 @@
 "use client"
 
 import { useState, useMemo, useEffect, useRef } from "react"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { fetchQiitaArticles, type QiitaArticle, type QiitaTag } from "../lib/qiita"
@@ -29,7 +27,6 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
   const containerRef = useRef<HTMLDivElement | null>(null)
   const postsPerPage = 5
 
-  // Qiita記事を取得（ホームでは言語選択や可視時にのみフェッチ）
   useEffect(() => {
     if (isHome) {
       const observer = new IntersectionObserver(
@@ -154,8 +151,8 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading articles...</p>
+          <div className="animate-spin rounded-full h-6 w-6 border-2 border-muted-foreground border-t-transparent mx-auto"></div>
+          <p className="mt-3 text-sm text-muted-foreground">Loading articles...</p>
         </div>
       </div>
     )
@@ -171,35 +168,43 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
       }
     >
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <p className="text-red-800">{error}</p>
+        <div className="border border-destructive/30 rounded-sm p-4 mb-6">
+          <p className="text-sm text-destructive">{error}</p>
         </div>
       )}
 
       {isHome && (
-        <h2 className="text-3xl font-bold mb-6 text-gray-900 text-center">Blog & Articles</h2>
+        <div className="mb-8">
+          <h2 className="text-2xl font-mono-heading mb-2">Blog & Articles</h2>
+          <div className="w-16 h-px bg-[hsl(var(--accent))]"></div>
+        </div>
       )}
 
-      {/* 言語フィルター */}
-      <div className="flex justify-center mb-8">
-        <div className="inline-flex items-center gap-2">
-          <Button variant={languageFilter === 'japanese' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('japanese'); setCurrentPage(1) }}>
-            日本語
-          </Button>
-          <Button variant={languageFilter === 'english' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('english'); setCurrentPage(1) }}>
-            English
-          </Button>
-          <Button variant={languageFilter === 'both' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('both'); setCurrentPage(1) }}>
-            All
-          </Button>
-        </div>
+      {/* Language filter */}
+      <div className="flex gap-4 mb-8">
+        {(['japanese', 'english', 'both'] as const).map((lang) => (
+          <button
+            key={lang}
+            onClick={() => { setLanguageFilter(lang); setCurrentPage(1) }}
+            className={`text-xs font-mono uppercase tracking-wider transition-colors ${
+              languageFilter === lang
+                ? 'text-foreground'
+                : 'text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {lang === 'japanese' ? '日本語' : lang === 'english' ? 'English' : 'All'}
+            {languageFilter === lang && (
+              <span className="block w-full h-px bg-foreground mt-1"></span>
+            )}
+          </button>
+        ))}
       </div>
 
-      {/* 検索バー（一覧のみ） */}
+      {/* Search (index only) */}
       {!isHome && (
-        <div className="max-w-md mx-auto mb-8">
+        <div className="max-w-md mb-8">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-3.5 w-3.5" />
             <Input
               type="text"
               placeholder="Search articles..."
@@ -208,42 +213,45 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
                 setSearchQuery(e.target.value)
                 setCurrentPage(1)
               }}
-              className="pl-10"
+              className="pl-9 rounded-sm text-sm"
             />
           </div>
         </div>
       )}
 
-      {/* タグフィルター（一覧のみ） */}
+      {/* Tag filter (index only) */}
       {!isHome && (
         <div className="mb-8">
-          <div className="flex flex-wrap gap-2 justify-center">
+          <div className="flex flex-wrap gap-2">
             {allTags.map((tag) => (
-              <Badge
+              <button
                 key={tag}
-                variant={selectedTags.includes(tag) ? 'default' : 'outline'}
-                className="cursor-pointer"
                 onClick={() => toggleTag(tag)}
+                className={`text-xs font-mono px-2 py-1 border rounded-sm transition-colors ${
+                  selectedTags.includes(tag)
+                    ? 'bg-foreground text-background border-foreground'
+                    : 'border-border text-muted-foreground hover:text-foreground hover:border-foreground'
+                }`}
               >
                 {tag}
-              </Badge>
+              </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* 記事一覧 */}
-      <div className="space-y-6 mb-8">
+      {/* Articles */}
+      <div className="divide-y divide-border mb-8">
         {paginatedArticles.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">該当する記事が見つかりませんでした</p>
+            <p className="text-sm text-muted-foreground">No articles found</p>
           </div>
         ) : (
           paginatedArticles.map((article, index) => (
             <div
               key={`${article.type}-${article.slug}`}
               className="animate-fade-in-up"
-              style={{ animationDelay: `${index * 100}ms` }}
+              style={{ animationDelay: `${index * 60}ms` }}
             >
               <ArticleCard article={article} isHome={isHome} />
             </div>
@@ -251,51 +259,55 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
         )}
       </div>
 
-      {/* ホーム用: 全記事へのリンク */}
+      {/* Home: link to all articles */}
       {isHome && (
-        <div className="flex justify-center mb-8">
-          <Button asChild className="bg-black text-white hover:bg-white hover:text-black border border-black transition-colors">
-            <a href="/blog" data-astro-prefetch>View all articles</a>
-          </Button>
+        <div className="pt-4 border-t">
+          <a
+            href="/blog"
+            className="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
+            data-astro-prefetch
+          >
+            All articles &rarr;
+          </a>
         </div>
       )}
 
-      {/* ページネーション */}
+      {/* Pagination */}
       {!isHome && totalPages > 1 && (
-        <div className="flex justify-center items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
+        <div className="flex items-center gap-2">
+          <button
             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
             disabled={currentPage === 1}
+            className="text-xs font-mono text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors flex items-center gap-1"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-3.5 w-3.5" />
             Prev
-          </Button>
+          </button>
 
-          <div className="flex gap-1">
+          <div className="flex gap-1 mx-2">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
+              <button
                 key={page}
-                variant={currentPage === page ? "default" : "outline"}
-                size="sm"
                 onClick={() => setCurrentPage(page)}
-                className="w-10"
+                className={`text-xs font-mono w-7 h-7 transition-colors ${
+                  currentPage === page
+                    ? 'bg-foreground text-background'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
               >
                 {page}
-              </Button>
+              </button>
             ))}
           </div>
 
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
             disabled={currentPage === totalPages}
+            className="text-xs font-mono text-muted-foreground hover:text-foreground disabled:opacity-30 transition-colors flex items-center gap-1"
           >
             Next
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+            <ChevronRight className="h-3.5 w-3.5" />
+          </button>
         </div>
       )}
     </div>

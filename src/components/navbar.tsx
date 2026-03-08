@@ -19,49 +19,31 @@ export default function Navbar() {
   const isHomePage = pathname === "/"
 
   useEffect(() => {
-    // クライアントサイドでpathnameを設定
     setPathname(window.location.pathname)
   }, [])
 
-  // セクションへのナビゲーション処理
   const navigateToSection = (sectionId: string) => {
     if (isHomePage) {
-      // ホームページにいる場合の特別処理: Aboutはトップへスクロール
       if (sectionId === "about") {
-        window.scrollTo({
-          top: 0,
-          behavior: "smooth",
-        })
+        window.scrollTo({ top: 0, behavior: "smooth" })
       } else {
-        // それ以外のセクションは要素までスクロール
         const element = document.getElementById(sectionId)
         if (element) {
-          const navbarHeight = 80 // ナビバーの高さを適宜調整
+          const navbarHeight = 64
           const elementPosition = element.getBoundingClientRect().top + window.scrollY
-          const offsetPosition = elementPosition - navbarHeight
-
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: "smooth",
-          })
+          window.scrollTo({ top: elementPosition - navbarHeight, behavior: "smooth" })
         }
       }
     } else {
-      // 他のページにいる場合
       if (sectionId === "about") {
-        // Aboutはホームのトップへ
         window.location.href = "/"
       } else {
-        // クエリパラメータ付きでホームページに移動
         window.location.href = `/?section=${sectionId}#${sectionId}`
       }
     }
-
-    // モバイルメニューを閉じる
     setIsMenuOpen(false)
   }
 
-  // ナビゲーションリンクの定義
   const navLinks: NavLink[] = [
     { name: "About", href: "#about", isSection: true, sectionId: "about" },
     { name: "Skills", href: "#skills", isSection: true, sectionId: "skills" },
@@ -71,60 +53,48 @@ export default function Navbar() {
   ]
 
   return (
-    <nav
-      className={`fixed top-0 w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-md shadow-sm`}
-    >
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+    <nav className="fixed top-0 w-full z-50 bg-background/95 border-b transition-all duration-200">
+      <div className="container mx-auto px-4 py-3 flex justify-between items-center">
         <a href="/" className="flex items-center gap-2" data-astro-prefetch>
-            <img
-              src="/new-favicon.png"
-              alt="Fairy Pitta"
-              className="h-8 w-8 object-contain"
-              width="32"
-              height="32"
-              loading="lazy"
-              decoding="async"
-            />
-            <span className="text-2xl font-normal gradient-text font-caveat">Fairy Pitta</span>
-          </a>
+          <img
+            src="/new-favicon.png"
+            alt="Fairy Pitta"
+            className="h-6 w-6 object-contain"
+            width="24"
+            height="24"
+            loading="lazy"
+            decoding="async"
+          />
+          <span className="font-caveat text-xl">Fairy Pitta</span>
+        </a>
 
         {isMobile ? (
           <>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                aria-label="Toggle menu"
-                className="bg-gray-100 hover:bg-gray-200 text-gray-900"
-              >
-                {isMenuOpen ? (
-                  <XIcon
-                    className={`h-5 w-5 text-gray-900`}
-                  />
-                ) : (
-                  <MenuIcon
-                    className={`h-5 w-5 text-gray-900`}
-                  />
-                )}
-              </Button>
-            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle menu"
+              className="h-8 w-8"
+            >
+              {isMenuOpen ? <XIcon className="h-4 w-4" /> : <MenuIcon className="h-4 w-4" />}
+            </Button>
 
             {isMenuOpen && (
-              <div className="absolute top-full left-0 right-0 bg-white/95 backdrop-blur-md shadow-md p-4 flex flex-col gap-2">
+              <div className="absolute top-full left-0 right-0 bg-background border-b p-4 flex flex-col gap-1">
                 {navLinks.map((link) => (
                   <div key={link.name}>
                     {link.isSection ? (
                       <button
                         onClick={() => navigateToSection(link.sectionId)}
-                        className="w-full text-left px-4 py-2 text-gray-900 hover:bg-gray-100 rounded-md transition-colors font-semibold"
+                        className="w-full text-left px-3 py-2 text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
                       >
                         {link.name}
                       </button>
                     ) : (
                       <a
                         href={link.href}
-                        className="px-4 py-2 text-gray-900 hover:bg-gray-100 rounded-md transition-colors block font-semibold"
+                        className="block px-3 py-2 text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
                         onClick={() => setIsMenuOpen(false)}
                         data-astro-prefetch
                       >
@@ -139,7 +109,6 @@ export default function Navbar() {
         ) : (
           <div className="flex items-center gap-6">
             {navLinks.map((link) => {
-              // 現在のページがリンク先と一致するかチェック
               const isActive =
                 (link.href === "/projects" && pathname.startsWith("/projects")) ||
                 (link.href === "/blog" && pathname.startsWith("/blog"))
@@ -149,7 +118,7 @@ export default function Navbar() {
                   <button
                     key={link.name}
                     onClick={() => navigateToSection(link.sectionId)}
-                    className={`text-sm font-medium transition-colors text-gray-900 hover:text-gray-700 font-semibold`}
+                    className="text-xs font-mono tracking-wide text-muted-foreground hover:text-foreground transition-colors uppercase"
                   >
                     {link.name}
                   </button>
@@ -160,8 +129,8 @@ export default function Navbar() {
                 <a
                   key={link.name}
                   href={link.href}
-                  className={`text-sm font-medium transition-colors ${
-                    isActive ? "text-gray-900 font-semibold" : "text-gray-900 hover:text-gray-700 font-semibold"
+                  className={`text-xs font-mono tracking-wide uppercase transition-colors ${
+                    isActive ? "text-foreground" : "text-muted-foreground hover:text-foreground"
                   }`}
                   data-astro-prefetch
                 >
