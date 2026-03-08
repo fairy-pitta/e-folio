@@ -35,7 +35,7 @@ export default function ProjectsClient({ initialProjects }: ProjectsClientProps)
   return (
     <div className="min-h-screen bg-background pt-24 md:pt-28">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl">
+        <div className="max-w-3xl mx-auto">
           <h1 className="text-2xl font-mono-heading mb-2">Projects</h1>
           <div className="w-16 h-px bg-[hsl(var(--accent))] mb-8"></div>
 

@@ -164,7 +164,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
       className={
         isHome
           ? "container mx-auto px-4 py-8"
-          : "mx-auto max-w-screen-2xl px-2 md:px-4 py-8"
+          : "max-w-3xl mx-auto py-8"
       }
     >
       {error && (

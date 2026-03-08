@@ -13,12 +13,15 @@ const posts = getAllBlogPosts()
   <Navbar client:idle />
   <div class="min-h-screen bg-background">
     <div class="pt-16 md:pt-20">
-      <div class="mx-auto max-w-screen-2xl px-2 md:px-4 py-12">
-        <h1 class="text-2xl font-mono-heading mb-2">Blog</h1>
-        <div class="w-16 h-px bg-[hsl(var(--accent))] mb-8"></div>
+      <div class="container mx-auto px-4 py-12">
+        <div class="max-w-3xl mx-auto">
+          <h1 class="text-2xl font-mono-heading mb-2">Blog</h1>
+          <div class="w-16 h-px bg-[hsl(var(--accent))] mb-8"></div>
+        </div>
         <!-- 拡張されたブログクライアント -->
         <EnhancedBlogClient englishPosts={posts} client:visible mode="index" />
       </div>
+    </div>
     </div>
   </div>
   <Footer />
