@@ -4,27 +4,11 @@ import { motion } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLinkIcon } from "lucide-react"
+import { ExternalLinkIcon, Github } from "lucide-react"
 import { useMobile } from "@/hooks/use-mobile"
-import { Github } from "lucide-react"
+import type { Project } from "@/lib/content"
 
-// 型定義を追加
-export interface ProjectFrontmatter {
-  title: string
-  description: string
-  date: string
-  coverImage: string
-  tags: string[]
-  liveUrl: string
-  githubUrl: string
-  gallery?: string[]
-}
-
-export interface Project {
-  slug: string
-  frontmatter: ProjectFrontmatter
-  content: string
-}
+export type { Project }
 
 interface ProjectsProps {
   projects: Project[]

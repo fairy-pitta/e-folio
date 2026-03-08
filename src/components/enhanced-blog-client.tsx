@@ -2,38 +2,13 @@
 
 import { useState, useMemo, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { ExternalLinkIcon, Heart, Search, Calendar, User, ChevronLeft, ChevronRight } from "lucide-react"
-import { fetchQiitaArticles, QiitaArticle } from "../lib/qiita"
-
-interface BlogPost {
-  slug: string
-  frontmatter: {
-    title: string
-    date: string
-    excerpt: string
-    coverImage: string
-    readTime: string
-    tags: string[]
-  }
-}
-
-interface UnifiedArticle {
-  type: 'blog' | 'qiita'
-  title: string
-  date: string
-  excerpt: string
-  readTime: string
-  tags: string[]
-  slug: string
-  language: 'english' | 'japanese'
-  url: string
-  likes?: number
-  coverImage?: string
-}
+import { Search, ChevronLeft, ChevronRight } from "lucide-react"
+import { fetchQiitaArticles, type QiitaArticle, type QiitaTag } from "../lib/qiita"
+import type { BlogPost } from "@/lib/content"
+import ArticleCard, { type UnifiedArticle } from "./article-card"
 
 type LanguageFilter = 'japanese' | 'english' | 'both'
 
@@ -54,15 +29,9 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
   const [inView, setInView] = useState(false)
   const containerRef = useRef<HTMLDivElement | null>(null)
   const postsPerPage = 5
-  const showPagination = !isHome
-  // 一覧ページでもサムネイル非表示の要望に合わせて画像は常に非表示
-  const showSearch = !isHome
-  const showTagFilter = !isHome
-  const showLanguageFilter = true
 
   // Qiita記事を取得（ホームでは言語選択や可視時にのみフェッチ）
   useEffect(() => {
-    // IntersectionObserverで可視判定（ホームのみ）
     if (isHome) {
       const observer = new IntersectionObserver(
         (entries) => {
@@ -88,19 +57,17 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
     }
 
     if (isHome) {
-      // ホームでは、日本語表示を選択し、かつコンポーネントが可視になった場合のみQiitaをフェッチ
       if ((languageFilter === 'japanese' || languageFilter === 'both') && inView) {
         loadQiitaArticles()
       }
     } else {
-      // 一覧ページでは即座にフェッチ
       loadQiitaArticles()
     }
   }, [isHome, languageFilter, inView])
+
   const getUnifiedArticles = (): UnifiedArticle[] => {
     const allArticles: UnifiedArticle[] = []
 
-    // 英語記事を追加
     if (languageFilter === 'english' || languageFilter === 'both') {
       englishPosts.forEach(post => {
         allArticles.push({
@@ -118,7 +85,6 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
       })
     }
 
-    // Qiita記事（日本語）を追加
     if (languageFilter === 'japanese' || languageFilter === 'both') {
       qiitaArticles.forEach((article: QiitaArticle) => {
         allArticles.push({
@@ -127,7 +93,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
           date: article.created_at,
           excerpt: `${article.title.substring(0, 100)}...`,
           readTime: '5分',
-          tags: article.tags.map((tag: any) => tag.name),
+          tags: article.tags.map((tag: QiitaTag) => tag.name),
           slug: article.id,
           language: 'japanese',
           url: article.url,
@@ -136,30 +102,23 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
       })
     }
 
-    // 日付順でソート（新しい順）
     return allArticles.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   }
 
-  // 全タグを取得
   const allTags = useMemo(() => {
     const tagSet = new Set<string>()
-    
     englishPosts.forEach(post => {
       post.frontmatter.tags.forEach(tag => tagSet.add(tag))
     })
-    
     qiitaArticles.forEach((article: QiitaArticle) => {
-      article.tags.forEach((articleTag: any) => tagSet.add(articleTag.name))
+      article.tags.forEach((articleTag: QiitaTag) => tagSet.add(articleTag.name))
     })
-    
     return Array.from(tagSet).sort()
   }, [englishPosts, qiitaArticles])
 
-  // フィルタリングされた記事を取得
   const filteredArticles = useMemo(() => {
     let articles = getUnifiedArticles()
 
-    // 検索クエリでフィルタリング
     if (searchQuery) {
       articles = articles.filter(article =>
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -168,7 +127,6 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
       )
     }
 
-    // タグでフィルタリング
     if (selectedTags.length > 0) {
       articles = articles.filter(article =>
         selectedTags.some(selectedTag => article.tags.includes(selectedTag))
@@ -178,14 +136,12 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
     return articles
   }, [englishPosts, qiitaArticles, searchQuery, selectedTags, languageFilter])
 
-  // ページネーション
   const totalPages = Math.ceil(filteredArticles.length / postsPerPage)
   const paginatedArticles = filteredArticles.slice(
     (currentPage - 1) * postsPerPage,
     currentPage * postsPerPage
   )
 
-  // タグの選択/解除
   const toggleTag = (tag: string) => {
     setSelectedTags(prev =>
       prev.includes(tag)
@@ -194,7 +150,6 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
     )
     setCurrentPage(1)
   }
-
 
   if (loading) {
     return (
@@ -216,39 +171,33 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
           : "mx-auto max-w-screen-2xl px-2 md:px-4 py-8"
       }
     >
-      {/* ヘッダー削除（要望により非表示） */}
-
-      {/* エラー表示 */}
       {error && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
           <p className="text-red-800">{error}</p>
         </div>
       )}
 
-      {/* ホーム見出しを言語トグルの上に配置して中央揃え */}
       {isHome && (
         <h2 className="text-3xl font-bold mb-6 text-gray-900 text-center">Blog & Articles</h2>
       )}
 
-      {/* 言語フィルター（ホーム/一覧ともに表示） */}
-      {showLanguageFilter && (
-        <div className="flex justify-center mb-8">
-          <div className="inline-flex items-center gap-2">
-            <Button variant={languageFilter === 'japanese' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('japanese'); setCurrentPage(1) }}>
-              日本語
-            </Button>
-            <Button variant={languageFilter === 'english' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('english'); setCurrentPage(1) }}>
-              English
-            </Button>
-            <Button variant={languageFilter === 'both' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('both'); setCurrentPage(1) }}>
-              All
-            </Button>
-          </div>
+      {/* 言語フィルター */}
+      <div className="flex justify-center mb-8">
+        <div className="inline-flex items-center gap-2">
+          <Button variant={languageFilter === 'japanese' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('japanese'); setCurrentPage(1) }}>
+            日本語
+          </Button>
+          <Button variant={languageFilter === 'english' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('english'); setCurrentPage(1) }}>
+            English
+          </Button>
+          <Button variant={languageFilter === 'both' ? 'default' : 'outline'} size="sm" onClick={() => { setLanguageFilter('both'); setCurrentPage(1) }}>
+            All
+          </Button>
         </div>
-      )}
+      </div>
 
-      {/* 検索バー（一覧のみ表示） */}
-      {showSearch && (
+      {/* 検索バー（一覧のみ） */}
+      {!isHome && (
         <div className="max-w-md mx-auto mb-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -266,8 +215,8 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
         </div>
       )}
 
-      {/* タグフィルター（一覧のみ表示） */}
-      {showTagFilter && (
+      {/* タグフィルター（一覧のみ） */}
+      {!isHome && (
         <div className="mb-8">
           <div className="flex flex-wrap gap-2 justify-center">
             {allTags.map((tag) => (
@@ -298,93 +247,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
             >
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row gap-3 md:gap-4">
-                    {/* 画像は非表示 */}
-                    
-                    <div className="flex-1">
-                      {/* タイトル行に日付を表示（ホームのみ） */}
-                      {isHome ? (
-                        <h3 className="text-xl font-semibold mb-1 font-source-sans flex items-center justify-between">
-                          <a
-                            href={article.url}
-                            target={article.type === 'qiita' ? '_blank' : '_self'}
-                            rel={article.type === 'qiita' ? 'noopener noreferrer' : undefined}
-                            className="flex items-center gap-2 hover:text-blue-600 transition-colors"
-                            {...(article.type === 'blog' ? { 'data-astro-prefetch': true } : {})}
-                          >
-                            {article.title}
-                            <Badge variant="outline" className="text-xs px-2 py-0.5">
-                              {article.type === 'blog' ? 'Blog' : 'Qiita'}
-                            </Badge>
-                            {article.type === 'qiita' && <ExternalLinkIcon className="h-4 w-4" />}
-                          </a>
-                          <span className="flex items-center gap-1 text-sm text-gray-500">
-                            <Calendar className="h-4 w-4" />
-                            {new Date(article.date).toLocaleDateString('ja-JP')}
-                          </span>
-                        </h3>
-                      ) : (
-                        <>
-                          <h3 className="text-xl font-semibold mb-2 hover:text-blue-600 transition-colors font-source-sans">
-                            <a
-                              href={article.url}
-                              target={article.type === 'qiita' ? '_blank' : '_self'}
-                              rel={article.type === 'qiita' ? 'noopener noreferrer' : undefined}
-                              className="flex items-center gap-2"
-                              {...(article.type === 'blog' ? { 'data-astro-prefetch': true } : {})}
-                            >
-                              {article.title}
-                              <Badge variant="outline" className="text-xs px-2 py-0.5">
-                                {article.type === 'blog' ? 'Blog' : 'Qiita'}
-                              </Badge>
-                              {article.type === 'qiita' && <ExternalLinkIcon className="h-4 w-4" />}
-                            </a>
-                          </h3>
-                        </>
-                      )}
-                      
-                      {/* 抜粋（一覧のみ表示、ホームでは非表示） */}
-                      {!isHome && (
-                        <p className="text-gray-600 mb-3 line-clamp-2">{article.excerpt}</p>
-                      )}
-                      
-                      {!isHome && (
-                        <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                          {/* 所要時間は一覧のみ表示 */}
-                          <div className="flex items-center gap-1">
-                            <User className="h-4 w-4" />
-                            {article.readTime}
-                          </div>
-                          {article.likes !== undefined && (
-                            <div className="flex items-center gap-1">
-                              <Heart className="h-4 w-4" />
-                              {article.likes}
-                            </div>
-                          )}
-                          {/* 日付は右端に配置 */}
-                          <div className="flex items-center gap-1 ml-auto">
-                            <Calendar className="h-4 w-4" />
-                            {new Date(article.date).toLocaleDateString('ja-JP')}
-                          </div>
-                        </div>
-                      )}
-                      {/* タグチップ（一覧のみ表示、ホームでは非表示） */}
-                      {!isHome && (
-                        <div className="flex flex-wrap gap-2">
-                          {article.tags.slice(0, 5).map((tag) => (
-                            <Badge key={tag} variant="outline" className="text-xs">
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  {/* タイプバッジはタイトル横に統合済み */}
-                </CardContent>
-              </Card>
+              <ArticleCard article={article} isHome={isHome} />
             </motion.div>
           ))
         )}
@@ -400,7 +263,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
       )}
 
       {/* ページネーション */}
-      {showPagination && totalPages > 1 && (
+      {!isHome && totalPages > 1 && (
         <div className="flex justify-center items-center gap-2">
           <Button
             variant="outline"
@@ -411,7 +274,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
             <ChevronLeft className="h-4 w-4" />
             Prev
           </Button>
-          
+
           <div className="flex gap-1">
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <Button
@@ -425,7 +288,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
               </Button>
             ))}
           </div>
-          
+
           <Button
             variant="outline"
             size="sm"
