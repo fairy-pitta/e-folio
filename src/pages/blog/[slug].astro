@@ -27,9 +27,10 @@ if (!post) {
 const contentHtml = await markdownToHtml(post.content);
 const title = `${post.frontmatter.title} | SingBirds`;
 const description = post.frontmatter.excerpt;
+const ogImage = `/og/blog-${slug}.png`;
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} ogImage={ogImage}>
   <Navbar client:idle />
   <ScrollToTop client:visible>
     <div class="min-h-screen bg-background">

@@ -26,9 +26,10 @@ if (!project) {
 const contentHtml = await markdownToHtml(project.content);
 const title = `${project.frontmatter.title} | SingBirds`;
 const description = project.frontmatter.description;
+const ogImage = `/og/project-${slug}.png`;
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} ogImage={ogImage}>
   <Navbar client:idle />
   <ScrollToTop client:visible>
     <div class="min-h-screen bg-background">
