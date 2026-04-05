@@ -1,44 +1,51 @@
 ---
-title: "Surviving on 3,000 GitHub Actions Minutes per Month"
+title: "How I Blew Through 3,000 GitHub Actions Minutes in Three Weeks"
 date: "March 31, 2026"
-excerpt: "Our team nearly burned through the entire monthly Actions budget in three weeks. Here's how we optimized CI to stay under the limit."
+excerpt: "I burned through 21 PRs in a single day and killed the CI budget. Here's what I learned about GitHub Actions billing the hard way."
 coverImage: "/og/blog-github-actions-minutes-budget.png"
-readTime: "6 min read"
+readTime: "7 min read"
 tags: ["CI/CD", "GitHub Actions", "DevOps", "Performance"]
 ---
 
-## The Budget
+## 3,000 Minutes Sounds Like a Lot
 
-GitHub Teams plan: 3,000 Actions minutes per month. Two active repositories (a Django/Vue accounting app and a Next.js stress check app). Six to eight developers submitting PRs daily. CodeRabbit running automated reviews on every PR.
+It isn't.
 
-By day 20, we'd used 2,843 minutes. Ten days left. I started watching the counter like a stock ticker.
+Here's what I was working with: GitHub Team plan, 3,000 Actions minutes per month, a couple of production apps with CI pipelines, and CodeRabbit running automated reviews on every PR. For context, GitHub Free gives you 2,000 minutes, Team/Pro gives you 3,000, and Enterprise gets a cushy 50,000. I was firmly in the "should be enough for a small operation" tier.
 
-## Where the Minutes Went
+By day 20, I'd burned through 2,843 minutes. Ten days left in the billing cycle. I started refreshing the usage page like it was a stock ticker during a crash.
 
-Each push triggered:
-1. Backend linter (flake8/ruff)
+## The Death-by-a-Thousand-Cuts Pipeline
+
+Every push kicked off the full circus:
+
+1. Backend linter (ruff)
 2. Frontend linter (ESLint, later Biome)
 3. Backend tests
 4. Frontend tests
 5. CodeRabbit review
 
-These ran **sequentially** in a single workflow. A typical run: 3–4 minutes. With 8 developers pushing multiple commits per PR, we were burning 100+ minutes per day.
+All **sequential**. One big workflow, step after step. A typical run chewed through 3-4 minutes. Doesn't sound bad until you realize that every push to a PR branch triggers the whole thing. Push a typo fix? 4 minutes. Push the actual fix? 4 more minutes. Force-push because you forgot to stage a file? That's another 4.
 
-The worst offender: **me**. In one particularly productive day, I submitted 21 PRs and single-handedly exhausted the remaining minutes.
+Across multiple PRs a day, it adds up terrifyingly fast.
 
-## Optimization 1: Parallelize Linters
+And the worst offender? Me. I had one of those days where everything clicked and I was shipping like a maniac. **21 PRs in a single day.** I felt like a productivity god right up until I checked the usage dashboard and realized I'd personally murdered the remaining budget.
 
-The simplest win. Backend and frontend linters have zero dependencies on each other.
+That was the "oh no" moment.
+
+## Split the Linters, Save Your Sanity (But Not Your Minutes)
+
+First thing I tried: run backend and frontend linters in parallel instead of sequentially.
 
 ```yaml
-# Before: sequential
+# Before: one slow conga line
 jobs:
   lint:
     steps:
       - run: ruff check .
       - run: npm run lint
 
-# After: parallel jobs
+# After: two jobs running at the same time
 jobs:
   lint-backend:
     runs-on: ubuntu-latest
@@ -50,40 +57,52 @@ jobs:
       - run: npm run lint
 ```
 
-Wall-clock time dropped by ~40%. But **minutes consumed stayed the same** — parallel jobs still bill separately. What it *did* help was developer experience: faster feedback loops meant fewer "push and pray" cycles.
+Wall-clock time dropped ~40%. Felt great. Then I realized: **parallel jobs still bill separately.** Two jobs running for 2 minutes each = 4 billed minutes, same as one job running for 4 minutes. GitHub doesn't care about your clever concurrency — they bill per runner-minute.
 
-My colleague pointed this out immediately: "Parallel doesn't save minutes, does it?" Correct. But it reduces the number of retry pushes, which indirectly saves minutes.
+So why bother? Because faster feedback means developers don't context-switch as hard, which means fewer "let me push another fix" commits, which *indirectly* saves minutes. It's a second-order effect, but it's real.
 
-## Optimization 2: Shallow Clone
+## Stop Cloning the Entire Universe
+
+This one's almost embarrassingly simple:
 
 ```yaml
-# Before
+# Before: downloads your entire git history
 - uses: actions/checkout@v4
 
-# After
+# After: just the last 10 commits
 - uses: actions/checkout@v4
   with:
     fetch-depth: 10
 ```
 
-`fetch-depth: 0` (full history) was unnecessary for linting and testing. Switching to `fetch-depth: 10` saved a few seconds per run. Small per run, but it adds up across hundreds of runs.
+The default `actions/checkout` doesn't clone full history anymore (it defaults to `fetch-depth: 1`), but if you've ever set `fetch-depth: 0` for some reason and forgotten about it, you're downloading every commit since the dawn of your repo on every single run. For linting and tests, you don't need any of that. A shallow clone with `fetch-depth: 1` or `fetch-depth: 10` is fine. Saves a few seconds per run, and across hundreds of runs a month, those seconds aren't nothing.
 
-## Optimization 3: Don't Cache What Can't Be Cached
+## The npm ci Cache Trap (A Classic Footgun)
 
-I spent three hours trying to make npm caching work before discovering the issue: **`npm ci` deletes `node_modules` before installing**, which defeats the purpose of caching `node_modules`.
+This one cost me three hours of my life that I'll never get back.
 
-The cache action was downloading cached packages, only for `npm ci` to delete them and reinstall from scratch. We were paying for the cache download time *and* the full install time.
+I set up `actions/cache` to cache `node_modules`, feeling very clever about it. Runs kept taking the same amount of time. I added debug logging. I verified the cache was being saved and restored. Everything looked right, but installs were still slow.
 
-Options:
-- Switch to `npm install` (loses the deterministic install guarantee)
-- Cache the npm global cache directory instead of `node_modules`
-- Accept the install time
+Then I actually read what `npm ci` does: **it deletes `node_modules` before installing.** Every. Single. Time. That's the whole point of `npm ci` — it guarantees a clean, deterministic install from your lockfile. Which is great for reproducibility and terrible for caching.
 
-We went with caching the global npm cache, which at least avoids re-downloading packages from the registry.
+So my workflow was: download cached `node_modules` (30 seconds) → `npm ci` immediately deletes it → reinstall everything from scratch (60 seconds). I was *adding* time by caching.
 
-## Optimization 4: Pre-commit Hooks
+This is a well-known footgun, by the way. The `actions/setup-node` action has a built-in `cache` parameter that handles this correctly — it caches the global npm/yarn/pnpm store, not `node_modules`. So the packages don't need to be re-downloaded from the registry, but `npm ci` can still do its clean install thing:
 
-Shift linting left. If developers run linters locally before pushing, the CI linter becomes a safety net rather than the primary check.
+```yaml
+- uses: actions/setup-node@v4
+  with:
+    node-version: 20
+    cache: 'npm'
+```
+
+If you're using pnpm, it's even simpler — `pnpm/action-setup` plus `cache: 'pnpm'` in `setup-node` handles everything. pnpm's content-addressable store plays much nicer with caching than npm's flat `node_modules` anyway.
+
+**Hot take**: if you're still on npm in CI and you care about speed, consider switching to pnpm. The install times aren't *dramatically* different on a warm cache, but pnpm's store-based architecture means cache hits are more effective. And if you're running a monorepo, Turborepo's remote caching can skip entire build steps that haven't changed — that's where the real savings are.
+
+## Lint Before You Push, You Animals
+
+The cheapest CI minute is the one you never use. Pre-commit hooks catch lint errors before they ever hit the pipeline.
 
 ```yaml
 # .pre-commit-config.yaml
@@ -101,23 +120,27 @@ repos:
         types: [ts, tsx, vue]
 ```
 
-This doesn't eliminate CI linting (someone will inevitably skip pre-commit), but it reduces the number of "fix lint error" follow-up commits.
+Does this eliminate CI linting? No. Someone's always going to `--no-verify` their way past hooks. But it cuts down on the "oops, forgot a trailing comma" follow-up commits, and those add up fast.
 
-## Optimization 5: Strategic CI Suspension
+## The Panic Button
 
-When we were at 2,950/3,000 minutes with a week left, I made the call to temporarily disable linters in CI for the less active repository. Not ideal, but pragmatic. Pre-commit hooks were still running locally.
+When I hit 2,950 out of 3,000 minutes with a week left in the cycle, I did what any responsible engineer would do: I panicked. Then I disabled the CI linters on the less active repo. Not proud of it, but pre-commit hooks were still running locally, so it wasn't *total* anarchy.
 
-## What I'd Do Differently
+Sometimes pragmatism beats purity.
 
-**Start with a minutes budget from day one.** We didn't think about minutes until we were almost out. If I'd tracked usage from week one, we'd have optimized earlier.
+## What I'd Actually Do Next Time
 
-**One commit = one minute** is a useful mental model. If your team makes 100 commits per day across all PRs, that's 100 minutes. At that rate, 3,000 minutes lasts exactly 30 days — with zero margin.
+**Track minutes from day one.** I didn't even know there was a limit until I was almost over it. GitHub buries the usage page under Settings → Billing → Actions, and it doesn't exactly send you push notifications at 80%.
 
-**Consider self-hosted runners** for high-volume repositories. They don't count against the minutes budget. The overhead of maintaining them might be worth it if you're consistently hitting limits.
+**Budget it like money.** A useful mental model: one push ≈ one minute. If you're making 100 pushes a day across all PRs, that's 100 minutes. At that rate, 3,000 minutes lasts exactly 30 days — with zero margin for a "21 PRs in one day" incident.
 
-## The Spreadsheet
+**Know your OS multipliers.** All my runners were Linux (`ubuntu-latest`), which is the cheapest at $0.008/min on the standard 2-core runner. Windows costs about 2x more. macOS? Roughly **10x** the cost of Linux. If you've got a macOS build in your pipeline, that's where your budget is actually going. One 10-minute macOS job eats as many dollars as a 100-minute Linux job.
 
-I ended up tracking daily usage manually:
+**Look at runner alternatives.** Self-hosted runners don't count against your minutes at all — you just pay for your own compute. If you're consistently bumping against limits, that's the move. There are also managed alternatives like [Depot](https://depot.dev/) (claims 30% faster CPUs at half the cost of GitHub runners) and [Namespace](https://namespace.so/) (fancy AMD EPYC and Apple M4 runners with built-in caching). BuildJet used to be the go-to recommendation here, but they shut down — so it goes.
+
+## The Spreadsheet of Shame
+
+I ended up tracking usage manually because apparently I enjoy suffering:
 
 | Date | Used | Remaining | Days Left |
 |------|------|-----------|-----------|
@@ -127,10 +150,12 @@ I ended up tracking daily usage manually:
 | Jan 21 | 2,454 | 546 | 10 |
 | Jan 29 | 2,950 | 50 | 2 |
 
-The pattern is obvious in retrospect: usage accelerated as more developers joined and PR volume increased. Linear extrapolation would have predicted the crunch two weeks earlier.
+See that jump between Jan 19 and Jan 21? That's the 21-PR day. Two days, 354 minutes. Just me, vibing, destroying the budget.
 
-## Takeaway
+The trend was obvious in hindsight. If I'd been plotting this from week one, I'd have seen the crunch coming two weeks early. But nobody ever thinks they need a spreadsheet until they need a spreadsheet.
 
-3,000 minutes sounds like a lot until it isn't. The main levers are: parallelize for speed (not savings), cache correctly, lint locally, and track usage before it becomes a crisis.
+## The Moral
 
-And maybe don't submit 21 PRs in one day.
+3,000 minutes sounds generous until you actually use CI the way it's meant to be used. The real levers are: cache *correctly* (not the `npm ci` way), lint locally, track your usage before it becomes an emergency, and maybe think twice before submitting 21 PRs in one day.
+
+Actually, no. Ship the 21 PRs. Just make sure you've optimized first.
