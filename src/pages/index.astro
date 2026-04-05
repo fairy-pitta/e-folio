@@ -3,7 +3,9 @@ import Layout from '../layouts/Layout.astro'
 import Projects from '../components/projects'
 import EnhancedBlogClient from '../components/enhanced-blog-client'
 import HeroAstro from '../components/Hero.astro'
+import About from '../components/about'
 import Skills from '../components/skills'
+import Experience from '../components/experience'
 import Contact from '../components/contact'
 import Navbar from '../components/navbar'
 import { getAllProjects, getAllBlogPosts } from '../lib/content'
@@ -16,7 +18,9 @@ const englishPosts = getAllBlogPosts()
 <Layout title="Fairy Pitta">
   <Navbar client:idle />
   <HeroAstro />
+  <About client:visible />
   <Skills client:visible />
+  <Experience client:visible />
   <section id="projects">
     <Projects client:visible projects={projects} showTags={false} />
   </section>

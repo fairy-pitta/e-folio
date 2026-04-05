@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { MenuIcon, XIcon } from "lucide-react"
 import { useMobile } from "@/hooks/use-mobile"
@@ -17,29 +17,51 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [pathname, setPathname] = useState("")
   const isHomePage = pathname === "/"
+  const menuRef = useRef<HTMLDivElement>(null)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     setPathname(window.location.pathname)
   }, [])
 
+  const closeMenu = useCallback(() => {
+    setIsMenuOpen(false)
+    menuButtonRef.current?.focus()
+  }, [])
+
+  // Close on Escape key
+  useEffect(() => {
+    if (!isMenuOpen) return
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeMenu()
+    }
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [isMenuOpen, closeMenu])
+
+  // Close on click outside
+  useEffect(() => {
+    if (!isMenuOpen) return
+    const handleClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node) &&
+          menuButtonRef.current && !menuButtonRef.current.contains(e.target as Node)) {
+        closeMenu()
+      }
+    }
+    document.addEventListener("mousedown", handleClick)
+    return () => document.removeEventListener("mousedown", handleClick)
+  }, [isMenuOpen, closeMenu])
+
   const navigateToSection = (sectionId: string) => {
     if (isHomePage) {
-      if (sectionId === "about") {
-        window.scrollTo({ top: 0, behavior: "smooth" })
-      } else {
-        const element = document.getElementById(sectionId)
-        if (element) {
-          const navbarHeight = 64
-          const elementPosition = element.getBoundingClientRect().top + window.scrollY
-          window.scrollTo({ top: elementPosition - navbarHeight, behavior: "smooth" })
-        }
+      const element = document.getElementById(sectionId)
+      if (element) {
+        const navbarHeight = 64
+        const elementPosition = element.getBoundingClientRect().top + window.scrollY
+        window.scrollTo({ top: elementPosition - navbarHeight, behavior: "smooth" })
       }
     } else {
-      if (sectionId === "about") {
-        window.location.href = "/"
-      } else {
-        window.location.href = `/?section=${sectionId}#${sectionId}`
-      }
+      window.location.href = `/?section=${sectionId}#${sectionId}`
     }
     setIsMenuOpen(false)
   }
@@ -47,6 +69,7 @@ export default function Navbar() {
   const navLinks: NavLink[] = [
     { name: "About", href: "#about", isSection: true, sectionId: "about" },
     { name: "Skills", href: "#skills", isSection: true, sectionId: "skills" },
+    { name: "Experience", href: "#experience", isSection: true, sectionId: "experience" },
     { name: "Projects", href: "/projects", isSection: false, sectionId: "" },
     { name: "Blog", href: "/blog", isSection: false, sectionId: "" },
     { name: "Contact", href: "#contact", isSection: true, sectionId: "contact" },
@@ -71,31 +94,41 @@ export default function Navbar() {
         {isMobile ? (
           <>
             <Button
+              ref={menuButtonRef}
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Toggle menu"
+              aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={isMenuOpen}
+              aria-controls="mobile-nav-menu"
               className="h-8 w-8"
             >
               {isMenuOpen ? <XIcon className="h-4 w-4" /> : <MenuIcon className="h-4 w-4" />}
             </Button>
 
             {isMenuOpen && (
-              <div className="absolute top-full left-0 right-0 bg-background border-b p-4 flex flex-col gap-1">
+              <div
+                ref={menuRef}
+                id="mobile-nav-menu"
+                role="menu"
+                className="absolute top-full left-0 right-0 bg-background border-b p-4 flex flex-col gap-1"
+              >
                 {navLinks.map((link) => (
                   <div key={link.name}>
                     {link.isSection ? (
                       <button
-                        onClick={() => navigateToSection(link.sectionId)}
+                        role="menuitem"
+                        onClick={() => { navigateToSection(link.sectionId); closeMenu(); }}
                         className="w-full text-left px-3 py-2 text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
                       >
                         {link.name}
                       </button>
                     ) : (
                       <a
+                        role="menuitem"
                         href={link.href}
                         className="block px-3 py-2 text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
-                        onClick={() => setIsMenuOpen(false)}
+                        onClick={closeMenu}
                         data-astro-prefetch
                       >
                         {link.name}

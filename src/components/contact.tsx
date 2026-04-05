@@ -12,6 +12,18 @@ interface ContactFormState {
   message: string
 }
 
+function InlineError({ message, onDismiss }: { message: string; onDismiss: () => void }) {
+  return (
+    <div className="flex items-center gap-2 p-3 border border-destructive/30 bg-destructive/5 rounded-sm text-sm animate-fade-in-up">
+      <span className="text-destructive shrink-0">!</span>
+      <span className="text-destructive/90 flex-1">{message}</span>
+      <button onClick={onDismiss} className="text-muted-foreground hover:text-foreground text-xs shrink-0" aria-label="Dismiss">
+        &times;
+      </button>
+    </div>
+  )
+}
+
 export default function Contact() {
   const [formState, setFormState] = useState<ContactFormState>({
     name: "",
@@ -21,9 +33,12 @@ export default function Contact() {
   const [isContactSubmitting, setIsContactSubmitting] = useState(false)
   const [isContactSubmitted, setIsContactSubmitted] = useState(false)
 
+  const [contactError, setContactError] = useState<string | null>(null)
+
   const [newsletterEmail, setNewsletterEmail] = useState("")
   const [isNewsletterSubmitting, setIsNewsletterSubmitting] = useState(false)
   const [isSubscribed, setIsSubscribed] = useState(false)
+  const [newsletterError, setNewsletterError] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState({
@@ -36,6 +51,7 @@ export default function Contact() {
     e.preventDefault()
     setIsContactSubmitting(true)
 
+    setContactError(null)
     try {
       const response = await fetch("https://resend-worker.shuna120700.workers.dev/api/contact", {
         method: "POST",
@@ -53,7 +69,7 @@ export default function Contact() {
       }, 5000)
     } catch (error) {
       console.error(error)
-      alert("Failed to send message. Please try again later.")
+      setContactError("Failed to send message. Please try again later.")
     } finally {
       setIsContactSubmitting(false)
     }
@@ -85,7 +101,7 @@ export default function Contact() {
       }, 3000)
     } catch (error) {
       console.error(error)
-      alert("Failed to subscribe. Please try again later.")
+      setNewsletterError("Failed to subscribe. Please try again later.")
     } finally {
       setIsNewsletterSubmitting(false)
     }
@@ -120,6 +136,9 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
+                {contactError && (
+                  <InlineError message={contactError} onDismiss={() => setContactError(null)} />
+                )}
                 <div>
                   <label htmlFor="name" className="text-xs font-mono block mb-1.5 text-muted-foreground">
                     Name
@@ -204,6 +223,9 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="space-y-4">
+                {newsletterError && (
+                  <InlineError message={newsletterError} onDismiss={() => setNewsletterError(null)} />
+                )}
                 <p className="text-sm text-muted-foreground">
                   New articles, project updates, and environmental tech insights.
                 </p>

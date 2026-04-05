@@ -2,47 +2,85 @@
 ---
 <section class="min-h-[85vh] flex items-center">
   <div class="container mx-auto px-4">
-    <div class="max-w-2xl">
-      <p class="font-mono text-sm tracking-wide text-muted-foreground mb-6">Software Engineer</p>
-      <h1 class="text-6xl md:text-8xl font-caveat mb-4 leading-tight">
-        Fairy Pitta
-      </h1>
-      <div class="w-16 h-px bg-[hsl(var(--accent))] mb-8"></div>
-      <p class="text-lg text-muted-foreground mb-10 max-w-xl leading-relaxed">
-        Building tools for education and nature through clean, purposeful code.
-      </p>
-      <div class="flex gap-4 mb-10">
-        <a
-          href="#projects"
-          class="inline-flex items-center font-mono text-sm px-5 py-2.5 bg-foreground text-background hover:bg-[hsl(var(--accent))] transition-colors"
-        >
-          Projects
-        </a>
-        <a
-          href="#contact"
-          class="inline-flex items-center font-mono text-sm px-5 py-2.5 border border-foreground hover:border-[hsl(var(--accent))] hover:text-[hsl(var(--accent))] transition-colors"
-        >
-          Contact
-        </a>
+    <div class="flex items-center justify-between gap-8">
+      <!-- Left: text content -->
+      <div class="max-w-2xl">
+        <p class="font-mono text-sm tracking-wide text-muted-foreground mb-6">Software Engineer</p>
+        <h1 class="text-6xl md:text-8xl font-caveat mb-4 leading-tight">
+          Fairy Pitta
+        </h1>
+        <div class="w-16 h-px bg-[hsl(var(--accent))] mb-8"></div>
+        <p class="text-lg text-muted-foreground mb-10 max-w-xl leading-relaxed">
+          Building tools for education and nature through clean, purposeful code.
+        </p>
+        <div class="flex gap-4 mb-10">
+          <a
+            href="#projects"
+            class="inline-flex items-center font-mono text-sm px-5 py-2.5 bg-foreground text-background hover:bg-[hsl(var(--accent))] transition-colors"
+          >
+            Projects
+          </a>
+          <a
+            href="#contact"
+            class="inline-flex items-center font-mono text-sm px-5 py-2.5 border border-foreground hover:border-[hsl(var(--accent))] hover:text-[hsl(var(--accent))] transition-colors"
+          >
+            Contact
+          </a>
+        </div>
+        <div class="flex gap-5">
+          <a
+            href="https://github.com/fairy-pitta"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
+          >
+            GitHub
+          </a>
+          <a
+            href="https://qiita.com/Pitta"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Qiita
+          </a>
+        </div>
       </div>
-      <div class="flex gap-5">
-        <a
-          href="https://github.com/fairy-pitta"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
-        >
-          GitHub
-        </a>
-        <a
-          href="https://qiita.com/Pitta"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-sm font-mono text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Qiita
-        </a>
+
+      <!-- Right: sound wave animation -->
+      <div class="hidden md:flex items-center gap-[5px] h-64 opacity-[0.12]" aria-hidden="true">
+        <div class="wave-bar" style="--min:20px;--max:80px;--dur:0.8s;--del:0s"></div>
+        <div class="wave-bar" style="--min:30px;--max:120px;--dur:0.6s;--del:0.1s"></div>
+        <div class="wave-bar" style="--min:15px;--max:60px;--dur:0.9s;--del:0.2s"></div>
+        <div class="wave-bar" style="--min:40px;--max:140px;--dur:0.5s;--del:0.05s"></div>
+        <div class="wave-bar" style="--min:20px;--max:90px;--dur:0.7s;--del:0.15s"></div>
+        <div class="wave-bar" style="--min:35px;--max:110px;--dur:0.65s;--del:0.25s"></div>
+        <div class="wave-bar" style="--min:15px;--max:70px;--dur:0.85s;--del:0.1s"></div>
+        <div class="wave-bar" style="--min:25px;--max:100px;--dur:0.55s;--del:0.2s"></div>
+        <div class="wave-bar" style="--min:40px;--max:130px;--dur:0.5s;--del:0.08s"></div>
+        <div class="wave-bar" style="--min:20px;--max:50px;--dur:0.75s;--del:0.3s"></div>
+        <div class="wave-bar" style="--min:30px;--max:85px;--dur:0.6s;--del:0.05s"></div>
+        <div class="wave-bar" style="--min:15px;--max:65px;--dur:0.9s;--del:0.15s"></div>
+        <div class="wave-bar" style="--min:25px;--max:95px;--dur:0.7s;--del:0.25s"></div>
+        <div class="wave-bar" style="--min:35px;--max:115px;--dur:0.55s;--del:0.12s"></div>
+        <div class="wave-bar" style="--min:20px;--max:75px;--dur:0.8s;--del:0.18s"></div>
+        <div class="wave-bar" style="--min:30px;--max:105px;--dur:0.6s;--del:0.08s"></div>
       </div>
     </div>
   </div>
 </section>
+
+<style>
+  .wave-bar {
+    width: 3px;
+    border-radius: 2px;
+    background: hsl(var(--accent));
+    animation: wave-pulse var(--dur) ease-in-out infinite alternate;
+    animation-delay: var(--del);
+  }
+
+  @keyframes wave-pulse {
+    0% { height: var(--min); }
+    100% { height: var(--max); }
+  }
+</style>

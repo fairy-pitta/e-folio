@@ -2,11 +2,12 @@
 import '../styles/globals.css';
 const {
   title = 'Fairy Pitta | Software Engineer',
-  description = 'Portfolio of Fairy Pitta, a software engineer based in Singapore.'
+  description = 'Portfolio of Fairy Pitta, a software engineer based in Singapore.',
+  ogImage,
 } = Astro.props;
 
-// OGP画像は常にロゴを使用
-const ogImagePath = '/new-favicon.png';
+// OGP画像: 動的画像があればそちらを使用、なければロゴ
+const ogImagePath = ogImage || '/new-favicon.png';
 
 // URL生成: devではAstro.url基準の絶対URL、本番ではAstro.siteを使用
 const canonicalPath = Astro.url.pathname;
@@ -36,6 +37,8 @@ const imageUrl = Astro.site ? new URL(ogImagePath, Astro.site).href : new URL(og
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
+    <!-- RSS -->
+    <link rel="alternate" type="application/rss+xml" title="Fairy Pitta Blog" href="/rss.xml" />
     <!-- Favicon and app icons -->
     <link rel="icon" type="image/png" sizes="32x32" href="/new-favicon_t.png" />
     <link rel="icon" type="image/svg+xml" href="/new-favicon_svg.svg" />
