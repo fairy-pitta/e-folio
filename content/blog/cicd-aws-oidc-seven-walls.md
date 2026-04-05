@@ -1,7 +1,7 @@
 ---
 title: "7 Walls Between GitHub Actions and a Running Server — An AWS OIDC CI/CD War Story"
 date: "April 1, 2026"
-excerpt: "I just wanted to push to dev and have it deploy. OIDC, SSM, Git ownership errors, nested quote hell — every single step broke. Here's the full debugging log."
+excerpt: "I just wanted to push to dev and have it deploy. OIDC, SSM, Git ownership errors, nested quote issues — every single step broke. Here's the full debugging log."
 coverImage: "/og/blog-cicd-aws-oidc-seven-walls.png"
 readTime: "12 min read"
 tags: ["AWS", "CI/CD", "GitHub Actions", "DevOps"]
@@ -136,9 +136,9 @@ Not hard, but there are a lot of small pieces that all have to be right. Wrong k
 
 The final boss. And honestly? I should've seen it coming.
 
-Our SSM command had grown into an unholy monster. Shell variables, nested quotes, multi-line scripts — all crammed into a JSON string, passed to bash, which called `bash -lc`, which ran the actual commands. Somewhere in the JSON → shell → subshell expansion chain, the syntax just... collapsed. Variables expanded at the wrong layer, quotes got eaten, and we got `syntax error` messages that pointed at perfectly valid-looking code.
+Our SSM command had grown large and fragile. Shell variables, nested quotes, multi-line scripts — all crammed into a JSON string, passed to bash, which called `bash -lc`, which ran the actual commands. Somewhere in the JSON → shell → subshell expansion chain, the syntax just... collapsed. Variables expanded at the wrong layer, quotes got eaten, and we got `syntax error` messages that pointed at perfectly valid-looking code.
 
-I spent a while trying to fix the quoting. Adding backslashes, switching between single and double quotes, trying heredocs inside JSON. It was cursed.
+I spent a while trying to fix the quoting. Adding backslashes, switching between single and double quotes, trying heredocs inside JSON. Nothing worked.
 
 **Fix**: I scrapped the entire inline command. Wrote a deployment script, put it on the server, and called *that*:
 
@@ -156,7 +156,7 @@ sudo systemctl restart gunicorn
 
 The SSM command became one line: `sudo -u ec2-user bash -lc '/home/ec2-user/deploy.sh'`
 
-That's it. No nested quotes. No variable expansion games. No cursed JSON escaping. The deploy script is version-controllable, testable, and readable by humans. I should've done this from the start.
+That's it. No nested quotes. No variable expansion games. No JSON escaping issues. The deploy script is version-controllable, testable, and readable by humans. I should've done this from the start.
 
 ## The Aftermath
 

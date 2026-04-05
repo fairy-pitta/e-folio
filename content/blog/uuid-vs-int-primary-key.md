@@ -114,7 +114,7 @@ I mean, you *can*. But I wouldn't recommend it on an existing production system 
 5. Update all API serializers, URL patterns, and frontend code
 6. Hope nothing references the old integer IDs anywhere
 
-Each step needs its own migration. Schema changes and data changes can't share a transaction in PostgreSQL. Foreign keys make the dependency graph a nightmare — you can't drop a PK constraint while FKs reference it.
+Each step needs its own migration. Schema changes and data changes can't share a transaction in PostgreSQL. Foreign keys make the dependency graph tedious — you can't drop a PK constraint while FKs reference it.
 
 There's a library called [`django-uuid-migration`](https://github.com/Afaneor/django-uuid-migration) that automates some of this, but honestly? If you're starting a new Django project, just set it up right from day one:
 
@@ -139,6 +139,6 @@ The performance gap with bigint is effectively zero. You get global uniqueness, 
 
 For existing projects on integer PKs: **leave them alone** unless you have a concrete problem. The migration cost almost never justifies the architectural purity.
 
-The worst option — the one I've done, the one I regret — is starting with integers and "planning to migrate later." That migration doesn't happen. Or it happens two years later under enormous time pressure, and it's painful.
+The worst option — the one I've done, the one I regret — is starting with integers and "planning to migrate later." That migration doesn't happen. Or it happens two years later under enormous time pressure, and it's messy.
 
 Make the decision on day one. Stick with it. And if a database textbook from 2015 tells you primary keys should carry business meaning: respectfully skip that chapter.

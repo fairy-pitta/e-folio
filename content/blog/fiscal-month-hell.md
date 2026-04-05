@@ -23,7 +23,7 @@ Fiscal month         → Counted from fiscal year start. If FY starts April, the
 Relative month       → Offset from the closing month. Entirely context-dependent.
 ```
 
-I built everything on calendar months. Two weeks in, the requirement changed: "Oh, we need fiscal month aggregation." My stomach dropped. That wasn't a config tweak. That was a rewrite.
+I built everything on calendar months. Two weeks in, the requirement changed: "Oh, we need fiscal month aggregation." That wasn't a small change. That wasn't a config tweak. That was a rewrite.
 
 ## Everything Broke
 
@@ -118,6 +118,6 @@ This won't win beauty contests, but it's one authoritative place where the conve
 
 ## Dates Are a Domain Problem
 
-Every programmer has a war story about dates. Usually it's time zones or daylight saving or that one server that was secretly in UTC-5. Fiscal dates are a different beast. They're not about physical time at all — they're about how a business *models* time, and that model can be totally disconnected from the Gregorian calendar.
+Most programmers have run into date-related bugs at some point. Usually it's time zones or daylight saving or that one server that was secretly in UTC-5. Fiscal dates are a different category. They're not about physical time at all — they're about how a business *models* time, and that model can be totally disconnected from the Gregorian calendar.
 
 If you're building anything that touches accounting, assume "month" is ambiguous until proven otherwise. Wrap it in a type. Use a library. Test the boundaries. And for the love of all that is holy, don't just call `.month`.

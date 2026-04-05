@@ -77,7 +77,7 @@ Once I stopped trying to visualize arrows flipping and started thinking about *w
 
 The mental model that finally made DI permanent in my brain: **power outlets**.
 
-Your laptop doesn't have a wire soldered directly to the power plant. That'd be insane — you couldn't move it, you couldn't switch power sources, and testing it would require firing up an actual coal plant. Instead, there's a standardized outlet. The laptop defines what kind of plug it needs. The power company conforms to that spec. You can plug into a wall socket, a portable battery, or a solar panel. The laptop doesn't care.
+Your laptop doesn't have a wire soldered directly to the power plant. That'd be impractical — you couldn't move it, you couldn't switch power sources, and testing it would require firing up an actual coal plant. Instead, there's a standardized outlet. The laptop defines what kind of plug it needs. The power company conforms to that spec. You can plug into a wall socket, a portable battery, or a solar panel. The laptop doesn't care.
 
 That's DI.
 

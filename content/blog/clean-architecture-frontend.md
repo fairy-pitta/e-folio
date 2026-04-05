@@ -13,7 +13,7 @@ I read Uncle Bob's Clean Architecture. I watched twada's [2025 JSConf.jp talk](h
 
 The backend loved it. Domain, Application, Infrastructure, Presentation — each layer had clear responsibilities, dependency inversion worked beautifully, and repository interfaces gave me that warm architectural glow. Real business logic deserves real boundaries.
 
-The frontend? Disaster.
+The frontend? Not so much.
 
 ## It's a Category Error
 

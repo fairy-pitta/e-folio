@@ -15,7 +15,7 @@ Here's what I was working with: GitHub Team plan, 3,000 Actions minutes per mont
 
 By day 20, I'd burned through 2,843 minutes. Ten days left in the billing cycle. I started refreshing the usage page like it was a stock ticker during a crash.
 
-## The Death-by-a-Thousand-Cuts Pipeline
+## Where the Minutes Went
 
 Every push kicked off the full circus:
 
@@ -27,9 +27,9 @@ Every push kicked off the full circus:
 
 All **sequential**. One big workflow, step after step. A typical run chewed through 3-4 minutes. Doesn't sound bad until you realize that every push to a PR branch triggers the whole thing. Push a typo fix? 4 minutes. Push the actual fix? 4 more minutes. Force-push because you forgot to stage a file? That's another 4.
 
-Across multiple PRs a day, it adds up terrifyingly fast.
+Across multiple PRs a day, it adds up fast.
 
-And the worst offender? Me. I had one of those days where everything clicked and I was shipping like a maniac. **21 PRs in a single day.** I felt like a productivity god right up until I checked the usage dashboard and realized I'd personally murdered the remaining budget.
+And the worst offender? Me. I had one of those days where everything was flowing. **21 PRs in a single day.** Felt great until I checked the usage dashboard and realized I'd blown the remaining budget.
 
 That was the "oh no" moment.
 
@@ -122,9 +122,9 @@ repos:
 
 Does this eliminate CI linting? No. Someone's always going to `--no-verify` their way past hooks. But it cuts down on the "oops, forgot a trailing comma" follow-up commits, and those add up fast.
 
-## The Panic Button
+## When You're About to Run Out
 
-When I hit 2,950 out of 3,000 minutes with a week left in the cycle, I did what any responsible engineer would do: I panicked. Then I disabled the CI linters on the less active repo. Not proud of it, but pre-commit hooks were still running locally, so it wasn't *total* anarchy.
+When I hit 2,950 out of 3,000 minutes with a week left in the cycle, I disabled the CI linters on the less active repo. Pre-commit hooks were still running locally, so it wasn't uncontrolled.
 
 Sometimes pragmatism beats purity.
 
@@ -150,7 +150,7 @@ I ended up tracking usage manually because apparently I enjoy suffering:
 | Jan 21 | 2,454 | 546 | 10 |
 | Jan 29 | 2,950 | 50 | 2 |
 
-See that jump between Jan 19 and Jan 21? That's the 21-PR day. Two days, 354 minutes. Just me, vibing, destroying the budget.
+See that jump between Jan 19 and Jan 21? That's the 21-PR day. Two days, 354 minutes.
 
 The trend was obvious in hindsight. If I'd been plotting this from week one, I'd have seen the crunch coming two weeks early. But nobody ever thinks they need a spreadsheet until they need a spreadsheet.
 
