@@ -2,7 +2,7 @@
 title: "Does the Frontend Need Clean Architecture?"
 date: "April 4, 2026"
 excerpt: "After applying Clean Architecture to both backend and frontend in a production app, I'm convinced: the onion diagram doesn't fit the frontend. Here's what works instead."
-coverImage: "/new-favicon.png"
+coverImage: "/og/blog-clean-architecture-frontend.png"
 readTime: "7 min read"
 tags: ["Architecture", "Frontend", "React", "Clean Architecture"]
 ---

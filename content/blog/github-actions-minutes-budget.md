@@ -2,7 +2,7 @@
 title: "Surviving on 3,000 GitHub Actions Minutes per Month"
 date: "March 31, 2026"
 excerpt: "Our team nearly burned through the entire monthly Actions budget in three weeks. Here's how we optimized CI to stay under the limit."
-coverImage: "/new-favicon.png"
+coverImage: "/og/blog-github-actions-minutes-budget.png"
 readTime: "6 min read"
 tags: ["CI/CD", "GitHub Actions", "DevOps", "Performance"]
 ---

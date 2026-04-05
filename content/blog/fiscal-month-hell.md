@@ -2,7 +2,7 @@
 title: "Three Kinds of 'Month' — How Accounting Date Logic Broke Everything"
 date: "April 5, 2026"
 excerpt: "Calendar month, fiscal month, relative month. In accounting systems, 'month' means three different things, and confusing them cost me weeks of rework."
-coverImage: "/new-favicon.png"
+coverImage: "/og/blog-fiscal-month-hell.png"
 readTime: "8 min read"
 tags: ["Architecture", "Domain Design", "Django", "Backend"]
 ---

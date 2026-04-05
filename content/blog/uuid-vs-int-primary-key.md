@@ -2,7 +2,7 @@
 title: "UUID vs Integer Primary Keys — A Decision That Split the Team"
 date: "April 2, 2026"
 excerpt: "When we debated primary key strategy for a B2B accounting system, every engineer had a different opinion. Here's what we considered and what we chose."
-coverImage: "/new-favicon.png"
+coverImage: "/og/blog-uuid-vs-int-primary-key.png"
 readTime: "7 min read"
 tags: ["Database", "PostgreSQL", "Architecture", "Backend"]
 ---

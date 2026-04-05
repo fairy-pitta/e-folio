@@ -2,7 +2,7 @@
 title: "Dependency Injection: Why I Kept Forgetting It and How It Finally Clicked"
 date: "April 3, 2026"
 excerpt: "I looked up dependency injection at least five times before it stuck. Here's the mental model that finally made it permanent."
-coverImage: "/new-favicon.png"
+coverImage: "/og/blog-dependency-injection-explained.png"
 readTime: "6 min read"
 tags: ["Architecture", "Design Patterns", "Python", "Backend"]
 ---

@@ -2,7 +2,7 @@
 title: "7 Walls Between GitHub Actions and a Running Server — An AWS OIDC CI/CD Debugging Story"
 date: "April 1, 2026"
 excerpt: "Setting up CI/CD from GitHub Actions to an EC2 instance via OIDC authentication. Every step broke. Here's the full debugging log."
-coverImage: "/new-favicon.png"
+coverImage: "/og/blog-cicd-aws-oidc-seven-walls.png"
 readTime: "10 min read"
 tags: ["AWS", "CI/CD", "GitHub Actions", "DevOps"]
 ---
