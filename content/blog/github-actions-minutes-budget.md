@@ -63,7 +63,7 @@ So why bother? Because faster feedback means developers don't context-switch as 
 
 ## Stop Cloning the Entire Universe
 
-This one's almost embarrassingly simple:
+This one's dead simple:
 
 ```yaml
 # Before: downloads your entire git history

@@ -40,7 +40,7 @@ The classic. I was using [`aws-actions/configure-aws-credentials`](https://githu
 }
 ```
 
-I stared at this for an embarrassingly long time. Everything matched — the org, the repo, the branch. Except it didn't. The role ARN in my workflow was pointing at a *completely different role* than the one with this trust policy attached. The infra team had set up multiple roles and I'd grabbed the wrong one.
+I stared at this for way too long. Everything matched — the org, the repo, the branch. Except it didn't. The role ARN in my workflow was pointing at a *completely different role* than the one with this trust policy attached. The infra team had set up multiple roles and I'd grabbed the wrong one.
 
 A few things I learned the hard way here:
 
