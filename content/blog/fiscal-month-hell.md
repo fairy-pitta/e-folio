@@ -35,7 +35,7 @@ This is what Noah Sussman's famous ["Falsehoods Programmers Believe About Time"]
 
 The obvious stuff I caught fast. The subtle stuff ate days.
 
-One that really got me: I was querying for "month 13" (the closing month) and getting back zero rows. Couldn't figure out why. Stared at the SQL for longer than I'd like to admit before it clicked — the closing month is a *relative* month, not a calendar month. There is no calendar month 13. I'd also mixed up "fiscal year start month" and "closing month" in my head. The database stored the start month; I was treating it as the closing month. Off by one, but in the fiscal calendar sense, which made the error wildly non-obvious.
+One that really got me: I was querying for "month 13" (the closing month) and getting back zero rows. Couldn't figure out why. Stared at the SQL for a while before it clicked — the closing month is a *relative* month, not a calendar month. There is no calendar month 13. I'd also mixed up "fiscal year start month" and "closing month" in my head. The database stored the start month; I was treating it as the closing month. Off by one, but in the fiscal calendar sense, which made the error wildly non-obvious.
 
 Then there was the classic frontend/backend mismatch. All my Django unit tests passed because the backend was internally consistent with its new fiscal logic. But the API contract had silently changed — month `1` now meant April, not January — and the frontend was still interpreting it as calendar. No integration tests caught it. Of course not. I hadn't written any.
 

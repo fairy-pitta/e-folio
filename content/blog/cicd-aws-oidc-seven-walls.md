@@ -40,7 +40,7 @@ The classic. I was using [`aws-actions/configure-aws-credentials`](https://githu
 }
 ```
 
-I stared at this for way too long. Everything matched — the org, the repo, the branch. Except it didn't. The role ARN in my workflow was pointing at a *completely different role* than the one with this trust policy attached. The infra team had set up multiple roles and I'd grabbed the wrong one.
+I stared at this for a while. Everything matched — the org, the repo, the branch. Except it didn't. The role ARN in my workflow was pointing at a *completely different role* than the one with this trust policy attached. The infra team had set up multiple roles and I'd grabbed the wrong one.
 
 A few things I learned the hard way here:
 
@@ -52,7 +52,7 @@ A few things I learned the hard way here:
 
 ## Wall 2: SSM Command Output — Flying Blind
 
-After OIDC finally worked (sweet relief), I used [AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html) to run commands on the EC2 instance. SSM is great for this — no SSH port to expose, no keys to manage, everything goes through IAM. Commands were failing, but I couldn't see *why*. The output was just... empty. Nothing. A void.
+After OIDC worked, I used [AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html) to run commands on the EC2 instance. SSM is great for this — no SSH port to expose, no keys to manage, everything goes through IAM. Commands were failing, but I couldn't see *why*. The output was just... empty. Nothing. A void.
 
 Imagine trying to debug a deployment where every error message is `/dev/null`. That's `SendCommand` without `GetCommandInvocation`.
 
@@ -138,7 +138,7 @@ The final boss. And honestly? I should've seen it coming.
 
 Our SSM command had grown into an unholy monster. Shell variables, nested quotes, multi-line scripts — all crammed into a JSON string, passed to bash, which called `bash -lc`, which ran the actual commands. Somewhere in the JSON → shell → subshell expansion chain, the syntax just... collapsed. Variables expanded at the wrong layer, quotes got eaten, and we got `syntax error` messages that pointed at perfectly valid-looking code.
 
-I spent way too long trying to fix the quoting. Adding backslashes, switching between single and double quotes, trying heredocs inside JSON. It was cursed.
+I spent a while trying to fix the quoting. Adding backslashes, switching between single and double quotes, trying heredocs inside JSON. It was cursed.
 
 **Fix**: I scrapped the entire inline command. Wrote a deployment script, put it on the server, and called *that*:
 

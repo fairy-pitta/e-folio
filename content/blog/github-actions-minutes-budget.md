@@ -79,7 +79,7 @@ The default `actions/checkout` doesn't clone full history anymore (it defaults t
 
 ## The npm ci Cache Trap (A Classic Footgun)
 
-This one cost me three hours of my life that I'll never get back.
+This one took me about three hours to figure out.
 
 I set up `actions/cache` to cache `node_modules`, feeling very clever about it. Runs kept taking the same amount of time. I added debug logging. I verified the cache was being saved and restored. Everything looked right, but installs were still slow.
 
