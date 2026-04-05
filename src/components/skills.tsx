@@ -107,7 +107,7 @@ export default function Skills() {
             <div
               key={category.title}
               data-animate
-              className="opacity-0 py-5 first:pt-0 grid grid-cols-[120px_1fr] md:grid-cols-[160px_1fr] gap-4 items-baseline"
+              className="opacity-0 py-5 first:pt-0 flex flex-col gap-2 md:grid md:grid-cols-[160px_1fr] md:gap-4 md:items-baseline"
               style={{ animationDelay: `${categoryIndex * 80}ms` }}
             >
               <h3 className="text-xs font-mono uppercase tracking-wider text-muted-foreground pt-0.5">

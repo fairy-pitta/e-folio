@@ -32,19 +32,24 @@ export default function Projects({ projects = [], showTags = true }: ProjectsPro
           <div className="divide-y divide-border">
             {displayedProjects.map((project) => (
               <article key={project.slug} className="py-6 first:pt-0 group">
-                <div className="flex items-baseline gap-4 mb-2">
-                  <span className="text-xs font-mono text-muted-foreground shrink-0">
+                <div className="mb-2">
+                  <span className="text-xs font-mono text-muted-foreground block mb-1 md:hidden">
                     {project.frontmatter.date}
                   </span>
-                  <h3 className="text-lg font-medium font-source-sans">
-                    <a
-                      href={`/projects/${project.slug}`}
-                      className="group-hover:text-[hsl(var(--accent))] transition-colors"
-                      data-astro-prefetch
-                    >
-                      {project.frontmatter.title}
-                    </a>
-                  </h3>
+                  <div className="flex items-baseline gap-4">
+                    <span className="text-xs font-mono text-muted-foreground shrink-0 hidden md:inline">
+                      {project.frontmatter.date}
+                    </span>
+                    <h3 className="text-lg font-medium font-source-sans">
+                      <a
+                        href={`/projects/${project.slug}`}
+                        className="group-hover:text-[hsl(var(--accent))] transition-colors"
+                        data-astro-prefetch
+                      >
+                        {project.frontmatter.title}
+                      </a>
+                    </h3>
+                  </div>
                 </div>
 
                 <p className="text-muted-foreground text-sm mb-3 max-w-2xl line-clamp-2">

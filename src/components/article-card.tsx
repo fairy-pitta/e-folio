@@ -38,13 +38,9 @@ function ArticleLink({ article, children, className }: { article: UnifiedArticle
 export default function ArticleCard({ article, isHome }: ArticleCardProps) {
   return (
     <article className="py-5 group">
-      <div className="flex items-baseline gap-3 mb-1.5">
-        <span className="text-xs font-mono text-muted-foreground shrink-0">
-          {new Date(article.date).toLocaleDateString('ja-JP')}
-        </span>
-        <span className="text-xs font-mono text-muted-foreground">
-          {article.type === 'blog' ? 'Blog' : 'Qiita'}
-        </span>
+      <div className="flex items-center gap-3 mb-1.5 text-xs font-mono text-muted-foreground">
+        <span>{new Date(article.date).toLocaleDateString('ja-JP')}</span>
+        <span>{article.type === 'blog' ? 'Blog' : 'Qiita'}</span>
       </div>
 
       <h3 className="text-base font-medium mb-1 font-source-sans">
