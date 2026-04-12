@@ -5,8 +5,11 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { SendIcon, CheckCircle, BellIcon } from "lucide-react"
+import { useFormSubmit } from "@/hooks/use-form-submit"
 
-interface ContactFormState {
+const API_BASE_URL = import.meta.env.PUBLIC_API_BASE_URL || "https://resend-worker.shuna120700.workers.dev"
+
+interface ContactFormData {
   name: string
   email: string
   message: string
@@ -25,20 +28,22 @@ function InlineError({ message, onDismiss }: { message: string; onDismiss: () =>
 }
 
 export default function Contact() {
-  const [formState, setFormState] = useState<ContactFormState>({
+  const [formState, setFormState] = useState<ContactFormData>({
     name: "",
     email: "",
     message: "",
   })
-  const [isContactSubmitting, setIsContactSubmitting] = useState(false)
-  const [isContactSubmitted, setIsContactSubmitted] = useState(false)
 
-  const [contactError, setContactError] = useState<string | null>(null)
+  const contact = useFormSubmit<ContactFormData>({
+    url: `${API_BASE_URL}/api/contact`,
+    successDuration: 5000,
+  })
 
   const [newsletterEmail, setNewsletterEmail] = useState("")
-  const [isNewsletterSubmitting, setIsNewsletterSubmitting] = useState(false)
-  const [isSubscribed, setIsSubscribed] = useState(false)
-  const [newsletterError, setNewsletterError] = useState<string | null>(null)
+  const newsletter = useFormSubmit<{ email: string }>({
+    url: `${API_BASE_URL}/api/newsletter`,
+    successDuration: 3000,
+  })
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormState({
@@ -49,61 +54,17 @@ export default function Contact() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsContactSubmitting(true)
-
-    setContactError(null)
-    try {
-      const response = await fetch("https://resend-worker.shuna120700.workers.dev/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formState),
-      })
-
-      if (!response.ok) throw new Error("Failed to send message")
-
-      setIsContactSubmitted(true)
+    await contact.submit(formState)
+    if (!contact.error) {
       setFormState({ name: "", email: "", message: "" })
-
-      setTimeout(() => {
-        setIsContactSubmitted(false)
-      }, 5000)
-    } catch (error) {
-      console.error(error)
-      setContactError("Failed to send message. Please try again later.")
-    } finally {
-      setIsContactSubmitting(false)
     }
   }
 
   const handleSubscribe = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsNewsletterSubmitting(true)
-
-    try {
-      const response = await fetch("https://resend-worker.shuna120700.workers.dev/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: newsletterEmail }),
-      })
-
-      const resultText = await response.text()
-
-      if (!response.ok) {
-        console.error("Failed response body:", resultText)
-        throw new Error(`Failed to subscribe: ${response.status}`)
-      }
-
-      setIsSubscribed(true)
+    await newsletter.submit({ email: newsletterEmail })
+    if (!newsletter.error) {
       setNewsletterEmail("")
-
-      setTimeout(() => {
-        setIsSubscribed(false)
-      }, 3000)
-    } catch (error) {
-      console.error(error)
-      setNewsletterError("Failed to subscribe. Please try again later.")
-    } finally {
-      setIsNewsletterSubmitting(false)
     }
   }
 
@@ -126,7 +87,7 @@ export default function Contact() {
               Send a message
             </h3>
 
-            {isContactSubmitted ? (
+            {contact.isSubmitted ? (
               <div className="border rounded-sm p-6 text-center animate-fade-in-up">
                 <CheckCircle className="h-8 w-8 mx-auto text-[hsl(var(--accent))] mb-3" />
                 <p className="text-sm font-medium mb-1">Message sent</p>
@@ -136,8 +97,8 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="space-y-4">
-                {contactError && (
-                  <InlineError message={contactError} onDismiss={() => setContactError(null)} />
+                {contact.error && (
+                  <InlineError message={contact.error} onDismiss={contact.clearError} />
                 )}
                 <div>
                   <label htmlFor="name" className="text-xs font-mono block mb-1.5 text-muted-foreground">
@@ -189,9 +150,9 @@ export default function Contact() {
                 <button
                   type="submit"
                   className="inline-flex items-center gap-2 font-mono text-sm px-5 py-2.5 bg-foreground text-background hover:bg-[hsl(var(--accent))] transition-colors disabled:opacity-50"
-                  disabled={isContactSubmitting}
+                  disabled={contact.isSubmitting}
                 >
-                  {isContactSubmitting ? (
+                  {contact.isSubmitting ? (
                     <>
                       <div className="h-3.5 w-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
                       Sending...
@@ -213,7 +174,7 @@ export default function Contact() {
               Newsletter
             </h3>
 
-            {isSubscribed ? (
+            {newsletter.isSubmitted ? (
               <div className="border rounded-sm p-6 text-center animate-fade-in-up">
                 <CheckCircle className="h-8 w-8 mx-auto text-[hsl(var(--accent))] mb-3" />
                 <p className="text-sm font-medium mb-1">Subscribed</p>
@@ -223,8 +184,8 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={handleSubscribe} className="space-y-4">
-                {newsletterError && (
-                  <InlineError message={newsletterError} onDismiss={() => setNewsletterError(null)} />
+                {newsletter.error && (
+                  <InlineError message={newsletter.error} onDismiss={newsletter.clearError} />
                 )}
                 <p className="text-sm text-muted-foreground">
                   New articles, project updates, and environmental tech insights.
@@ -242,16 +203,16 @@ export default function Contact() {
                     value={newsletterEmail}
                     onChange={(e) => setNewsletterEmail(e.target.value)}
                     required
-                    disabled={isNewsletterSubmitting}
+                    disabled={newsletter.isSubmitting}
                   />
                 </div>
 
                 <button
                   type="submit"
                   className="inline-flex items-center gap-2 font-mono text-sm px-5 py-2.5 bg-foreground text-background hover:bg-[hsl(var(--accent))] transition-colors disabled:opacity-50"
-                  disabled={isNewsletterSubmitting}
+                  disabled={newsletter.isSubmitting}
                 >
-                  {isNewsletterSubmitting ? (
+                  {newsletter.isSubmitting ? (
                     <>
                       <div className="h-3.5 w-3.5 border-2 border-current border-t-transparent rounded-full animate-spin" />
                       Subscribing...
