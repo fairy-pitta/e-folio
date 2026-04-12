@@ -11,12 +11,14 @@ type LanguageFilter = 'japanese' | 'english' | 'both'
 
 interface EnhancedBlogClientProps {
   englishPosts: BlogPost[]
+  initialQiitaArticles?: QiitaArticle[]
   mode?: 'home' | 'index'
 }
 
-export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }: EnhancedBlogClientProps) {
-  const [qiitaArticles, setQiitaArticles] = useState<QiitaArticle[]>([])
-  const [loading, setLoading] = useState(mode === 'home' ? false : true)
+export default function EnhancedBlogClient({ englishPosts = [], initialQiitaArticles = [], mode = 'index' }: EnhancedBlogClientProps) {
+  const [qiitaArticles, setQiitaArticles] = useState<QiitaArticle[]>(initialQiitaArticles)
+  const hasInitialQiita = initialQiitaArticles.length > 0
+  const [loading, setLoading] = useState(mode === 'home' ? false : !hasInitialQiita)
   const [error, setError] = useState<string | null>(null)
   const [languageFilter, setLanguageFilter] = useState<LanguageFilter>(mode === 'home' ? 'english' : 'both')
   const [selectedTags, setSelectedTags] = useState<string[]>([])
@@ -45,12 +47,14 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
 
   useEffect(() => {
     const loadQiitaArticles = async () => {
-      setLoading(true)
+      if (!hasInitialQiita) setLoading(true)
       const result = await fetchQiitaArticles()
       setQiitaArticles(result.articles)
       setError(result.error)
       setLoading(false)
     }
+
+    if (hasInitialQiita) return
 
     if (isHome) {
       if ((languageFilter === 'japanese' || languageFilter === 'both') && inView) {
@@ -59,9 +63,9 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
     } else {
       loadQiitaArticles()
     }
-  }, [isHome, languageFilter, inView])
+  }, [isHome, languageFilter, inView, hasInitialQiita])
 
-  const getUnifiedArticles = (): UnifiedArticle[] => {
+  const unifiedArticles = useMemo((): UnifiedArticle[] => {
     const allArticles: UnifiedArticle[] = []
 
     if (languageFilter === 'english' || languageFilter === 'both') {
@@ -99,7 +103,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
     }
 
     return allArticles.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-  }
+  }, [englishPosts, qiitaArticles, languageFilter])
 
   const allTags = useMemo(() => {
     const tagSet = new Set<string>()
@@ -113,7 +117,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
   }, [englishPosts, qiitaArticles])
 
   const filteredArticles = useMemo(() => {
-    let articles = getUnifiedArticles()
+    let articles = [...unifiedArticles]
 
     if (searchQuery) {
       articles = articles.filter(article =>
@@ -130,7 +134,7 @@ export default function EnhancedBlogClient({ englishPosts = [], mode = 'index' }
     }
 
     return articles
-  }, [englishPosts, qiitaArticles, searchQuery, selectedTags, languageFilter])
+  }, [unifiedArticles, searchQuery, selectedTags])
 
   const totalPages = Math.ceil(filteredArticles.length / postsPerPage)
   const paginatedArticles = filteredArticles.slice(
