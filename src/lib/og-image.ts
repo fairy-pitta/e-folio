@@ -1,21 +1,28 @@
 import satori from 'satori'
 import sharp from 'sharp'
 
+const fontCache = new Map<string, ArrayBuffer>()
+
 async function loadGoogleFont(family: string, weight: number): Promise<ArrayBuffer> {
+  const cacheKey = `${family}:${weight}`
+  const cached = fontCache.get(cacheKey)
+  if (cached) return cached
+
   const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weight}&display=swap`
   const cssRes = await fetch(url)
   const css = await cssRes.text()
   const match = css.match(/src:\s*url\(([^)]+)\)/)
   if (!match) throw new Error(`Failed to load font: ${family}`)
   const fontRes = await fetch(match[1])
-  return fontRes.arrayBuffer()
+  const buffer = await fontRes.arrayBuffer()
+  fontCache.set(cacheKey, buffer)
+  return buffer
 }
 
 export async function generateOgImage(title: string, tags: string[] = []): Promise<Buffer> {
   const jetbrainsMono = await loadGoogleFont('JetBrains Mono', 500)
   const sourceSans = await loadGoogleFont('Source Sans 3', 400)
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const svg = await satori(
     {
       type: 'div',
