@@ -5,8 +5,10 @@ import ScrollToTop from '../../components/scroll-to-top'
 import Navbar from '../../components/navbar'
 import Footer from '../../components/Footer.astro'
 import { getAllBlogPosts } from '../../lib/content'
+import { fetchQiitaArticlesStatic } from '../../lib/qiita'
 
 const posts = getAllBlogPosts()
+const qiitaArticles = await fetchQiitaArticlesStatic()
 ---
 
 <Layout title="Blog & Articles">
@@ -18,7 +20,7 @@ const posts = getAllBlogPosts()
           <h1 class="text-2xl font-mono-heading mb-2">Blog</h1>
           <div class="w-16 h-px bg-[hsl(var(--accent))] mb-8"></div>
         </div>
-        <EnhancedBlogClient englishPosts={posts} client:visible mode="index" />
+        <EnhancedBlogClient englishPosts={posts} initialQiitaArticles={qiitaArticles} client:visible mode="index" />
       </div>
     </div>
   </div>

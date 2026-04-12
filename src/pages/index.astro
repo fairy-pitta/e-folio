@@ -9,10 +9,12 @@ import Experience from '../components/experience'
 import Contact from '../components/contact'
 import Navbar from '../components/navbar'
 import { getAllProjects, getAllBlogPosts } from '../lib/content'
+import { fetchQiitaArticlesStatic } from '../lib/qiita'
 import FooterAstro from '../components/Footer.astro'
 
 const projects = getAllProjects()
 const englishPosts = getAllBlogPosts()
+const qiitaArticles = await fetchQiitaArticlesStatic()
 ---
 
 <Layout title="Fairy Pitta">
@@ -25,7 +27,7 @@ const englishPosts = getAllBlogPosts()
     <Projects client:visible projects={projects} showTags={false} />
   </section>
   <section id="blog">
-    <EnhancedBlogClient client:visible englishPosts={englishPosts} mode="home" />
+    <EnhancedBlogClient client:visible englishPosts={englishPosts} initialQiitaArticles={qiitaArticles} mode="home" />
   </section>
   <Contact client:visible />
   <FooterAstro />

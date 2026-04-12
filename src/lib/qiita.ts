@@ -72,6 +72,17 @@ const setCachedData = (articles: QiitaArticle[], rateLimitReset?: number) => {
   }
 }
 
+// ビルド時にQiita記事を取得する関数（サーバーサイド用）
+export async function fetchQiitaArticlesStatic(): Promise<QiitaArticle[]> {
+  try {
+    const response = await fetch('https://qiita.com/api/v2/users/Pitta/items?page=1&per_page=20')
+    if (!response.ok) return []
+    return await response.json()
+  } catch {
+    return []
+  }
+}
+
 // Qiita記事を取得する関数
 export async function fetchQiitaArticles(): Promise<{
   articles: QiitaArticle[]
