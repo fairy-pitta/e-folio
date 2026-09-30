@@ -127,8 +127,8 @@ export const cv: Cv = {
   ],
   certifications: [
     "AWS Certified Solutions Architect – Professional",
+    "AWS Certified Generative AI Developer – Professional",
     "AWS Certified Solutions Architect – Associate",
-    "AWS Certified AI Practitioner",
     "IPA Database Specialist",
     "IPA Applied Information Technology Engineer",
     "IPA Fundamental Information Technology Engineer",
