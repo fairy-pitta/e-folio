@@ -2,119 +2,126 @@ import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
 
-// Content directory paths
 const blogDirectory = path.join(process.cwd(), "content", "blog")
 const projectsDirectory = path.join(process.cwd(), "content", "projects")
 
-// Blog post frontmatter type definition
 export interface BlogFrontmatter {
   title: string
   date: string
   excerpt: string
-  coverImage: string
-  readTime: string
+  coverImage?: string
+  readTime?: string
   tags: string[]
 }
 
-// Project frontmatter type definition
 export interface ProjectFrontmatter {
   title: string
   description: string
   date: string
-  coverImage: string
+  coverImage?: string
   tags: string[]
-  liveUrl: string
-  githubUrl: string
+  liveUrl?: string
+  githubUrl?: string
   gallery?: string[]
+  featured?: boolean
+  order?: number
 }
 
-// Blog post type definition
 export interface BlogPost {
   slug: string
   frontmatter: BlogFrontmatter
   content: string
+  date: Date
 }
 
-// Project type definition
 export interface Project {
   slug: string
   frontmatter: ProjectFrontmatter
   content: string
+  date: Date
 }
 
-// Read markdown files from a directory
-function readMarkdownFiles<T>(directory: string): { slug: string; frontmatter: T; content: string }[] {
-  if (!fs.existsSync(directory)) {
-    return []
+const MONTHS: Record<string, number> = {
+  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
+  jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+}
+
+function buildUtcDate(year: number, month: number | undefined, day: number): Date | null {
+  if (month === undefined) return null
+  const date = new Date(Date.UTC(year, month, day))
+  return date.getUTCMonth() === month && date.getUTCDate() === day ? date : null
+}
+
+// Frontmatter dates come in several formats ("April 5, 2026", "13 Jan, 2026", "2025-05-18")
+// and unquoted ISO dates arrive from YAML as Date objects.
+export function parseContentDate(value: unknown, source: string): Date {
+  let date: Date | null = null
+
+  if (value instanceof Date && !Number.isNaN(value.getTime())) {
+    date = new Date(Date.UTC(value.getUTCFullYear(), value.getUTCMonth(), value.getUTCDate()))
+  } else if (typeof value === "string") {
+    const text = value.trim()
+    const monthFirst = text.match(/^([A-Za-z]+)\.? (\d{1,2}),? (\d{4})$/)
+    const dayFirst = text.match(/^(\d{1,2}) ([A-Za-z]+)\.?,? (\d{4})$/)
+    const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+    if (monthFirst) {
+      date = buildUtcDate(Number(monthFirst[3]), MONTHS[monthFirst[1].slice(0, 3).toLowerCase()], Number(monthFirst[2]))
+    } else if (dayFirst) {
+      date = buildUtcDate(Number(dayFirst[3]), MONTHS[dayFirst[2].slice(0, 3).toLowerCase()], Number(dayFirst[1]))
+    } else if (iso) {
+      date = buildUtcDate(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]))
+    }
   }
+
+  if (!date) {
+    throw new Error(`Invalid date in ${source}: ${String(value)}`)
+  }
+  return date
+}
+
+const pad = (n: number) => String(n).padStart(2, "0")
+
+export function formatYearMonth(date: Date): string {
+  return `${date.getUTCFullYear()}-${pad(date.getUTCMonth() + 1)}`
+}
+
+export function formatDate(date: Date): string {
+  return `${formatYearMonth(date)}-${pad(date.getUTCDate())}`
+}
+
+function readMarkdownFiles<T extends { date: string; tags: string[] }>(directory: string) {
+  if (!fs.existsSync(directory)) return []
 
   return fs.readdirSync(directory)
-    .filter((fileName) => fileName.endsWith(".md") || fileName.endsWith(".mdx"))
+    .filter((fileName) => fileName.endsWith(".md"))
     .map((fileName) => {
-      const slug = fileName.replace(/\.mdx?$/, "")
-      const fullPath = path.join(directory, fileName)
-      const fileContents = fs.readFileSync(fullPath, "utf8")
-      const { data, content } = matter(fileContents)
-      return { slug, frontmatter: data as T, content }
+      const slug = fileName.replace(/\.md$/, "")
+      const { data, content } = matter(fs.readFileSync(path.join(directory, fileName), "utf8"))
+      const date = parseContentDate(data.date, fileName)
+      const frontmatter = { ...data, tags: Array.isArray(data.tags) ? data.tags : [] } as T
+      return { slug, frontmatter, content, date }
     })
+    .sort((a, b) => b.date.getTime() - a.date.getTime())
 }
 
-// Get all blog post slugs
-export function getAllBlogSlugs() {
-  return getAllBlogPosts().map(({ slug }) => ({ slug }))
-}
-
-// Get all project slugs
-export function getAllProjectSlugs() {
-  return getAllProjects().map(({ slug }) => ({ slug }))
-}
-
-// Get blog post content
-export function getBlogPost(slug: string): BlogPost | null {
-  const fullPath = path.join(blogDirectory, `${slug}.md`)
-  if (!fs.existsSync(fullPath)) {
-    return null
-  }
-  const fileContents = fs.readFileSync(fullPath, "utf8")
-  const { data, content } = matter(fileContents)
-  return { slug, frontmatter: data as BlogFrontmatter, content }
-}
-
-// Get project content
-export function getProject(slug: string): Project | null {
-  const fullPath = path.join(projectsDirectory, `${slug}.md`)
-  if (!fs.existsSync(fullPath)) {
-    return null
-  }
-  const fileContents = fs.readFileSync(fullPath, "utf8")
-  const { data, content } = matter(fileContents)
-  return { slug, frontmatter: data as ProjectFrontmatter, content }
-}
-
-// Get all blog posts sorted by date (newest first)
 export function getAllBlogPosts(): BlogPost[] {
   return readMarkdownFiles<BlogFrontmatter>(blogDirectory)
-    .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
 }
 
-// Get all projects sorted by date (newest first)
 export function getAllProjects(): Project[] {
   return readMarkdownFiles<ProjectFrontmatter>(projectsDirectory)
-    .sort((a, b) => new Date(b.frontmatter.date).getTime() - new Date(a.frontmatter.date).getTime())
 }
 
-// Get blog posts by tag
-export function getBlogPostsByTag(tag: string): BlogPost[] {
-  return getAllBlogPosts().filter((post) =>
-    post.frontmatter.tags.some((t) => t.toLowerCase() === tag.toLowerCase())
-  )
+export function getFeaturedProjects(limit = 4): Project[] {
+  return getAllProjects()
+    .filter((project) => project.frontmatter.featured === true)
+    .sort((a, b) => (a.frontmatter.order ?? Infinity) - (b.frontmatter.order ?? Infinity))
+    .slice(0, limit)
 }
 
-// Get all tags
-export function getAllTags(): string[] {
-  const tagSet = new Set<string>()
-  getAllBlogPosts().forEach((post) => {
-    post.frontmatter.tags.forEach((tag) => tagSet.add(tag))
-  })
-  return Array.from(tagSet).sort()
+export function projectLinks(frontmatter: ProjectFrontmatter): { label: "Code" | "Live"; href: string }[] {
+  const links: { label: "Code" | "Live"; href: string }[] = []
+  if (frontmatter.githubUrl?.trim()) links.push({ label: "Code", href: frontmatter.githubUrl.trim() })
+  if (frontmatter.liveUrl?.trim()) links.push({ label: "Live", href: frontmatter.liveUrl.trim() })
+  return links
 }

@@ -4,6 +4,8 @@ description: "A PWA web application specialized for GitHub Pull Request progress
 date: "16 Jan, 2026"
 coverImage: ""
 tags: ["Web App", "Next.js", "TypeScript", "PWA", "Clean Architecture", "DDD"]
+featured: true
+order: 2
 liveUrl: ""
 githubUrl: "https://github.com/fairy-pitta/pr-viewer"
 gallery: []

@@ -4,6 +4,8 @@ description: "A CLI tool that automatically manages multiple dev servers per git
 date: "6 Feb, 2026"
 coverImage: "/projects/portree/portree_main.gif"
 tags: ["CLI Tool", "Go", "Git Worktree", "TUI", "Developer Tools"]
+featured: true
+order: 1
 liveUrl: ""
 githubUrl: "https://github.com/fairy-pitta/portree"
 gallery: [

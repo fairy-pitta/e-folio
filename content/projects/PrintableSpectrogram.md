@@ -4,6 +4,8 @@ description: "A fully client-side web application that generates high-resolution
 date: "31 Jan, 2026"
 coverImage: "/projects/printable-spectrogram/spectrogram_main.png"
 tags: ["Web App", "TypeScript", "React", "Rust", "WASM", "Audio Processing", "DSP"]
+featured: true
+order: 3
 liveUrl: "https://spectrogram.fairy-pitta.net/"
 githubUrl: "https://github.com/fairy-pitta/printable_spectrogram"
 gallery: []
