@@ -3,15 +3,13 @@ import type { APIContext } from 'astro'
 import { getAllBlogPosts } from '../lib/content'
 
 export function GET(context: APIContext) {
-  const posts = getAllBlogPosts()
-
   return rss({
-    title: 'Fairy Pitta Blog',
-    description: 'Articles on bioacoustics, education technology, and software engineering.',
+    title: 'Shuna Maekawa — Writing',
+    description: 'Notes on software engineering by Shuna Maekawa.',
     site: context.site!.toString(),
-    items: posts.map((post) => ({
+    items: getAllBlogPosts().map((post) => ({
       title: post.frontmatter.title,
-      pubDate: new Date(post.frontmatter.date),
+      pubDate: post.date,
       description: post.frontmatter.excerpt,
       link: `/blog/${post.slug}/`,
       categories: post.frontmatter.tags,
