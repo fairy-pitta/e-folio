@@ -1,0 +1,54 @@
+---
+import { cv } from '../data/cv';
+---
+
+<form class="contact" id="contact-form" data-email={cv.email} hidden>
+  <label>Name<input name="name" required autocomplete="name" /></label>
+  <label>Email<input name="email" type="email" required autocomplete="email" /></label>
+  <label>Message<textarea name="message" rows="5" required></textarea></label>
+  <button type="submit">Send</button>
+</form>
+<p class="status" id="contact-status" role="status" aria-live="polite"></p>
+<noscript>
+  <p>Email me at <a href={`mailto:${cv.email}`}>{cv.email}</a>.</p>
+</noscript>
+
+<script>
+  import { sendContact } from '../lib/contact';
+
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+  const status = document.getElementById('contact-status');
+
+  if (form && status) {
+    const email = form.dataset.email ?? '';
+    const button = form.querySelector('button') as HTMLButtonElement;
+    form.hidden = false;
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      button.disabled = true;
+      button.textContent = 'Sending…';
+      status.textContent = '';
+
+      const data = new FormData(form);
+      const ok = await sendContact({
+        name: String(data.get('name') ?? ''),
+        email: String(data.get('email') ?? ''),
+        message: String(data.get('message') ?? ''),
+      });
+
+      if (ok) {
+        form.remove();
+        status.textContent = "Thanks — I'll get back to you soon.";
+        return;
+      }
+
+      button.disabled = false;
+      button.textContent = 'Send';
+      const link = document.createElement('a');
+      link.href = `mailto:${email}`;
+      link.textContent = email;
+      status.replaceChildren('Something went wrong. Please email me directly at ', link, '.');
+    });
+  }
+</script>

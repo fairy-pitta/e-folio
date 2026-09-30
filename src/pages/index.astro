@@ -1,8 +1,78 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Section from '../components/Section.astro';
+import Row from '../components/Row.astro';
+import Contact from '../components/Contact.astro';
+import { cv } from '../data/cv';
+import { getAllBlogPosts, getFeaturedProjects, formatYearMonth } from '../lib/content';
+
+const projects = getFeaturedProjects();
+const posts = getAllBlogPosts().slice(0, 3);
 ---
 
 <Layout>
-  <h1>Shuna Maekawa <span class="muted">(fairy-pitta)</span></h1>
-  <p class="muted">Software Engineer · Singapore</p>
+  <header>
+    <h1>{cv.name} <span class="muted" style="font-weight:400">({cv.handle})</span></h1>
+    <p class="muted">{cv.headline}</p>
+    <p class="links">
+      {cv.links.map((link, i) => (
+        <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
+      ))}
+    </p>
+    <p class="summary">{cv.summary}</p>
+  </header>
+
+  <Section title="Experience">
+    {cv.experience.map((job) => (
+      <>
+        <Row meta={job.period}>{job.role} — {job.org}</Row>
+        {job.bullets.length > 0 && (
+          <ul class="bullets">
+            {job.bullets.map((bullet) => <li>{bullet}</li>)}
+          </ul>
+        )}
+      </>
+    ))}
+  </Section>
+
+  <Section title="Projects">
+    {projects.map((project) => (
+      <Row meta={project.frontmatter.tags.slice(0, 2).join(' · ')}>
+        <a href={`/projects/${project.slug}`}>{project.frontmatter.title}</a>
+      </Row>
+    ))}
+    <p class="more"><a href="/projects">All projects →</a></p>
+  </Section>
+
+  <Section title="Writing">
+    {posts.map((post) => (
+      <Row meta={formatYearMonth(post.date)}>
+        <a href={`/blog/${post.slug}`}>{post.frontmatter.title}</a>
+      </Row>
+    ))}
+    <p class="more"><a href="/blog">All writing →</a> · <a href="/rss.xml">RSS</a></p>
+  </Section>
+
+  <Section title="Education">
+    {cv.education.map((edu) => (
+      <>
+        <Row meta={edu.period}>{edu.school} — {edu.degree}</Row>
+        {edu.note && <p class="muted">{edu.note}</p>}
+      </>
+    ))}
+  </Section>
+
+  <Section title="Certifications">
+    <p>{cv.certifications.join(' · ')}</p>
+  </Section>
+
+  <Section title="Skills">
+    {cv.skills.map((group) => (
+      <p style="margin:0"><span class="muted">{group.label}</span> {group.items.join(', ')}</p>
+    ))}
+  </Section>
+
+  <Section title="Contact">
+    <Contact />
+  </Section>
 </Layout>
