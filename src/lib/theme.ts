@@ -30,3 +30,20 @@ export function resolveTheme(stored: Theme | null, systemPrefersDark: boolean): 
 export function nextTheme(theme: Theme): Theme {
   return theme === "dark" ? "light" : "dark"
 }
+
+export interface ToggleView {
+  // What the button will switch to — labelling the current theme instead left
+  // it ambiguous whether "Dark" meant the state or the action.
+  target: Theme
+  label: string
+  ariaLabel: string
+}
+
+export function toggleView(current: Theme): ToggleView {
+  const target = nextTheme(current)
+  return {
+    target,
+    label: target === "dark" ? "Dark" : "Light",
+    ariaLabel: `Switch to ${target} mode`,
+  }
+}

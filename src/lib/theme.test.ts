@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { readStoredTheme, storeTheme, resolveTheme, nextTheme, THEME_STORAGE_KEY } from './theme'
+import { readStoredTheme, storeTheme, resolveTheme, nextTheme, toggleView, THEME_STORAGE_KEY } from './theme'
 
 const memoryStorage = (initial: Record<string, string> = {}) => {
   const data = { ...initial }
@@ -67,5 +67,29 @@ describe('nextTheme', () => {
   it('toggles_between_light_and_dark', () => {
     expect(nextTheme('light')).toBe('dark')
     expect(nextTheme('dark')).toBe('light')
+  })
+})
+
+describe('toggleView', () => {
+  it('test_build_view_in_dark_theme_returns_the_light_target', () => {
+    expect(toggleView('dark')).toEqual({
+      target: 'light',
+      label: 'Light',
+      ariaLabel: 'Switch to light mode',
+    })
+  })
+
+  it('test_build_view_in_light_theme_returns_the_dark_target', () => {
+    expect(toggleView('light')).toEqual({
+      target: 'dark',
+      label: 'Dark',
+      ariaLabel: 'Switch to dark mode',
+    })
+  })
+
+  it('test_build_view_never_labels_the_current_theme', () => {
+    for (const theme of ['light', 'dark'] as const) {
+      expect(toggleView(theme).target).not.toBe(theme)
+    }
   })
 })

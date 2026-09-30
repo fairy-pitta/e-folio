@@ -57,7 +57,20 @@ const hasFeed = getAllBlogPosts().length > 0;
     </script>
   </head>
   <body>
-    <button type="button" class="theme-toggle" id="theme-toggle" hidden></button>
+    <button type="button" class="theme-toggle" id="theme-toggle" hidden>
+      <span class="theme-icon" data-icon="light" hidden>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.5"></circle>
+          <path d="M12 1.5v2.5M12 20v2.5M1.5 12h2.5M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M19.4 4.6l-1.8 1.8M6.4 17.6l-1.8 1.8"></path>
+        </svg>
+      </span>
+      <span class="theme-icon" data-icon="dark" hidden>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <path d="M20.8 13.4A8.5 8.5 0 1 1 10.6 3.2a7 7 0 0 0 10.2 10.2z"></path>
+        </svg>
+      </span>
+      <span id="theme-label"></span>
+    </button>
     <div class="page">
       <slot />
       <footer class="site-footer">
@@ -66,9 +79,11 @@ const hasFeed = getAllBlogPosts().length > 0;
     </div>
 
     <script>
-      import { nextTheme, readStoredTheme, resolveTheme, storeTheme, type Theme } from '../lib/theme';
+      import { nextTheme, readStoredTheme, resolveTheme, storeTheme, toggleView, type Theme } from '../lib/theme';
 
       const button = document.getElementById('theme-toggle') as HTMLButtonElement | null;
+      const label = document.getElementById('theme-label');
+      const icons = document.querySelectorAll<HTMLElement>('.theme-icon');
       const root = document.documentElement;
       const system = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -84,10 +99,14 @@ const hasFeed = getAllBlogPosts().length > 0;
         return resolveTheme(readStoredTheme(storage()), system.matches);
       }
 
+      // The button shows the theme it will switch to, icon included, so its
+      // meaning does not depend on knowing which theme is already on.
       function render(theme: Theme) {
         if (!button) return;
-        button.textContent = theme === 'dark' ? 'Dark' : 'Light';
-        button.setAttribute('aria-label', `Switch to ${nextTheme(theme)} mode`);
+        const view = toggleView(theme);
+        if (label) label.textContent = view.label;
+        for (const icon of icons) icon.hidden = icon.dataset.icon !== view.target;
+        button.setAttribute('aria-label', view.ariaLabel);
       }
 
       if (button) {
