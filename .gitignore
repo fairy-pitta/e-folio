@@ -22,3 +22,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# brainstorming mockups
+.superpowers/
+
+# leftover local CMS data
+data.db*
+uploads/
