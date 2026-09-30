@@ -1,0 +1,14 @@
+---
+// Without this page Cloudflare Pages answers every unknown path with the
+// homepage and a 200, which reads to a crawler as endless duplicate pages.
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Page not found — Shuna Maekawa" description="This page does not exist.">
+  <p class="crumb"><a href="/">Shuna Maekawa</a> / Not found</p>
+  <h1>Page not found</h1>
+  <p class="summary">That page does not exist. It may have been renamed or removed.</p>
+  <p class="links">
+    <a href="/">Home</a> · <a href="/projects">Projects</a> · <a href="/blog">Writing</a>
+  </p>
+</Layout>
