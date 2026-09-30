@@ -45,6 +45,15 @@ describe('cv', () => {
     }
   })
 
+  it('test_read_certifications_returns_name_year_and_https_link', () => {
+    expect(cv.certifications.length).toBeGreaterThan(0)
+    for (const certification of cv.certifications) {
+      expect(certification.name.trim(), certification.name).not.toBe('')
+      expect(certification.year, certification.name).toMatch(/^\d{4}$/)
+      expect(certification.href, certification.name).toMatch(/^https:\/\//)
+    }
+  })
+
   it('test_read_awards_returns_title_and_period_for_each', () => {
     expect(cv.awards.length).toBeGreaterThan(0)
     for (const award of cv.awards) {

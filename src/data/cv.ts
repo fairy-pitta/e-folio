@@ -23,6 +23,14 @@ export interface CvSkillGroup {
   items: string[]
 }
 
+export interface CvCertification {
+  name: string
+  year: string
+  // English explainer for the issuing body — the IPA exams in particular are
+  // Japanese national qualifications that need introducing abroad.
+  href: string
+}
+
 export interface CvAward {
   title: string
   period: string
@@ -37,7 +45,7 @@ export interface Cv {
   summary: string
   experience: CvExperience[]
   education: CvEducation[]
-  certifications: string[]
+  certifications: CvCertification[]
   awards: CvAward[]
   skills: CvSkillGroup[]
 }
@@ -134,13 +142,29 @@ export const cv: Cv = {
     },
   ],
   certifications: [
-    "AWS Certified Solutions Architect – Professional (2026)",
-    "AWS Certified Generative AI Developer – Professional (2026)",
-    "AWS Certified Solutions Architect – Associate (2025)",
-    "IPA Database Specialist (2024)",
-    "IPA Applied Information Technology Engineer (2024)",
-    "IPA Fundamental Information Technology Engineer (2023)",
-    "Singapore Class 3CA driving licence (2024)",
+    {
+      name: "AWS Certified Solutions Architect – Professional",
+      year: "2026",
+      href: "https://aws.amazon.com/certification/certified-solutions-architect-professional/",
+    },
+    {
+      name: "AWS Certified Generative AI Developer – Professional",
+      year: "2026",
+      href: "https://aws.amazon.com/certification/certified-generative-ai-developer-professional/",
+    },
+    {
+      name: "AWS Certified Solutions Architect – Associate",
+      year: "2025",
+      href: "https://aws.amazon.com/certification/certified-solutions-architect-associate/",
+    },
+    { name: "IPA Database Specialist", year: "2024", href: "https://www.ipa.go.jp/en/about/it-talents/itee.html" },
+    { name: "IPA Applied Information Technology Engineer", year: "2024", href: "https://www.ipa.go.jp/en/about/it-talents/itee.html" },
+    { name: "IPA Fundamental Information Technology Engineer", year: "2023", href: "https://www.ipa.go.jp/en/about/it-talents/itee.html" },
+    {
+      name: "Singapore Class 3CA driving licence",
+      year: "2024",
+      href: "https://www.police.gov.sg/Knowledge-Hub/Traffic/Traffic-Matters/Singapore-Driving-Licence",
+    },
   ],
   awards: [
     { title: "CIN Outstanding Volunteer, NParks", period: "2021, 2022" },

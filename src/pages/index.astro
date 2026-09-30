@@ -73,7 +73,12 @@ const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
 
   <Section title="Certifications">
     <ul class="bullets">
-      {cv.certifications.map((certification) => <li>{certification}</li>)}
+      {cv.certifications.map((certification) => (
+        <li>
+          <a href={certification.href} target="_blank" rel="noopener noreferrer">{certification.name}</a>
+          <span class="muted"> ({certification.year})</span>
+        </li>
+      ))}
     </ul>
   </Section>
 
