@@ -110,6 +110,8 @@ export const cv: Cv = {
       bullets: [
         "Major in Environmental Studies",
         "Minor in Mathematical, Computational & Statistical Science",
+        "MOE Tuition Grant recipient",
+        "Capstone study on how traffic noise along the Bukit Timah Expressway affects bird vocalisations, using autonomous recording stations in nature parks",
       ],
     },
     {
