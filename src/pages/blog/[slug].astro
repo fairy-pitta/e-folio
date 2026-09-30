@@ -1,0 +1,35 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllBlogPosts, formatDate, type BlogPost } from '../../lib/content';
+import { markdownToHtml } from '../../lib/markdown';
+
+export function getStaticPaths() {
+  return getAllBlogPosts().map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: BlogPost;
+}
+
+const { post } = Astro.props;
+const { frontmatter } = post;
+const html = await markdownToHtml(post.content);
+const meta = [formatDate(post.date), frontmatter.readTime, frontmatter.tags.join(', ')]
+  .filter(Boolean)
+  .join(' · ');
+---
+
+<Layout
+  title={`${frontmatter.title} — Shuna Maekawa`}
+  description={frontmatter.excerpt}
+  ogImage={`/og/blog-${post.slug}.png`}
+>
+  <p class="crumb"><a href="/">Shuna Maekawa</a> / <a href="/blog">Writing</a></p>
+  <h1>{frontmatter.title}</h1>
+  <p class="meta">{meta}</p>
+  <article class="prose" set:html={html} />
+  <p class="footer-nav">← <a href="/blog">All writing</a></p>
+</Layout>

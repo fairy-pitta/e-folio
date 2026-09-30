@@ -1,0 +1,29 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Row from '../../components/Row.astro';
+import { getAllBlogPosts, formatYearMonth } from '../../lib/content';
+import { fetchQiitaItems } from '../../lib/qiita';
+import { toWritingItems } from '../../lib/writing';
+
+const items = toWritingItems(getAllBlogPosts(), await fetchQiitaItems());
+---
+
+<Layout title="Writing — Shuna Maekawa" description="Notes on software engineering by Shuna Maekawa.">
+  <p class="crumb"><a href="/">Shuna Maekawa</a> / Writing</p>
+  <h1>Writing</h1>
+  <p class="meta"><a href="/rss.xml">RSS</a></p>
+  <div class="list section">
+    {items.map((item) => (
+      <Row meta={formatYearMonth(item.date)}>
+        {item.external ? (
+          <>
+            <a href={item.href} target="_blank" rel="noopener noreferrer">{item.title}</a>
+            <span class="muted"> Qiita ↗</span>
+          </>
+        ) : (
+          <a href={item.href}>{item.title}</a>
+        )}
+      </Row>
+    ))}
+  </div>
+</Layout>
