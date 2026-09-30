@@ -135,7 +135,7 @@ export const cv: Cv = {
     "Singapore Class 3CA driving licence",
   ],
   skills: [
-    { label: "Languages", items: ["TypeScript", "JavaScript", "Python", "Go", "Rust", "R"] },
+    { label: "Languages", items: ["Python", "TypeScript", "R"] },
     { label: "Frameworks", items: ["React", "Next.js", "Vue", "Hono", "Django"] },
     { label: "Cloud", items: ["AWS", "Cloudflare Workers / Pages", "Vercel", "Supabase"] },
     { label: "Data", items: ["PostgreSQL", "SQLite", "SQL modelling"] },
