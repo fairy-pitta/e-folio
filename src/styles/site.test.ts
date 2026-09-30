@@ -45,7 +45,22 @@ describe('site.css', () => {
   })
 
   const light = block(css, /^:root\s*\{/m)
-  const dark = block(block(css, /@media \(prefers-color-scheme: dark\)\s*\{/), /:root\s*\{/)
+  const dark = block(
+    block(css, /@media \(prefers-color-scheme: dark\)\s*\{/),
+    /:root:not\(\[data-theme="light"\]\)\s*\{/,
+  )
+  const chosenDark = block(css, /^:root\[data-theme="dark"\]\s*\{/m)
+
+  it('lets_a_chosen_light_theme_override_a_dark_system_setting', () => {
+    expect(block(css, /^:root\[data-theme="light"\]\s*\{/m)).toMatch(/color-scheme:\s*light/)
+  })
+
+  it('uses_the_same_colours_for_chosen_dark_and_system_dark', () => {
+    for (const name of ['fg', 'muted', 'faint', 'line', 'bg', 'code-bg']) {
+      expect(variable(chosenDark, name)).toBe(variable(dark, name))
+    }
+    expect(chosenDark).toMatch(/color-scheme:\s*dark/)
+  })
 
   for (const [label, scope] of [['light', light], ['dark', dark]] as const) {
     for (const name of ['fg', 'muted', 'faint']) {

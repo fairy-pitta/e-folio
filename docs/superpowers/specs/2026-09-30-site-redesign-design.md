@@ -35,7 +35,7 @@
 - 残す依存: `astro`, `@astrojs/check`, `@astrojs/rss`, `gray-matter`, `unified` / `remark-*` / `rehype-*`（Markdown 変換）, `satori`, `sharp`（サムネ画像）, `typescript`, `vitest`, `tsx`
 - パッケージ管理は pnpm に一本化（`package-lock.json` は削除し、`pnpm-lock.yaml` を作り直す。`pnpm-workspace.yaml` の `onlyBuiltDependencies`（`sharp`）は維持し、必要なら `esbuild` を追加）。`package.json` に `packageManager` を記載。`.nvmrc` は残す
 - 見た目は `src/styles/site.css` の1ファイル（目安 100〜200 行）。書体は端末標準（`-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif`）。外部フォントは読み込まない
-- 暗い画面対応は `prefers-color-scheme: dark` による自動切り替えのみ（切り替えボタンは作らない）
+- 暗い画面対応は `prefers-color-scheme: dark` による自動切り替えが基本。右上の「Light / Dark」ボタンで手動でも切り替えられ、選んだ設定は `localStorage` に保存して次回も使う（2026-09-30 追加）。JavaScript が無効ならボタンは出さない
 - 色は CSS 変数で定義: 文字色・薄い文字色・線の色・背景色の4つ程度。強調色は使わない
 
 ## 3. ページ構成と URL

@@ -4,10 +4,14 @@ import Section from '../components/Section.astro';
 import Row from '../components/Row.astro';
 import Contact from '../components/Contact.astro';
 import { cv } from '../data/cv';
-import { getAllBlogPosts, getFeaturedProjects, formatYearMonth } from '../lib/content';
+import WritingRow from '../components/WritingRow.astro';
+import { getAllBlogPosts, getFeaturedProjects } from '../lib/content';
+import { fetchQiitaItems } from '../lib/qiita';
+import { toWritingItems } from '../lib/writing';
 
 const projects = getFeaturedProjects();
-const posts = getAllBlogPosts().slice(0, 3);
+const posts = getAllBlogPosts();
+const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
 ---
 
 <Layout>
@@ -23,15 +27,16 @@ const posts = getAllBlogPosts().slice(0, 3);
   </header>
 
   <Section title="Experience">
-    {cv.experience.map((job) => (
-      <>
-        <Row meta={job.period}>{job.role} — {job.org}</Row>
-        {job.bullets.length > 0 && (
-          <ul class="bullets">
-            {job.bullets.map((bullet) => <li>{bullet}</li>)}
-          </ul>
-        )}
-      </>
+    {cv.experience.map((job, i) => (
+      <details class="job" open={i === 0}>
+        <summary class="row">
+          <span class="row-main"><span class="role">{job.role}</span> — {job.org}</span>
+          <span class="row-meta">{job.period}</span>
+        </summary>
+        <ul class="bullets">
+          {job.bullets.map((bullet) => <li>{bullet}</li>)}
+        </ul>
+      </details>
     ))}
   </Section>
 
@@ -44,14 +49,14 @@ const posts = getAllBlogPosts().slice(0, 3);
     <p class="more"><a href="/projects">All projects →</a></p>
   </Section>
 
-  <Section title="Writing">
-    {posts.map((post) => (
-      <Row meta={formatYearMonth(post.date)}>
-        <a href={`/blog/${post.slug}`}>{post.frontmatter.title}</a>
-      </Row>
-    ))}
-    <p class="more"><a href="/blog">All writing →</a> · <a href="/rss.xml">RSS</a></p>
-  </Section>
+  {writing.length > 0 && (
+    <Section title="Writing">
+      {writing.map((item) => <WritingRow item={item} />)}
+      <p class="more">
+        <a href="/blog">All writing →</a>{posts.length > 0 && <> · <a href="/rss.xml">RSS</a></>}
+      </p>
+    </Section>
+  )}
 
   <Section title="Education">
     {cv.education.map((edu) => (
