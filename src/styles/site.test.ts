@@ -43,4 +43,15 @@ describe('site.css', () => {
   it('hides_elements_with_the_hidden_attribute_despite_display_rules', () => {
     expect(css).toMatch(/\[hidden\]\s*\{[^}]*display:\s*none/)
   })
+
+  const light = block(css, /^:root\s*\{/m)
+  const dark = block(block(css, /@media \(prefers-color-scheme: dark\)\s*\{/), /:root\s*\{/)
+
+  for (const [label, scope] of [['light', light], ['dark', dark]] as const) {
+    for (const name of ['fg', 'muted', 'faint']) {
+      it(`${label}_${name}_text_meets_wcag_aa_contrast_on_bg`, () => {
+        expect(contrast(variable(scope, name), variable(scope, 'bg'))).toBeGreaterThanOrEqual(4.5)
+      })
+    }
+  }
 })
