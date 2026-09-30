@@ -25,13 +25,33 @@ describe('cv', () => {
     }
   })
 
+  it('gives_every_job_details_to_expand', () => {
+    for (const job of cv.experience) {
+      expect(job.bullets.length, `${job.role} — ${job.org}`).toBeGreaterThan(0)
+    }
+  })
+
   it('links_use_https_or_mailto', () => {
     for (const link of cv.links) {
       expect(link.href).toMatch(/^(https:\/\/|mailto:)/)
     }
   })
 
-  it.each(['Tampines', '520297', 'Employment Pass', '(EP', 'PR pending', 'GPA', '4.52'])(
+  it.each([
+    'Tampines',
+    '520297',
+    'Employment Pass',
+    '(EP',
+    'PR pending',
+    'GPA',
+    '4.52',
+    'Forval',
+    'Crossgear',
+    'Haseko',
+    'Hasegawa',
+    '1000 users',
+    '9-person',
+  ])(
     'does_not_publish_%s',
     (secret) => {
       expect(JSON.stringify(cv)).not.toContain(secret)

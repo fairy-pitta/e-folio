@@ -48,15 +48,19 @@ export const cv: Cv = {
     { label: "Qiita", href: "https://qiita.com/Pitta" },
   ],
   summary:
-    "Full-stack engineer working across React, TypeScript, Python and Go, from database design to deployment. Currently leading engineering on client-facing systems at WAO Singapore.",
+    "Full-stack engineer working across React, TypeScript, Python and Go, from database design to deployment. Currently building client and internal systems at WAO Singapore.",
   experience: [
     {
       role: "Software Engineer",
-      org: "WAO Singapore",
+      org: "WAO Singapore / WAO Tech (WAO Corporation group)",
       period: "Dec 2023 – Present",
       bullets: [
-        "Led a team of 3 building an invoicing and customer-communication platform on React and Hono (Cloudflare Workers), replacing a manual spreadsheet workflow.",
-        "Project manager and lead engineer for a financial system built for an external client: architecture, client communication and task allocation.",
+        "Lead engineer on an accounting and budgeting SaaS for an external client (Django, Vue 3, PostgreSQL, AWS) — largest contributor over 15 months. Clean Architecture / DDD backend, Feature-Sliced frontend, AWS CDK infrastructure with OIDC-based GitHub Actions deploys, Playwright E2E and visual regression tests.",
+        "Sole developer of the school's operations platform (Hono, Drizzle, Cloudflare Workers / D1 / R2, React 19): member management, monthly invoicing with PDF generation, and email / WhatsApp messaging — replacing a manual spreadsheet workflow. Around 2,000 automated tests including contract and real-API E2E; halved the Worker bundle (2.6 MB → 1.2 MB).",
+        "Built parts of an AI document-revision pipeline for a client: OCR (Azure Document Intelligence) and an LLM (Claude on AWS Bedrock) turn scanned rules into Word files with tracked changes. Worked on test infrastructure, the storage migration and OCR accuracy evaluation.",
+        "Maintain the school's public website: custom WordPress theme with headless CMS content, SEO and performance work, and visual regression tests.",
+        "Automated back-office work: scanned-document sorting, exam-paper collection, and email archiving on AWS SES / Lambda.",
+        "Ran an internal session for the engineering team on agentic coding with Claude Code.",
         "Also teach maths, English, science and introductory programming one-on-one.",
       ],
     },
@@ -64,28 +68,36 @@ export const cv: Cv = {
       role: "Part-time Keeper",
       org: "Mandai Wildlife Group",
       period: "May 2022 – Apr 2023",
-      bullets: [],
+      bullets: [
+        "Husbandry and exhibit maintenance for 3,000+ stick insects in the invertebrate section.",
+        "Population estimates, behavioural management, and ex-situ conservation research on the best environmental conditions for stick insects.",
+      ],
     },
     {
       role: "Administrative Assistant",
       org: "Osaka Prefectural Government",
       period: "May 2020 – Jul 2020",
-      bullets: [],
+      bullets: [
+        "COVID-19 response support: translated official documents between Japanese and English and checked data integrity.",
+      ],
     },
     {
       role: "Student Research Associate",
       org: "Yale-NUS Ecology Adaptation Lab",
       period: "Dec 2019 – Dec 2022",
       bullets: [
-        "Classified hornbill vocalisations and identified individuals from acoustic features.",
+        "Led field research on Oriental pied hornbills: data collection, vocalisation classification, and individual identification from acoustic features.",
         "Built a Zooniverse citizen-science workflow to test crowd-sourced identification.",
+        "Maintained phasmid colonies and supported related data collection.",
       ],
     },
     {
       role: "Part-time Tutor",
       org: "WAO Singapore",
       period: "Sep 2019 – Apr 2023",
-      bullets: [],
+      bullets: [
+        "One-on-one tutoring for Japanese students (primary to high school) in maths, English, science and basic programming.",
+      ],
     },
   ],
   education: [

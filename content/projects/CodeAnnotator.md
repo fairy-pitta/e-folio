@@ -4,8 +4,6 @@ description: "Create beautiful, annotated code snippets for documentation, prese
 date: "22 Mar, 2026"
 coverImage: "/projects/code-annotator/screenshot.png"
 tags: ["Web App", "JavaScript", "Cloudflare Workers", "Prism.js", "Canvas"]
-featured: true
-order: 4
 liveUrl: ""
 githubUrl: "https://github.com/fairy-pitta/code-annotator"
 gallery: [
