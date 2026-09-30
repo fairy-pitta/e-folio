@@ -12,6 +12,7 @@ describe('sendContact', () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(message),
+      signal: expect.any(AbortSignal),
     })
   })
 
@@ -23,5 +24,14 @@ describe('sendContact', () => {
   it('returns_false_on_network_error', async () => {
     const fetchImpl = (async () => { throw new TypeError('Failed to fetch') }) as unknown as typeof fetch
     expect(await sendContact(message, fetchImpl)).toBe(false)
+  })
+
+  it('returns_false_when_the_worker_never_responds', { timeout: 2000 }, async () => {
+    const fetchImpl = ((_url: string, init: RequestInit) =>
+      new Promise((_resolve, reject) => {
+        init.signal?.addEventListener('abort', () => reject(init.signal?.reason))
+      })) as unknown as typeof fetch
+
+    expect(await sendContact(message, fetchImpl, 20)).toBe(false)
   })
 })
