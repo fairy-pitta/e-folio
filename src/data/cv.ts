@@ -55,7 +55,7 @@ export const cv: Cv = {
     { label: "Qiita", href: "https://qiita.com/Pitta" },
   ],
   summary:
-    "Full-stack engineer working across React, TypeScript, Python and Go, from database design to deployment. Currently building client and internal systems at WAO Singapore.",
+    "Full-stack engineer working across React, TypeScript and Python, from database design to deployment. Currently building client and internal systems at WAO Singapore.",
   experience: [
     {
       role: "Software Engineer",
