@@ -141,15 +141,31 @@ const ICONS = [
   { master: 'new-favicon.png', output: 'og-default.png', size: 512 },
 ]
 
+// The mark is essentially two colours, so a small palette costs nothing
+// visually and halves the large sizes. Which encoding wins varies with the
+// size, so all three run and the smallest output is kept.
+const PNG_ENCODINGS = [
+  { compressionLevel: 9, palette: true, colors: 128, effort: 10 },
+  { compressionLevel: 9, palette: true },
+  { compressionLevel: 9, palette: false },
+]
+
 async function buildIcons() {
   for (const { master, output, size } of ICONS) {
     const source = path.join(SOURCE_DIR, master)
     const target = path.join(OUTPUT_DIR, output)
     if (!(await isStale(source, target))) continue
-    await sharp(source)
-      .resize({ width: size, height: size, fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-      .png({ compressionLevel: 9, palette: true })
-      .toFile(target)
+    const resized = sharp(source).resize({
+      width: size,
+      height: size,
+      fit: 'contain',
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    })
+    const encoded = await Promise.all(
+      PNG_ENCODINGS.map((options) => resized.clone().png(options).toBuffer())
+    )
+    const smallest = encoded.reduce((a, b) => (b.length < a.length ? b : a))
+    await fs.writeFile(target, smallest)
     await record(source, [target])
   }
 }
