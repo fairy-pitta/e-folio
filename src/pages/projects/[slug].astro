@@ -1,0 +1,57 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getAllProjects, formatDate, projectLinks, type Project } from '../../lib/content';
+import { markdownToHtml } from '../../lib/markdown';
+
+export function getStaticPaths() {
+  return getAllProjects().map((project) => ({
+    params: { slug: project.slug },
+    props: { project },
+  }));
+}
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { frontmatter } = project;
+const html = await markdownToHtml(project.content);
+const links = projectLinks(frontmatter);
+const meta = [formatDate(project.date), frontmatter.tags.join(', ')].filter(Boolean).join(' · ');
+const gallery = (frontmatter.gallery ?? []).filter((src) => src.trim() !== '');
+---
+
+<Layout
+  title={`${frontmatter.title} — Shuna Maekawa`}
+  description={frontmatter.description}
+  ogImage={`/og/project-${project.slug}.png`}
+>
+  <p class="crumb"><a href="/">Shuna Maekawa</a> / <a href="/projects">Projects</a></p>
+  <h1>{frontmatter.title}</h1>
+  <p class="meta">{meta}</p>
+  <p class="summary">{frontmatter.description}</p>
+  {links.length > 0 && (
+    <p class="links">
+      {links.map((link, i) => (
+        <>{i > 0 && ' · '}<a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a></>
+      ))}
+    </p>
+  )}
+
+  {frontmatter.coverImage?.trim() && (
+    <figure class="figure">
+      <img src={frontmatter.coverImage} alt={frontmatter.title} width="1280" height="720" decoding="async" />
+    </figure>
+  )}
+
+  <article class="prose" set:html={html} />
+
+  {gallery.map((src) => (
+    <figure class="figure">
+      <img src={src} alt={`${frontmatter.title} screenshot`} loading="lazy" decoding="async" />
+    </figure>
+  ))}
+
+  <p class="footer-nav">← <a href="/projects">All projects</a></p>
+</Layout>

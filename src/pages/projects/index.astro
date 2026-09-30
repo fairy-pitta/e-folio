@@ -1,0 +1,20 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Row from '../../components/Row.astro';
+import { getAllProjects, formatYearMonth } from '../../lib/content';
+
+const projects = getAllProjects();
+---
+
+<Layout title="Projects — Shuna Maekawa" description="Side projects and tools by Shuna Maekawa.">
+  <p class="crumb"><a href="/">Shuna Maekawa</a> / Projects</p>
+  <h1>Projects</h1>
+  <div class="list section">
+    {projects.map((project) => (
+      <Row meta={formatYearMonth(project.date)}>
+        <a href={`/projects/${project.slug}`}>{project.frontmatter.title}</a>
+        <span class="muted"> — {project.frontmatter.description}</span>
+      </Row>
+    ))}
+  </div>
+</Layout>
