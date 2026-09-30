@@ -89,9 +89,14 @@ const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
   </Section>
 
   <Section title="Skills">
-    {cv.skills.map((group) => (
-      <p style="margin:0"><span class="muted">{group.label}</span> {group.items.join(', ')}</p>
-    ))}
+    <dl class="skills">
+      {cv.skills.map((group) => (
+        <>
+          <dt>{group.label}</dt>
+          <dd>{group.items.join(', ')}</dd>
+        </>
+      ))}
+    </dl>
   </Section>
 
   <Section title="Contact">

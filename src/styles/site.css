@@ -119,6 +119,16 @@ pre { background: var(--code-bg); padding: 12px 14px; overflow-x: auto; font-siz
 .theme-icon { display: inline-flex; flex: none; }
 .theme-toggle:hover { color: var(--fg); border-color: var(--muted); }
 .site-footer { margin-top: 64px; font-size: .8rem; color: var(--faint); }
+/* Labels in their own column so the values line up down the section. */
+.skills { display: grid; grid-template-columns: max-content 1fr; gap: 8px 20px; margin: 0; }
+.skills dt { color: var(--muted); }
+.skills dd { margin: 0; }
+@media (max-width: 460px) {
+  .skills { grid-template-columns: 1fr; gap: 0; }
+  .skills dt { margin-top: 10px; font-size: .875rem; }
+  .skills dt:first-of-type { margin-top: 0; }
+}
+
 
 .contact { display: grid; gap: 10px; max-width: 440px; }
 .contact label { display: grid; gap: 4px; font-size: .875rem; color: var(--muted); }
