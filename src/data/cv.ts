@@ -12,6 +12,7 @@ export interface CvExperience {
 
 export interface CvEducation {
   school: string
+  country: string
   degree: string
   period: string
   bullets?: string[]
@@ -103,6 +104,7 @@ export const cv: Cv = {
   education: [
     {
       school: "Yale-NUS College",
+      country: "Singapore",
       degree: "BSc (Hons), First Class Honours",
       period: "2019 – 2023",
       bullets: [
@@ -112,11 +114,13 @@ export const cv: Cv = {
     },
     {
       school: "United World College Costa Rica",
+      country: "Costa Rica",
       degree: "International Baccalaureate Diploma",
       period: "2017 – 2019",
     },
     {
       school: "Nishiyamato Gakuen Academy",
+      country: "Japan",
       degree: "Junior and senior high school",
       period: "2013 – 2017",
     },

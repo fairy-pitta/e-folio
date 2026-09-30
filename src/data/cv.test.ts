@@ -31,9 +31,9 @@ describe('cv', () => {
     }
   })
 
-  it('test_read_education_entries_returns_school_degree_and_period', () => {
+  it('test_read_education_entries_returns_school_country_degree_and_period', () => {
     for (const edu of cv.education) {
-      expect(edu.school && edu.degree && edu.period, edu.school).toBeTruthy()
+      expect(edu.school && edu.country && edu.degree && edu.period, edu.school).toBeTruthy()
     }
   })
 
