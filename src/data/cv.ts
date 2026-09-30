@@ -56,9 +56,9 @@ export const cv: Cv = {
       period: "Dec 2023 – Present",
       bullets: [
         "Lead engineer on an accounting and budgeting SaaS for an external client (Django, Vue 3, PostgreSQL, AWS) — largest contributor over 15 months. Clean Architecture / DDD backend, Feature-Sliced frontend, AWS CDK infrastructure with OIDC-based GitHub Actions deploys, Playwright E2E and visual regression tests.",
-        "Sole developer of the school's operations platform (Hono, Drizzle, Cloudflare Workers / D1 / R2, React 19): member management, monthly invoicing with PDF generation, and email / WhatsApp messaging — replacing a manual spreadsheet workflow. Around 2,000 automated tests including contract and real-API E2E; halved the Worker bundle (2.6 MB → 1.2 MB).",
+        "Sole developer of the tuition centre's operations platform (Hono, Drizzle, Cloudflare Workers / D1 / R2, React 19): member management, monthly invoicing with PDF generation, and email / WhatsApp messaging — replacing a manual spreadsheet workflow. Around 2,000 automated tests including contract and real-API E2E; halved the Worker bundle (2.6 MB → 1.2 MB).",
         "Built parts of an AI document-revision pipeline for a client: OCR (Azure Document Intelligence) and an LLM (Claude on AWS Bedrock) turn scanned rules into Word files with tracked changes. Worked on test infrastructure, the storage migration and OCR accuracy evaluation.",
-        "Maintain the school's public website: custom WordPress theme with headless CMS content, SEO and performance work, and visual regression tests.",
+        "Maintain the tuition centre's public website: custom WordPress theme with headless CMS content, SEO and performance work, and visual regression tests.",
         "Automated back-office work: scanned-document sorting, exam-paper collection, and email archiving on AWS SES / Lambda.",
         "Ran an internal session for the engineering team on agentic coding with Claude Code.",
         "Also teach maths, English, science and introductory programming one-on-one.",
