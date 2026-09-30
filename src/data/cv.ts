@@ -87,7 +87,7 @@ export const cv: Cv = {
       org: "Yale-NUS Ecology Adaptation Lab",
       period: "Dec 2019 – Dec 2022",
       bullets: [
-        "Led field research on Oriental pied hornbills: data collection, vocalisation classification, and individual identification from acoustic features.",
+        "Led field research on Oriental pied hornbills: data collection, vocalisation classification, and individual identification from facial features using pattern recognition.",
         "Built a Zooniverse citizen-science workflow to test crowd-sourced identification.",
         "Maintained phasmid colonies and supported related data collection.",
       ],
