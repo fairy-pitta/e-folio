@@ -31,6 +31,20 @@ describe('cv', () => {
     }
   })
 
+  it('test_read_education_entries_returns_school_degree_and_period', () => {
+    for (const edu of cv.education) {
+      expect(edu.school && edu.degree && edu.period, edu.school).toBeTruthy()
+    }
+  })
+
+  it('test_read_education_bullets_when_present_returns_non_empty_lines', () => {
+    for (const edu of cv.education) {
+      if (!edu.bullets) continue
+      expect(edu.bullets.length, edu.school).toBeGreaterThan(0)
+      edu.bullets.forEach((bullet) => expect(bullet.trim(), edu.school).not.toBe(''))
+    }
+  })
+
   it('links_use_https_or_mailto', () => {
     for (const link of cv.links) {
       expect(link.href).toMatch(/^(https:\/\/|mailto:)/)

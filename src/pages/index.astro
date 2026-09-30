@@ -62,7 +62,11 @@ const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
     {cv.education.map((edu) => (
       <>
         <Row meta={edu.period}>{edu.school} — {edu.degree}</Row>
-        {edu.note && <p class="muted">{edu.note}</p>}
+        {edu.bullets && (
+          <ul class="bullets">
+            {edu.bullets.map((bullet) => <li>{bullet}</li>)}
+          </ul>
+        )}
       </>
     ))}
   </Section>

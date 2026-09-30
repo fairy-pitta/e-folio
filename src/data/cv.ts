@@ -14,7 +14,7 @@ export interface CvEducation {
   school: string
   degree: string
   period: string
-  note?: string
+  bullets?: string[]
 }
 
 export interface CvSkillGroup {
@@ -103,14 +103,22 @@ export const cv: Cv = {
   education: [
     {
       school: "Yale-NUS College",
-      degree: "BSc (Hons) Environmental Studies, First Class Honours",
+      degree: "BSc (Hons), First Class Honours",
       period: "2019 – 2023",
-      note: "Minor in Mathematical, Computational & Statistical Science",
+      bullets: [
+        "Major in Environmental Studies",
+        "Minor in Mathematical, Computational & Statistical Science",
+      ],
     },
     {
       school: "United World College Costa Rica",
       degree: "International Baccalaureate Diploma",
       period: "2017 – 2019",
+    },
+    {
+      school: "Nishiyamato Gakuen Academy",
+      degree: "Junior and senior high school",
+      period: "2013 – 2017",
     },
   ],
   certifications: [
