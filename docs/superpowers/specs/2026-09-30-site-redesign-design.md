@@ -33,7 +33,7 @@
 - 公開先はこれまでどおり Cloudflare Pages（`wrangler.toml` の `pages_build_output_dir = "dist"` を維持）
 - 削除する依存: React 関連（`@astrojs/react`, `react`, `react-dom`, `@types/react*`）、Tailwind 関連（`tailwindcss`, `@tailwindcss/*`, `tailwindcss-animate`, `autoprefixer`, `postcss` 設定）、`@radix-ui/*`, `class-variance-authority`, `clsx`, `tailwind-merge`, `lucide-react`, `react-hook-form`, `@hookform/resolvers`, `zod`, `date-fns`（不要なら）, `resend`, EmDash 関連（`emdash`, `@emdash-cms/*`, `better-sqlite3`, `@astrojs/node`, `@astrojs/cloudflare`, `@portabletext/react`）
 - 残す依存: `astro`, `@astrojs/check`, `@astrojs/rss`, `gray-matter`, `unified` / `remark-*` / `rehype-*`（Markdown 変換）, `satori`, `sharp`（サムネ画像）, `typescript`, `vitest`, `tsx`
-- パッケージ管理は npm に一本化（`pnpm-lock.yaml`, `pnpm-workspace.yaml` は削除）。`.nvmrc` は残す
+- パッケージ管理は pnpm に一本化（`package-lock.json` は削除し、`pnpm-lock.yaml` を作り直す。`pnpm-workspace.yaml` の `onlyBuiltDependencies`（`sharp`）は維持し、必要なら `esbuild` を追加）。`package.json` に `packageManager` を記載。`.nvmrc` は残す
 - 見た目は `src/styles/site.css` の1ファイル（目安 100〜200 行）。書体は端末標準（`-apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif`）。外部フォントは読み込まない
 - 暗い画面対応は `prefers-color-scheme: dark` による自動切り替えのみ（切り替えボタンは作らない）
 - 色は CSS 変数で定義: 文字色・薄い文字色・線の色・背景色の4つ程度。強調色は使わない
@@ -150,7 +150,7 @@ JavaScript はフォーム送信だけ。React は使わない。
 - `src/data/cv.test.ts`（新規）: 必須項目が空でないこと、住所・在留資格に当たる文字列（`Tampines`, `520297`, `Employment Pass`, `(EP`, `PR pending`）が含まれていないこと
 - `src/lib/qiita.test.ts`（新規）: 取得失敗時に空配列を返すこと（`fetch` を差し替えて確認）
 - `src/lib/utils.test.ts`: `cn()` など不要になった関数のテストは関数と一緒に削除
-- 最終確認: `npm test` と `npm run build`（`astro check && astro build`）が通ること。`dist/` に全記事・全作品・RSS・サムネ画像が出力されていること
+- 最終確認: `pnpm test` と `pnpm build`（`astro check && astro build`）が通ること。`dist/` に全記事・全作品・RSS・サムネ画像が出力されていること
 - 見た目の確認: 開発サーバーでトップ・記事・作品・一覧を、明るい画面／暗い画面、スマホ幅（375px）／パソコン幅で目視確認する
 
 ## 8. 今回やらないこと
