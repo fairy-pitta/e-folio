@@ -1,32 +1,8 @@
 ---
-import Layout from '../layouts/Layout.astro'
-import Projects from '../components/projects'
-import EnhancedBlogClient from '../components/enhanced-blog-client'
-import HeroAstro from '../components/Hero.astro'
-import About from '../components/about'
-import Skills from '../components/skills'
-import Experience from '../components/experience'
-import Contact from '../components/contact'
-import Navbar from '../components/navbar'
-import { getAllProjects, getAllBlogPosts } from '../lib/content'
-import FooterAstro from '../components/Footer.astro'
-
-const projects = getAllProjects()
-const englishPosts = getAllBlogPosts()
+import Layout from '../layouts/Layout.astro';
 ---
 
-<Layout title="Fairy Pitta">
-  <Navbar client:idle />
-  <HeroAstro />
-  <About client:visible />
-  <Skills client:visible />
-  <Experience client:visible />
-  <section id="projects">
-    <Projects client:visible projects={projects} showTags={false} />
-  </section>
-  <section id="blog">
-    <EnhancedBlogClient client:visible englishPosts={englishPosts} mode="home" />
-  </section>
-  <Contact client:visible />
-  <FooterAstro />
+<Layout>
+  <h1>Shuna Maekawa <span class="muted">(fairy-pitta)</span></h1>
+  <p class="muted">Software Engineer · Singapore</p>
 </Layout>

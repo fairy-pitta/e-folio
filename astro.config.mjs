@@ -1,14 +1,11 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
-import tailwind from '@astrojs/tailwind';
+import { defineConfig } from "astro/config";
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://fairy-pitta.net',
-  integrations: [react(), tailwind()],
+  site: "https://fairy-pitta.net",
   prefetch: {
-    defaultStrategy: 'hover',
-    prefetchAll: true
-  }
+    defaultStrategy: "hover",
+    prefetchAll: true,
+  },
 });

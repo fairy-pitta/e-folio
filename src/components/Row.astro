@@ -1,0 +1,11 @@
+---
+interface Props {
+  meta?: string;
+}
+const { meta } = Astro.props;
+---
+
+<div class="row">
+  <div class="row-main"><slot /></div>
+  {meta && <span class="row-meta">{meta}</span>}
+</div>
