@@ -2,12 +2,20 @@ import satori from 'satori'
 import sharp from 'sharp'
 
 // Fonts are fetched only at build time; the site itself uses system fonts.
+const fontCache = new Map<string, ArrayBuffer>()
+
 async function loadGoogleFont(family: string, weight: number): Promise<ArrayBuffer> {
+  const cacheKey = `${family}:${weight}`
+  const cached = fontCache.get(cacheKey)
+  if (cached) return cached
+
   const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weight}&display=swap`
   const css = await (await fetch(url)).text()
   const match = css.match(/src:\s*url\(([^)]+)\)/)
   if (!match) throw new Error(`Failed to load font: ${family}`)
-  return (await fetch(match[1])).arrayBuffer()
+  const buffer = await (await fetch(match[1])).arrayBuffer()
+  fontCache.set(cacheKey, buffer)
+  return buffer
 }
 
 export async function generateOgImage(title: string): Promise<Buffer> {
