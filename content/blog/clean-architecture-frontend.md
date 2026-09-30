@@ -5,49 +5,49 @@ excerpt: "I tried slapping the full onion onto a frontend codebase. It didn't go
 coverImage: "/og/blog-clean-architecture-frontend.png"
 readTime: "7 min read"
 tags: ["Architecture", "Frontend", "React", "Clean Architecture"]
+draft: true
 ---
 
-## An Onion That Won't Peel
+<!--
+SKELETON — rewrite in your own words before publishing (then delete `draft: true` and this comment).
+Facts below come from an earlier AI-written draft; check each one.
 
-I read Uncle Bob's Clean Architecture. I watched twada's [2025 JSConf.jp talk](https://speakerdeck.com/twada/why-the-clean-architecture-does-not-fit-with-web-frontend) on why it doesn't fit web frontends. Then I ignored both and tried to apply the full onion to a client project's Vue.js frontend anyway, because I'm that kind of person.
+Removed claims to verify (unsourced or not from my own experience):
+- twada's argument: CA separates business logic, frontends mostly lack it; complexity comes from device/network/UI state; React moved to functional/immutable (kept as one link below)
+- Dan Abramov "Goodbye, Clean Code" summary (kept as one link)
+- FSD description: "seven standardized layers" (draft lists six: App, Pages, Widgets, Features, Entities, Shared — count is wrong/unclear); import only from layers below
+- Bulletproof React description: features/ dir, no cross-feature imports enforced via ESLint, unidirectional flow
+- Kent C. Dodds colocation principle (link dropped)
+- Generic advice: "business rules belong in backend; duplicated client logic goes stale first"
+- "Steal the principles" list (dependency direction, separation of concerns, testability)
+- "Read Uncle Bob's Clean Architecture" (fine if true, check)
+- "Backend loved it": four layers Domain/Application/Infrastructure/Presentation on backend, repository interfaces — is this my own backend? (check)
+- "DTOs respawning in the backend" — draft says backend, but section is about frontend (check which)
+- Spectrogram tool as case where onion fits (client-side DSP): confirm I actually applied clean architecture there (check)
+- "Clean Architecture is a backend pattern" as general claim
+-->
 
-The backend loved it. Domain, Application, Infrastructure, Presentation — each layer had clear responsibilities, dependency inversion worked beautifully, and repository interfaces gave me that warm architectural glow. Real business logic deserves real boundaries.
+## Context
+- Client project, Vue.js frontend
+- Applied full Clean Architecture despite having read Clean Architecture and seen twada's talk
+- Four layers: Domain, Application, Infrastructure, Presentation
 
-The frontend? Not so much.
+## What happened
+- Domain layer ended up basically empty: entities were TypeScript types mirroring API responses; "use cases" were thin wrappers around fetch calls
+- Component layer (outermost in CA) is where the real complexity lived
+- DTOs reappeared despite being removed in an earlier refactor; each layer made "I need a transformation here" look reasonable while it was already handled elsewhere (check: backend or frontend)
+- Import paths across four layers for one feature:
+  - `@/domain/entities/Transaction`
+  - `@/application/usecases/GetTransactions`
+  - `@/infrastructure/api/TransactionApi`
+  - `@/presentation/components/TransactionList`
+- Later frontend migration: Pinia to TanStack Query, ESLint to Biome, new folder structure. Changes cascaded through layers; existing PRs needed extensive rework
 
-## It's a Category Error
+## Cause
+- Frontend had almost no business logic to protect, so layers were indirection only
 
-twada's core argument is sharp: Clean Architecture exists to separate **business logic** from its surroundings. But most frontend code doesn't *have* business logic. It's presentation, state management, and API calls. That's it.
-
-He goes further — frontend complexity comes from device constraints, network instability, and UI state management, not from domain rules. Modern frameworks like React deliberately moved toward functional programming and immutable data because those concerns demand different tools than what layered OOP architectures provide. You can't solve a state-synchronization problem with a dependency-inversion diagram.
-
-On my project, the frontend "domain layer" ended up basically empty. Entities were TypeScript types mirroring the API response. "Use cases" were thin wrappers around fetch calls. I'd built four layers of indirection for what amounted to: fetch data, show data. Brilliant.
-
-Meanwhile, the component layer — which Clean Architecture treats as the outermost, *least important* ring — was where all the actual complexity lived. The hierarchy was upside down.
-
-## Three Ways It Hurt
-
-### DTOs That Wouldn't Stay Dead
-
-I caught data transfer objects respawning in the backend despite being removed in an earlier refactor. Each layer gave developers a convenient excuse to think "I need a transformation here" without realizing it was already handled two layers away. Layers don't just add indirection — they hide duplication behind directory boundaries.
-
-### Import Paths From Hell
-
-Four layers plus strict dependency rules meant every feature touched `@/domain/entities/Transaction`, `@/application/usecases/GetTransactions`, `@/infrastructure/api/TransactionApi`, and `@/presentation/components/TransactionList`. Navigating the codebase felt like finding the lobby by walking through every floor of a hotel. One feature, four directories, zero joy.
-
-### Refactoring Became Surgery
-
-When I eventually migrated the frontend (Pinia to TanStack Query, ESLint to Biome, new folder structure), the layered architecture fought back hard. Every change cascaded through multiple layers. Existing PRs needed extensive rework. Dan Abramov's ["Goodbye, Clean Code"](https://overreacted.io/goodbye-clean-code/) essay kept echoing in my head — I'd traded the ability to change requirements for architectural purity, and that wasn't a good trade.
-
-## What Actually Works
-
-### Vertical Slices Over Horizontal Layers
-
-Instead of organizing by technical layer (domain / application / infrastructure / presentation), organize by **feature**. Each feature owns its components, API calls, types, and state. Colocate what changes together.
-
-[Feature-Sliced Design](https://feature-sliced.design/) (FSD) formalizes this with seven standardized layers — App, Pages, Widgets, Features, Entities, Shared — where modules can only import from layers strictly below them. It's opinionated but flexible, and the unidirectional dependency rule gives you most of what Clean Architecture promises without the ceremony.
-
-[Bulletproof React](https://github.com/alan2207/bulletproof-react) takes a lighter approach: a `features/` directory where each feature encapsulates its own API hooks, components, and types. No cross-feature imports (enforced via ESLint), unidirectional flow from shared to features to app. Honestly, for most React projects this is the right starting point.
+## Fix
+- Moved to feature-based folders (each feature owns components, API, types, state):
 
 ```
 features/
@@ -66,29 +66,16 @@ features/
     └── lib/
 ```
 
-Kent C. Dodds calls this the [colocation principle](https://kentcdodds.com/blog/colocation): place code as close to where it's relevant as possible. Things that change together should live together. It sounds obvious. It wasn't obvious to me when I was drawing onion diagrams.
+- Kept only: shared code does not depend on feature code; API calls not inside components; pure functions for data transformation (check)
+- Business rules stay in backend
 
-### Keep the Frontend Thin
+## Takeaway
+- Frontend that mostly fetches and displays: feature-sliced organisation, thin layers
+- Full layering only if real client-side domain logic exists; example: browser spectrogram tool with client-side DSP (check)
 
-Business rules belong in the backend. The frontend's job is to fetch, display, and collect input. Duplicating domain logic client-side creates two sources of truth, and the frontend copy is always the one that goes stale first.
-
-### Steal the Principles, Skip the Structure
-
-The *ideas* in Clean Architecture still matter:
-- **Dependency direction** — shared code shouldn't depend on feature code
-- **Separation of concerns** — API calls don't belong inside components
-- **Testability** — pure functions for data transformation
-
-You don't need concentric circles to follow these principles. A flat features directory with clear import rules gets you there.
-
-## When the Onion Actually Fits
-
-There's one case where full Clean Architecture earns its keep on the frontend: **genuine client-side domain logic**. Offline-first apps, complex form validation with real business rules, or heavy client-side computation.
-
-I built a [browser-based spectrogram tool](https://spectrogram.fairy-pitta.net/) where DSP algorithms run entirely in the client. That's real domain logic — math that exists independent of any UI framework — and it deserves isolation. The onion works there because there's actually something worth putting at the center.
-
-## The Short Version
-
-Clean Architecture is a backend pattern. When it shows up in frontend codebases, it's usually cargo-culted in by someone (hi, past me) who liked the diagram more than they understood the constraints.
-
-If your frontend mostly fetches and displays data, go with feature-sliced organization and thin layers. Save the onion for backends with real business logic — or the rare frontend where the domain layer isn't just a mirror of your API types.
+## Links
+- twada, JSConf.jp 2025: https://speakerdeck.com/twada/why-the-clean-architecture-does-not-fit-with-web-frontend
+- Dan Abramov, "Goodbye, Clean Code": https://overreacted.io/goodbye-clean-code/
+- Feature-Sliced Design: https://feature-sliced.design/
+- Bulletproof React: https://github.com/alan2207/bulletproof-react
+- Spectrogram tool: https://spectrogram.fairy-pitta.net/

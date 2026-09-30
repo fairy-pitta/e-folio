@@ -12,6 +12,8 @@ export interface BlogFrontmatter {
   coverImage?: string
   readTime?: string
   tags: string[]
+  // Drafts stay in the repo but are not built into any page, feed or image.
+  draft?: boolean
 }
 
 export interface ProjectFrontmatter {
@@ -104,8 +106,9 @@ function readMarkdownFiles<T extends { date: string; tags: string[] }>(directory
     .sort((a, b) => b.date.getTime() - a.date.getTime())
 }
 
-export function getAllBlogPosts(): BlogPost[] {
-  return readMarkdownFiles<BlogFrontmatter>(blogDirectory)
+export function getAllBlogPosts({ includeDrafts = false }: { includeDrafts?: boolean } = {}): BlogPost[] {
+  const posts = readMarkdownFiles<BlogFrontmatter>(blogDirectory)
+  return includeDrafts ? posts : posts.filter((post) => post.frontmatter.draft !== true)
 }
 
 export function getAllProjects(): Project[] {

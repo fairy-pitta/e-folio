@@ -42,8 +42,19 @@ describe('formatters', () => {
 })
 
 describe('getAllBlogPosts', () => {
+  it('leaves_out_drafts_by_default', () => {
+    for (const post of getAllBlogPosts()) {
+      expect(post.frontmatter.draft).not.toBe(true)
+    }
+  })
+
+  it('includes_drafts_when_asked', () => {
+    const all = getAllBlogPosts({ includeDrafts: true })
+    expect(all.length).toBeGreaterThan(getAllBlogPosts().length)
+  })
+
   it('returns_posts_sorted_newest_first_with_tags_arrays', () => {
-    const posts = getAllBlogPosts()
+    const posts = getAllBlogPosts({ includeDrafts: true })
     expect(posts.length).toBeGreaterThan(0)
     for (let i = 1; i < posts.length; i++) {
       expect(posts[i - 1].date.getTime()).toBeGreaterThanOrEqual(posts[i].date.getTime())
@@ -70,9 +81,9 @@ describe('getFeaturedProjects', () => {
   it('returns_the_four_featured_projects_in_order', () => {
     expect(getFeaturedProjects().map((p) => p.slug)).toEqual([
       'Portree',
-      'PRViewer',
+      'CCAccountSwitcher',
+      'OcrVfs',
       'PrintableSpectrogram',
-      'CodeAnnotator',
     ])
   })
 

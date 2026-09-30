@@ -5,18 +5,27 @@ excerpt: "Evaluating BirdNET’s accuracy on common Singaporean birds reveals st
 coverImage: "/blogs/hornbill_call.png"
 readTime: "10 min read"
 tags: ["BirdNET", "bioacoustics"]
+draft: true
 ---
 
-#### Overview
+<!--
+SKELETON — rewrite in your own words before publishing (then delete `draft: true` and this comment).
+Facts below come from an earlier AI-written draft; check each one.
 
-How well can a machine tell the difference between a myna and a munia? This article dives into that question using BirdNET — the open-source bird sound recognizer — tested on 30 of Singapore's most familiar feathered residents. The goal: to assess how accurately the default BirdNET model performs when given real-world recordings from Southeast Asia.
+Removed claims to verify (unsourced or not from my own experience):
+- Explanations for why species did well/badly (clear calls cut through noise; overlapping vocal traits; under-represented in training data; woodpecker trill blends with insect/leaf sounds)
+- Exact recall for Eurasian Tree Sparrow and Olive-backed Sunbird (draft only says "solid but imperfect"; numbers are in the plot)
+- Overall conclusion "highly reliable for distinctive, well-represented calls; drops for subtler/noisier/rarer birds"
+- Planned next step: fine-tune BirdNET for Singaporean birds
+- "30 most familiar residents" framing
+-->
 
-#### Setup and Progress
+## Question
+- How accurate is the default BirdNET model on real Southeast Asian recordings of common Singapore birds?
 
-I began by cloning the [BirdNET-Analyzer repository](https://github.com/birdnet-team/BirdNET-Analyzer) and building a Docker image locally. There were a few bumps — the Dockerfile needed path fixes — but it was soon up and running.
-
-<details>
-<summary>Show Dockerfile</summary>
+## Setup
+- Cloned [BirdNET-Analyzer](https://github.com/birdnet-team/BirdNET-Analyzer), built a Docker image locally
+- Dockerfile needed path fixes (details: check)
 
 ```Dockerfile
 FROM python:3.11
@@ -38,62 +47,9 @@ RUN pip install --upgrade pip \
 ENTRYPOINT ["python3", "-m", "birdnet_analyzer.analyze"]
 ```
 
-</details>
-
-#### Species Targeted for Evaluation
-
-To make the experiment as relevant as possible, I used the 30 species selected for NParks' [Garden Bird Watch](http://nparks.gov.sg/nature/community-in-nature/garden-bird-watch) — birds that the public is encouraged to identify in parks and green spaces. Of these, I gathered 10 high-quality recordings for 27 species.
-
-<details>
-  <summary>List of the Birds are the following</summary>
-<ol>
-  <li>Common Myna (<em>Acridotheres tristis</em>)</li>
-  <li>Large-billed Crow (<em>Corvus macrorhynchos</em>)</li>
-  <li>Yellow-vented Bulbul (<em>Pycnonotus goiavier</em>)</li>
-  <li>Asian Koel (<em>Eudynamys scolopaceus</em>)</li>
-  <li>White-breasted Waterhen (<em>Amaurornis phoenicurus</em>)</li>
-  <li>Asian Glossy Starling (<em>Aplonis panayensis</em>)</li>
-  <li>Scarlet-backed Flowerpecker (<em>Dicaeum cruentatum</em>)</li>
-  <li>Common Iora (<em>Aegithina tiphia</em>)</li>
-  <li>Swinhoe's White-eye (<em>Zosterops simplex</em>)</li>
-  <li>Collared Kingfisher (<em>Todiramphus chloris</em>)</li>
-  <li>Red Junglefowl (<em>Gallus gallus</em>)</li>
-  <li>Eurasian Tree Sparrow (<em>Passer montanus</em>)</li>
-  <li>White-throated Kingfisher (<em>Halcyon smyrnensis</em>)</li>
-  <li>Common Tailorbird (<em>Orthotomus sutorius</em>)</li>
-  <li>Rock Pigeon (<em>Columba livia</em>)</li>
-  <li>Olive-backed Sunbird (<em>Cinnyris jugularis</em>)</li>
-  <li>Spotted Dove (<em>Spilopelia chinensis</em>)</li>
-  <li>Brown-throated Sunbird (<em>Anthreptes malacensis</em>)</li>
-  <li>Blue-tailed Bee-eater (<em>Merops philippinus</em>)</li>
-  <li>Blue-throated Bee-eater (<em>Merops viridis</em>)</li>
-  <li>Pink-necked Green Pigeon (<em>Treron vernans</em>)</li>
-  <li>Sunda Pygmy Woodpecker (<em>Yungipicus moluccensis</em>)</li>
-  <li>Oriental Pied Hornbill (<em>Anthracoceros albirostris</em>)</li>
-  <li>Common Flameback (<em>Dinopium javanense</em>)</li>
-  <li>Scaly-breasted Munia (<em>Lonchura punctulata</em>)</li>
-  <li>Zebra Dove (<em>Geopelia striata</em>)</li>
-  <li>House Crow (<em>Corvus splendens</em>)</li>
-</ol>
-
-#### Species Not Used
-
-Out of the 30 Garden Birdwatch species, a few species couldn’t be retrieved from Xeno-Canto:
-
-* Javan Myna (<em>Acridotheres javanicus</em>)
-* Oriental Magpie-Robin (<em>Copsychus saularis</em>)
-* Black-naped Oriole (<em>Oriolus chinensis</em>)
-
-> Some species are under extreme pressure due to trapping or harassment. The open availability of high-quality recordings of these species can make the problems even worse. For this reason, streaming and downloading of these recordings is disabled. ([xeno-canto](https://xeno-canto.org/help/FAQ#restricted))
-</details>
-
-
-#### Evaluation: How Accurate Is BirdNET?
-
-With coordinates set to Singapore (lat 1.35, lon 103.8), each file was scored based on the dominant call and filtered for confidence (>85%).
-
-<details>
-<summary>Show R code used for analysis</summary>
+- Location set to Singapore: lat 1.35, lon 103.8
+- Each file scored on its dominant call; detections filtered to confidence > 85%
+- Analysis in R:
 
 ```r
 df |>
@@ -112,22 +68,63 @@ df |>
   )
 ```
 
-</details>
+## Species tested
+- The 30 species of NParks [Garden Bird Watch](http://nparks.gov.sg/nature/community-in-nature/garden-bird-watch)
+- 10 recordings each for 27 species (source: Xeno-Canto)
 
-#### Results: Recall Rate by Species
+1. Common Myna (*Acridotheres tristis*)
+2. Large-billed Crow (*Corvus macrorhynchos*)
+3. Yellow-vented Bulbul (*Pycnonotus goiavier*)
+4. Asian Koel (*Eudynamys scolopaceus*)
+5. White-breasted Waterhen (*Amaurornis phoenicurus*)
+6. Asian Glossy Starling (*Aplonis panayensis*)
+7. Scarlet-backed Flowerpecker (*Dicaeum cruentatum*)
+8. Common Iora (*Aegithina tiphia*)
+9. Swinhoe's White-eye (*Zosterops simplex*)
+10. Collared Kingfisher (*Todiramphus chloris*)
+11. Red Junglefowl (*Gallus gallus*)
+12. Eurasian Tree Sparrow (*Passer montanus*)
+13. White-throated Kingfisher (*Halcyon smyrnensis*)
+14. Common Tailorbird (*Orthotomus sutorius*)
+15. Rock Pigeon (*Columba livia*)
+16. Olive-backed Sunbird (*Cinnyris jugularis*)
+17. Spotted Dove (*Spilopelia chinensis*)
+18. Brown-throated Sunbird (*Anthreptes malacensis*)
+19. Blue-tailed Bee-eater (*Merops philippinus*)
+20. Blue-throated Bee-eater (*Merops viridis*)
+21. Pink-necked Green Pigeon (*Treron vernans*)
+22. Sunda Pygmy Woodpecker (*Yungipicus moluccensis*)
+23. Oriental Pied Hornbill (*Anthracoceros albirostris*)
+24. Common Flameback (*Dinopium javanense*)
+25. Scaly-breasted Munia (*Lonchura punctulata*)
+26. Zebra Dove (*Geopelia striata*)
+27. House Crow (*Corvus splendens*)
+
+- Not used (could not be retrieved from Xeno-Canto; restricted recordings, see [xeno-canto FAQ](https://xeno-canto.org/help/FAQ#restricted)):
+  - Javan Myna (*Acridotheres javanicus*)
+  - Oriental Magpie-Robin (*Copsychus saularis*)
+  - Black-naped Oriole (*Oriolus chinensis*)
+
+## Results
+- Metric: recall per species (share of recordings whose dominant detection was the right species)
 
 ![Precision by Bird Species](/blogs/birdnet_default_model_plot.png)
 
-BirdNET excelled with species like the Spotted Dove and White-breasted Waterhen — both of which had a perfect 100% recall. These birds likely benefit from clear, recognizable calls that cut through ambient noise.
+- Spotted Dove: 100%
+- White-breasted Waterhen: 100%
+- Eurasian Tree Sparrow, Olive-backed Sunbird: middle, solid but imperfect (exact values: read from plot)
+- Sunda Pygmy Woodpecker: 0%
 
-Middle performers, like the Eurasian Tree Sparrow and Olive-backed Sunbird, returned solid but imperfect results. These birds may have overlapping vocal traits with other species or simply appear less prominently in the model’s training data.
+## Limitations
+- Recordings from Xeno-Canto, 10 per species; 3 of 30 species missing
+- Only the dominant call per file counted; confidence threshold 85% (both affect recall)
+- Plot title says "Precision" but the metric is recall (check)
 
-Then there were the challenges: species like the Sunda Pygmy Woodpecker, which scored a dismal 0%. Its rapid trilling — a sound not unlike the flutter of an insect wing or a rustling leaf — blends easily into the soundscape. Distinguishing it, even for a trained algorithm, proves difficult.
+## Takeaway
+- Default model works for some species and fails completely for others; species-level results are in the plot
+- Next step (planned): fine-tune for Singapore birds (check)
 
-#### What Comes Next?
-
-This experiment shows that BirdNET’s default model has real potential — and real limits. For species with distinctive, well-represented vocalizations, it's highly reliable. But for subtler, noisier, or less common birds, its accuracy drops.
-
-Which brings us to the next phase. This trial was only the beginning. The next step is to fine-tune BirdNET’s model specifically for Singaporean birds — to build something more sensitive to local accents, habitat noise, and subtle song patterns.
-
-Stay tuned. The jungle may be noisy, but we’re getting better at listening.
+## Links
+- [BirdNET-Analyzer](https://github.com/birdnet-team/BirdNET-Analyzer)
+- [NParks Garden Bird Watch](http://nparks.gov.sg/nature/community-in-nature/garden-bird-watch)
+- [xeno-canto FAQ on restricted recordings](https://xeno-canto.org/help/FAQ#restricted)

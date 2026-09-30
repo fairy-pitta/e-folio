@@ -5,64 +5,60 @@ excerpt: "Managing multiple dev servers across git worktrees was annoying, so I 
 coverImage: "/blogs/portree-cover.gif"
 readTime: "7 min read"
 tags: ["Developer Tools", "Go", "Git"]
+draft: true
 ---
 
-## "you should use worktrees"
+<!--
+SKELETON — rewrite in your own words before publishing (then delete `draft: true` and this comment).
+Facts below come from an earlier AI-written draft; check each one.
 
-This tweet nails it:
+Removed claims to verify (unsourced or not from my own experience):
+- "Thirty minutes later you don't remember which port belongs to which branch" (invented timing?)
+- "spend 20 minutes debugging" after running feature/auth frontend against main backend (real incident or hypothetical?)
+- "Three branches ... six dev servers" (example says two `git worktree add` plus main)
+- Found portless "the day before" finishing portree
+- portless facts: proxy over already-running servers, no lifecycle management, no worktree concept, random port allocation, auto-certs HTTPS, no TUI, TypeScript, example `myapp.localhost:1355`
+- Next.js SWC compiler as example of child processes spawned by dev servers
+- Vite and webpack HMR use SSE with persistent connections, so a write deadline kills the stream
+- "Everything except that last line can be automated" (opinion, kept only as the motivation)
+-->
 
-<blockquote>
-you should use worktrees
-
-you just have to..
-- npm install in the worktree
-- reinstall the pre-commit hooks
-- copy the env files
-- not use the same ports
-
-or realize this is not the right solution
-
-— <a href="https://x.com/_colemurray/status/2025170703448985849">@_colemurray</a>
-</blockquote>
-
-I laughed. Then I thought — **"Everything except that last line can be automated."**
-
----
-
-## The Port Problem
-
-If you work on a monorepo with, say, a React frontend on `:3000` and a Python backend on `:8000`, one branch is fine. But git worktree lets you check out multiple branches simultaneously, and that's where things get annoying.
+## Problem
+- Tweet that triggered it: "you should use worktrees — you just have to npm install in the worktree, reinstall pre-commit hooks, copy env files, not use the same ports" ([@_colemurray](https://x.com/_colemurray/status/2025170703448985849))
+- Monorepo: React frontend on `:3000`, Python backend on `:8000`
+- Worktrees let several branches be checked out at once, so each needs its own frontend + backend
+- Port 3000 can be used only once
 
 ```bash
 git worktree add ../myapp-feature-auth feature/auth
 git worktree add ../myapp-fix-header fix/header
 ```
 
-Three branches, each needing its own frontend and backend. That's six dev servers. Port 3000 can only be used once.
+- Manual workaround: offset ports (3001, 3002, ...), update env vars and backend URLs in frontend config on every context switch
+- Failure mode: frontend of `feature/auth` running against `main` backend without noticing (check)
 
-So you start manually offsetting ports — 3001, 3002, 3003. Thirty minutes later, you don't remember which port belongs to which branch. You update environment variables, change backend URLs in the frontend config, and repeat the process every time you switch context.
+## Existing options
+- portless (Vercel Labs): [github.com/vercel-labs/portless](https://github.com/vercel-labs/portless)
+  - found after portree was nearly done
+  - replaces port numbers with named `.localhost` URLs
+  - scope differs: no worktree concept, no server lifecycle (check)
+- What I wanted: add a worktree, all services start on the right ports, reachable by branch name
+  - needs port allocation + process management + service discovery in one tool
 
-The worst part: you run `feature/auth` frontend against `main` backend without realizing it, and spend 20 minutes debugging something that isn't a bug.
+| | portless | portree |
+|---|---|---|
+| Philosophy | Replace ports with names | Manage dev environments per worktree |
+| Process management | None (proxy only) | Full lifecycle (start/stop/restart) |
+| Port allocation | Random | Deterministic (FNV32 hash) |
+| Named URLs | Yes | Yes (`branch-name.localhost`) |
+| Worktree support | No | Core feature |
+| HTTPS | Yes (auto-certs) | In progress |
+| TUI | No | Yes |
+| Language | TypeScript | Go (single binary) |
 
-**This should be automated.**
-
----
-
-## I Found portless After the Fact
-
-After I'd nearly finished building portree, I found Vercel Labs' **[portless](https://github.com/vercel-labs/portless)**. Genuinely didn't know it existed until the day before.
-
-It replaces port numbers with named `.localhost` URLs — `myapp.localhost:1355` instead of `localhost:3000`. The direction felt similar. For a moment I thought someone had already solved this.
-
-But the scope is different. portless is a proxy layer over servers that are already running. It doesn't manage server lifecycle, and it has no concept of git worktrees.
-
-What I wanted was: **"Add a worktree, and all services start on the right ports, accessible by branch name."** Port naming alone doesn't cover that. I needed port allocation, process management, and service discovery — all in one tool.
-
----
-
-## What portree Does
-
-**[portree](https://github.com/fairy-pitta/portree)** — Git Worktree Server Manager. The name is port + tree. Written in Go.
+## What portree does
+- [portree](https://github.com/fairy-pitta/portree): port + tree, Git Worktree Server Manager, written in Go
+- Install: `brew install fairy-pitta/tap/portree`
 
 ```bash
 portree init          # Initialize
@@ -70,22 +66,22 @@ portree up --all      # Start all services across all worktrees
 portree open          # → http://main.localhost:3000
 ```
 
-Three core ideas:
+- Three parts: port allocation, lifecycle management, branch-name routing
 
-### 1. Deterministic Port Allocation
+## Design details
 
-Branch name + service name → FNV32 hash → port number.
+### Deterministic port allocation
+- Branch name + service name -> FNV32 hash -> port
+- Same branch + service always gets the same port
+- On hash collision: linear probing to next free port
 
 ```
 FNV32("main:frontend") % 100 + 3100 → 3100
 FNV32("feature/auth:frontend") % 100 + 3100 → 3117
 ```
 
-Same branch, same service, same port every time. On hash collision, linear probing finds the next available port.
-
-### 2. Server Lifecycle Management
-
-Define services once in `.portree.toml`, and every worktree runs the same configuration:
+### Lifecycle management
+- Services defined once in `.portree.toml`, same config for every worktree
 
 ```toml
 [services.frontend]
@@ -101,11 +97,11 @@ port_range = { min = 8100, max = 8199 }
 proxy_port = 8000
 ```
 
-`portree up --all` starts everything. `portree down --all` stops everything. Processes are managed as groups — SIGTERM first, SIGKILL after timeout. No orphaned child processes.
+- `portree up --all` / `portree down --all`
+- Processes managed as groups: SIGTERM first, SIGKILL after timeout; no orphaned children
 
-### 3. Branch-Name Routing
-
-`portree proxy start` runs a reverse proxy that routes based on the `Host` header subdomain:
+### Branch-name routing
+- `portree proxy start` = reverse proxy routing on `Host` header subdomain
 
 ```
 http://main.localhost:3000          → frontend (main)
@@ -114,33 +110,25 @@ http://main.localhost:8000          → backend (main)
 http://feature-auth.localhost:8000  → backend (feature/auth)
 ```
 
-`*.localhost` resolves to `127.0.0.1` per [RFC 6761](https://tools.ietf.org/html/rfc6761) — no `/etc/hosts` editing needed.
+- `*.localhost` resolves to 127.0.0.1 per [RFC 6761](https://tools.ietf.org/html/rfc6761); no `/etc/hosts` edit
+- Env vars injected: `$PORT` (port to bind), `$PT_BACKEND_URL` (where the backend is)
 
-Environment variables are injected automatically. `$PORT` tells your server which port to bind. `$PT_BACKEND_URL` tells your frontend where the backend is. Services discover each other without manual configuration.
+### TOCTOU in port allocation
+- Gap between checking a port is free and the service binding it
+- `flock` file lock prevents races between concurrent portree invocations
+- External collisions: clear error message
 
----
-
-## Interesting Engineering Details
-
-### TOCTOU in Port Allocation
-
-There's a gap between checking if a port is free and the service actually binding it. Another process could take the port in between (Time-of-Check-Time-of-Use).
-
-File-level locking (`flock`) prevents race conditions between concurrent portree invocations. For external collisions, a clear error message tells you what happened.
-
-### Process Groups
-
-Dev servers often spawn child processes (e.g., Next.js SWC compiler). Killing only the parent leaves orphans.
+### Process groups
+- Killing only the parent leaves child processes orphaned
 
 ```go
 cmd.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 ```
 
-`Setpgid: true` creates a process group. On shutdown, `syscall.Kill(-pgid, syscall.SIGTERM)` takes down everything cleanly.
+- `Setpgid: true` creates a process group; on shutdown `syscall.Kill(-pgid, syscall.SIGTERM)` kills the whole group
 
 ### WriteTimeout = 0
-
-Go's `http.Server` conventionally sets a `WriteTimeout`. For a dev server proxy, I intentionally set it to `0` (unlimited). Vite and webpack HMR use SSE with persistent connections — a fixed write deadline kills the stream.
+- Proxy's `http.Server` deliberately has no `WriteTimeout`; reason: HMR streams (Vite/webpack, SSE) must stay open (check)
 
 ```go
 srv := &http.Server{
@@ -151,13 +139,10 @@ srv := &http.Server{
 }
 ```
 
-Following security best practices vs. understanding your use case. For a local dev tool, the latter wins.
-
----
-
-## TUI Dashboard
-
-A TUI to see all worktrees and services at a glance. Built with [Bubble Tea](https://github.com/charmbracelet/bubbletea) + [Lip Gloss](https://github.com/charmbracelet/lipgloss).
+### TUI dashboard
+- Built with [Bubble Tea](https://github.com/charmbracelet/bubbletea) + [Lip Gloss](https://github.com/charmbracelet/lipgloss)
+- Keys: `s` start, `x` stop, `r` restart, `o` open in browser, `q` quit
+- Shows worktree, service, port, status, PID
 
 ```
 ╭─ portree dashboard ────────────────────────────────╮
@@ -171,37 +156,15 @@ A TUI to see all worktrees and services at a glance. Built with [Bubble Tea](htt
 ╰─────────────────────────────────────────────────────╯
 ```
 
-`s` to start, `x` to stop, `o` to open in browser. Manage all branches without leaving the terminal.
-
 ![portree TUI dashboard](/blogs/portree-tui.gif)
 
----
-
-## portree vs portless
-
-Same space, different approaches.
-
-| | portless | portree |
-|---|---|---|
-| Philosophy | Replace ports with names | Manage dev environments per worktree |
-| Process management | None (proxy only) | Full lifecycle (start/stop/restart) |
-| Port allocation | Random | Deterministic (FNV32 hash) |
-| Named URLs | Yes | Yes (`branch-name.localhost`) |
-| Worktree support | No | Core feature |
-| HTTPS | Yes (auto-certs) | In progress |
-| TUI | No | Yes |
-| Language | TypeScript | Go (single binary) |
-
-portless is a general-purpose tool. portree is built specifically for git worktree workflows. They share features like named URLs and HTTPS (portree's is in progress), but portree adds process management, automatic port allocation, worktree integration, and a TUI.
-
----
-
-## Try It
-
-```bash
-brew install fairy-pitta/tap/portree
-```
-
-Or check it out on [GitHub](https://github.com/fairy-pitta/portree).
-
 ![portree workflow](/blogs/portree-workflow.gif)
+
+## Takeaway
+- WriteTimeout = 0: chose fitting the use case (local dev tool) over the default hardening advice
+- Should have searched for existing tools before building (found portless late) (check)
+
+## Links
+- [portree](https://github.com/fairy-pitta/portree)
+- [portless](https://github.com/vercel-labs/portless)
+- [RFC 6761](https://tools.ietf.org/html/rfc6761)

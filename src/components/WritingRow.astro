@@ -1,0 +1,22 @@
+---
+import Row from './Row.astro';
+import { formatYearMonth } from '../lib/content';
+import type { WritingItem } from '../lib/writing';
+
+interface Props {
+  item: WritingItem;
+}
+
+const { item } = Astro.props;
+---
+
+<Row meta={formatYearMonth(item.date)}>
+  {item.external ? (
+    <>
+      <a href={item.href} target="_blank" rel="noopener noreferrer" lang="ja">{item.title}</a>
+      <span class="muted"> Qiita ↗</span>
+    </>
+  ) : (
+    <a href={item.href}>{item.title}</a>
+  )}
+</Row>

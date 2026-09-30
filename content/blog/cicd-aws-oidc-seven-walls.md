@@ -5,21 +5,41 @@ excerpt: "I just wanted to push to dev and have it deploy. OIDC, SSM, Git owners
 coverImage: "/og/blog-cicd-aws-oidc-seven-walls.png"
 readTime: "12 min read"
 tags: ["AWS", "CI/CD", "GitHub Actions", "DevOps"]
+draft: true
 ---
 
-## The Goal
+<!--
+SKELETON — rewrite in your own words before publishing (then delete `draft: true` and this comment).
+Facts below come from an earlier AI-written draft; check each one.
 
-Should've been simple: push to the `dev` branch, GitHub Actions deploys to an EC2 instance. Done. We went with [OIDC authentication](https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services) so we wouldn't have long-lived AWS credentials sitting in GitHub Secrets like a ticking time bomb. The infrastructure was managed by a separate team, which meant every "can you check this?" took hours, not seconds.
+Removed claims to verify (unsourced or not from my own experience):
+- SSM needs no open inbound ports, no key distribution, integrates with IAM and CloudTrail, and is free (kept only as a docs link)
+- Alternatives to SSM: CodeDeploy (rollbacks, heavier setup), EC2 Instance Connect, plain SSH with keys in GitHub Secrets
+- "SSM is almost always the right call for CI/CD"
+- PATs are bad for machines: tied to a person, broad permissions, no expiry unless set
+- Deploy keys are repo-scoped, read-only SSH keys (kept as a docs link; read-only was my setting, check)
+- `StringEquals` is exact match only, no `*`/`?`; use `StringLike` for wildcards (kept as a docs link)
+- Without `id-token: write` the action silently falls back to looking for access keys with a "could not load credentials" error (check exact message)
+- Git 2.35.2+ safe.directory check is CVE-2022-24765, prevents privilege escalation via malicious .git/config or hooks
+- Pipeline now deploys in 30 seconds
+-->
 
-It took *days*. Here are the seven walls I hit setting up CI/CD for a Django app deployed on EC2.
+## Context
+- Goal: push to `dev` -> GitHub Actions deploys a Django app to EC2
+- Auth: OIDC instead of long-lived AWS keys in GitHub Secrets ([docs](https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services))
+- Infra managed by a separate team; every "can you check this?" took hours
+- Total: about two days of active debugging, spread over a week
 
-## Wall 1: GitHub Actions Can't Assume the AWS Role
+## What happened
+
+### Wall 1: GitHub Actions can't assume the AWS role
+- What happened: using [`aws-actions/configure-aws-credentials`](https://github.com/aws-actions/configure-aws-credentials) with OIDC
 
 ```
 Error: Could not assume role with OIDC: Not authorized to perform sts:AssumeRoleWithWebIdentity
 ```
 
-The classic. I was using [`aws-actions/configure-aws-credentials`](https://github.com/aws-actions/configure-aws-credentials) with OIDC, and the Trust Policy on the IAM role *looked* correct:
+- Trust policy looked correct:
 
 ```json
 {
@@ -40,51 +60,37 @@ The classic. I was using [`aws-actions/configure-aws-credentials`](https://githu
 }
 ```
 
-I stared at this for a while. Everything matched — the org, the repo, the branch. Except it didn't. The role ARN in my workflow was pointing at a *completely different role* than the one with this trust policy attached. The infra team had set up multiple roles and I'd grabbed the wrong one.
+- Cause: role ARN in the workflow pointed at a different role than the one with this trust policy; infra team had set up multiple roles
+- Fix: infra team confirmed the exact ARN; updated the workflow
+- Also noted: workflow needs `id-token: write` in `permissions`; multi-branch matching needs `StringLike` ([condition operators](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html)) (not needed here)
 
-A few things I learned the hard way here:
+### Wall 2: SSM command output empty
+- What happened: ran commands on EC2 via [AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html); commands failed but output was empty
+- Cause: IAM role lacked `ssm:GetCommandInvocation`; could send commands but not read results
+- Fix: added the permission; error messages became visible
+- Why SSM over SSH: see the SSM docs above (one bullet, no comparison)
 
-- You **must** have `id-token: write` in your workflow's `permissions` block, or GitHub won't even request the OIDC token. The action just silently falls back to looking for access keys and gives you a cryptic "could not load credentials" error. Helpful!
-- If you need to match multiple branches (like `dev` and `staging`), use `StringLike` with wildcards instead of `StringEquals`. `StringEquals` does exact matching only — no `*` or `?` support. I didn't need this here, but it's the kind of thing that'll bite you at 11pm. See the [AWS docs on condition operators](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html).
-- Triple-check your role ARN. Then check it again.
-
-**Fix**: Got the infra team to confirm the exact role ARN. Updated the workflow. Felt stupid.
-
-## Wall 2: SSM Command Output — Flying Blind
-
-After OIDC worked, I used [AWS Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html) to run commands on the EC2 instance. SSM is great for this — no SSH port to expose, no keys to manage, everything goes through IAM. Commands were failing, but I couldn't see *why*. The output was just... empty. Nothing. A void.
-
-Imagine trying to debug a deployment where every error message is `/dev/null`. That's `SendCommand` without `GetCommandInvocation`.
-
-**Root cause**: Missing `ssm:GetCommandInvocation` permission on the IAM role. I could *send* commands but not *read their results*. Who designs an API where you can execute commands but not see what happened?
-
-**Fix**: Added the permission. Suddenly I could actually see error messages. What a concept.
-
-> **Why SSM over SSH?** SSM doesn't need open inbound ports, doesn't require key distribution, integrates with IAM and CloudTrail for audit logging, and it's free. The tradeoff is you're locked into AWS and the ergonomics are... different. For CI/CD specifically, SSM is almost always the right call. Alternatives include [AWS CodeDeploy](https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html) (full deployment orchestration with rollbacks, but heavier setup), EC2 Instance Connect (good for interactive sessions), or just plain SSH with keys stored in GitHub Secrets (works but you're back to managing credentials).
-
-## Wall 3: Wrong Directory Path
+### Wall 3: Wrong directory path
+- What happened:
 
 ```
 /srv/my-app: No such file or directory
 ```
 
-**Root cause**: The SSM command was looking for the app at `/srv/my-app`, but it actually lived at `/home/ec2-user/srv/my-app`. The server setup docs were wrong. Of course they were.
+- Cause: SSM command used `/srv/my-app`; app actually at `/home/ec2-user/srv/my-app`; server setup docs were wrong
+- Fix: corrected the path and the docs
+- Only diagnosable quickly because Wall 2 was fixed first
 
-This one was quick once I could actually see the error output (thanks, Wall 2). But it's the kind of thing that would've been instant to diagnose with SSH access and completely opaque through SSM without the right permissions.
-
-**Fix**: Updated the path. Updated the docs too, because I'm not a monster.
-
-## Wall 4: SSM Runs as Root, Git Says No
+### Wall 4: SSM runs as root, Git refuses
+- What happened:
 
 ```
 fatal: detected dubious ownership in repository
 ```
 
-This one's fun. SSM runs commands as `root` by default. The repo on disk is owned by `ec2-user`. Git 2.35.2+ has a [security feature (CVE-2022-24765)](https://github.blog/open-source/git/git-security-vulnerabilities-announced-2/) that refuses to operate on a repo owned by a different user. It's there to prevent privilege escalation through malicious `.git/config` or hooks — totally reasonable in general, totally annoying in this specific moment.
-
-You *can* bypass it with `git config --global --add safe.directory /path/to/repo`, but that's a security workaround running as root on a production server. Don't do that.
-
-**Fix**: Wrapped everything in `sudo -u ec2-user bash -lc '...'` so the commands run as the correct user with the correct environment:
+- Cause: SSM runs as `root`; repo owned by `ec2-user`; Git's ownership check ([CVE-2022-24765](https://github.blog/open-source/git/git-security-vulnerabilities-announced-2/))
+- Rejected: `git config --global --add safe.directory ...` as root on a production server
+- Fix: run as the owning user via `sudo -u ec2-user bash -lc '...'`:
 
 ```yaml
 - name: Deploy via SSM
@@ -95,24 +101,21 @@ You *can* bypass it with `git config --global --add safe.directory /path/to/repo
       --targets "Key=instanceIds,Values=${{ secrets.EC2_INSTANCE_ID }}"
 ```
 
-This was the correct fix. Run as the user who owns the files. Don't punch holes in security features just because they're inconvenient.
-
-## Wall 5: SSH Host Key Verification
-
-Wall 5 was the dumbest one.
+### Wall 5: SSH host key verification
+- What happened: `git pull` hung until the command timed out, no error in output
 
 ```
 The authenticity of host 'github.com' can't be established.
 Are you sure you want to continue connecting (yes/no)?
 ```
 
-We'd set up a Deploy Key so the EC2 instance could pull from GitHub. But `known_hosts` didn't have GitHub's host key. And SSM can't answer interactive prompts. So `git pull` just hung there, waiting for a "yes" that would never come, until the command timed out.
+- Cause: Deploy Key set up, but `known_hosts` on EC2 lacked GitHub's host key; SSM can't answer the prompt
+- Fix: SSH'd in manually, ran `ssh -T git@github.com`, typed `yes`
+- Alternative: `ssh-keyscan github.com >> ~/.ssh/known_hosts`
+- Took about 20 minutes to find
 
-**Fix**: SSH'd into the instance manually, ran `ssh -T git@github.com`, typed `yes`, done. You could also do `ssh-keyscan github.com >> ~/.ssh/known_hosts` to automate it. One-time fix, but it's the kind of thing that makes you question your career choices when it takes 20 minutes to figure out why the deploy is timing out with no error message.
-
-## Wall 6: Deploy Key Setup
-
-The EC2 instance needed to `git pull` from a private repo. You could use a Personal Access Token, but PATs are bad practice for machines — they're tied to a person, they have broad permissions, and they don't expire unless you remember to set that up. [Deploy keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys) are the right approach: repo-scoped, read-only SSH keys.
+### Wall 6: Deploy key setup
+- Situation: EC2 needs to `git pull` a private repo; used a [deploy key](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys) instead of a personal access token
 
 ```bash
 # On EC2
@@ -121,8 +124,6 @@ ssh-keygen -t ed25519 -C "deploy@ec2" -f ~/.ssh/deploy_key -N ""
 git remote set-url origin git@github.com:your-org/your-repo.git
 ```
 
-Make sure your SSH config points to the right key:
-
 ```bash
 # ~/.ssh/config
 Host github.com
@@ -130,17 +131,13 @@ Host github.com
   IdentitiesOnly yes
 ```
 
-Not hard, but there are a lot of small pieces that all have to be right. Wrong key, wrong remote URL format (HTTPS vs SSH), missing config — any of these will give you a generic "permission denied" with no further explanation.
+- Failure modes hit or seen: wrong key, HTTPS vs SSH remote URL, missing SSH config; all give generic "permission denied" (check which ones I actually hit)
 
-## Wall 7: SSM Command Syntax Collapse
-
-The final boss. And honestly? I should've seen it coming.
-
-Our SSM command had grown large and fragile. Shell variables, nested quotes, multi-line scripts — all crammed into a JSON string, passed to bash, which called `bash -lc`, which ran the actual commands. Somewhere in the JSON → shell → subshell expansion chain, the syntax just... collapsed. Variables expanded at the wrong layer, quotes got eaten, and we got `syntax error` messages that pointed at perfectly valid-looking code.
-
-I spent a while trying to fix the quoting. Adding backslashes, switching between single and double quotes, trying heredocs inside JSON. Nothing worked.
-
-**Fix**: I scrapped the entire inline command. Wrote a deployment script, put it on the server, and called *that*:
+### Wall 7: SSM command syntax collapse
+- What happened: inline SSM command grew (shell variables, nested quotes, multi-line scripts in a JSON string -> bash -> `bash -lc`); got `syntax error` pointing at valid-looking code
+- Cause: variables expanded at the wrong layer, quotes eaten across JSON -> shell -> subshell
+- Tried: backslashes, switching quote styles, heredocs inside JSON; none worked
+- Fix: dropped the inline command; script on the server, called from SSM:
 
 ```bash
 #!/bin/bash
@@ -154,19 +151,18 @@ python manage.py migrate
 sudo systemctl restart gunicorn
 ```
 
-The SSM command became one line: `sudo -u ec2-user bash -lc '/home/ec2-user/deploy.sh'`
+- SSM command became: `sudo -u ec2-user bash -lc '/home/ec2-user/deploy.sh'`
 
-That's it. No nested quotes. No variable expansion games. No JSON escaping issues. The deploy script is version-controllable, testable, and readable by humans. I should've done this from the start.
+## Takeaway
+- Get temporary (read-only) console/IAM access early; much of the time was "is the config what I think it is?"
+- Start with a deploy script on the server, not inline SSM commands
+- Test OIDC with a minimal workflow first (`aws sts get-caller-identity`)
+- Read the `configure-aws-credentials` docs, especially `id-token: write`
 
-## The Aftermath
-
-Total time: roughly two days of active debugging, stretched across a week because of the back-and-forth with the infra team. Every "can you check the role ARN?" or "can you add this permission?" had a turnaround measured in hours.
-
-If I had to do this again, here's what I'd do differently:
-
-- **Get temporary console access early.** Even read-only IAM access would've cut the debugging time in half. So much of this was "is the config what I think it is?" and I couldn't just *look*.
-- **Start with the deploy script on the server.** Don't try to be clever with inline SSM commands. Just don't.
-- **Test OIDC with a minimal workflow first.** Before wiring up the whole pipeline, just get `aws sts get-caller-identity` working. One step at a time.
-- **Read the [`configure-aws-credentials` docs](https://github.com/aws-actions/configure-aws-credentials) carefully.** Especially the bit about `id-token: write` permissions. This trips up everyone.
-
-The pipeline's been running reliably ever since. Every time it deploys in 30 seconds, I think about the days it took to get there. But honestly? I understand every piece of it now — the OIDC token exchange, the trust policy conditions, the SSM execution model, the Git ownership checks. There's something to be said for learning things the hard way. Not much, but something.
+## Links
+- [OIDC in AWS (GitHub docs)](https://docs.github.com/actions/deployment/security-hardening-your-deployments/configuring-openid-connect-in-amazon-web-services)
+- [configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials)
+- [Systems Manager](https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html)
+- [IAM condition operators](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html)
+- [Git security announcement (CVE-2022-24765)](https://github.blog/open-source/git/git-security-vulnerabilities-announced-2/)
+- [Deploy keys](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/managing-deploy-keys)
