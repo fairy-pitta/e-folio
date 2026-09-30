@@ -2,15 +2,15 @@
 title: "portree - Git Worktree Server Manager"
 description: "A CLI tool that automatically manages multiple dev servers per git worktree with automatic port allocation, environment variable injection, and subdomain routing."
 date: "6 Feb, 2026"
-coverImage: "/projects/portree/portree_main.gif"
+coverImage: "/projects/portree/portree_main.mp4"
 tags: ["CLI Tool", "Go", "Git Worktree", "TUI", "Developer Tools"]
 featured: true
 order: 1
 liveUrl: ""
 githubUrl: "https://github.com/fairy-pitta/portree"
 gallery: [
-  "/projects/portree/portree_tui.gif",
-  "/projects/portree/portree_init.gif"
+  "/projects/portree/portree_tui.mp4",
+  "/projects/portree/portree_init.mp4"
 ]
 ---
 
@@ -20,7 +20,7 @@ When working on multiple feature branches simultaneously using git worktrees, ma
 
 **portree** solves this by automatically managing multiple dev servers per git worktree—with hash-based port allocation, environment variable injection, and `*.localhost` subdomain routing via a built-in reverse proxy.
 
-![portree workflow demo](/projects/portree/portree_main.gif)
+![portree workflow demo](/projects/portree/portree_main.mp4)
 
 ---
 
@@ -92,7 +92,7 @@ In a typical monorepo setup with frontend and backend services:
 
 ## Usage
 
-![portree init demo](/projects/portree/portree_init.gif)
+![portree init demo](/projects/portree/portree_init.mp4)
 
 ```bash
 # Initialize in your project
@@ -118,7 +118,7 @@ portree ls
 
 Manage all your services from an interactive terminal UI:
 
-![portree TUI dashboard](/projects/portree/portree_tui.gif)
+![portree TUI dashboard](/projects/portree/portree_tui.mp4)
 
 ---
 

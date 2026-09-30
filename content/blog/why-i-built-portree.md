@@ -2,7 +2,7 @@
 title: "Why I Built portree — Git Worktree Server Manager"
 date: "February 6, 2026"
 excerpt: "Managing multiple dev servers across git worktrees was annoying, so I built a CLI to automate it."
-coverImage: "/blogs/portree-cover.gif"
+coverImage: "/blogs/portree-cover.mp4"
 readTime: "7 min read"
 tags: ["Developer Tools", "Go", "Git"]
 draft: true
@@ -156,9 +156,9 @@ srv := &http.Server{
 ╰─────────────────────────────────────────────────────╯
 ```
 
-![portree TUI dashboard](/blogs/portree-tui.gif)
+![portree TUI dashboard](/blogs/portree-tui.mp4)
 
-![portree workflow](/blogs/portree-workflow.gif)
+![portree workflow](/blogs/portree-workflow.mp4)
 
 ## Takeaway
 - WriteTimeout = 0: chose fitting the use case (local dev tool) over the default hardening advice

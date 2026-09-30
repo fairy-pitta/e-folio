@@ -2,12 +2,12 @@
 title: "Pseudocode Converter: Convert Code to IB‑Compliant Pseudocode"
 description: "A web tool that converts Python or Java code into IB‑compliant pseudocode for Computer Science courses and examinations."
 date: "Oct 13, 2025"
-coverImage: "/projects/Pseudocode/pseudocode.png"
+coverImage: "/projects/Pseudocode/pseudocode.webp"
 tags: ["Web App", "Python", "Java", "IB", "Computer Science"]
 liveUrl: "https://pseudocode-converter.fairy-pitta.net/"
 githubUrl: "https://github.com/fairy-pitta/pseudocode-converter"
 gallery: [
-  "/projects/Pseudocode/fizzbuzz.png"
+  "/projects/Pseudocode/fizzbuzz.webp"
 ]
 ---
 

@@ -2,7 +2,7 @@
 title: "Printable Spectrogram"
 description: "A fully client-side web application that generates high-resolution spectrograms with publication-quality annotated exports, powered by Rust/WASM."
 date: "31 Jan, 2026"
-coverImage: "/projects/printable-spectrogram/spectrogram_main.png"
+coverImage: "/projects/printable-spectrogram/spectrogram_main.webp"
 tags: ["Web App", "TypeScript", "React", "Rust", "WASM", "Audio Processing", "DSP"]
 featured: true
 order: 4

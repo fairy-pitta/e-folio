@@ -2,7 +2,7 @@
 title: "Testing BirdNET In-Built model with Singapore Birds"
 date: May 18, 2025
 excerpt: "Evaluating BirdNET’s accuracy on common Singaporean birds reveals strengths and weaknesses"
-coverImage: "/blogs/hornbill_call.png"
+coverImage: "/blogs/hornbill_call.webp"
 readTime: "10 min read"
 tags: ["BirdNET", "bioacoustics"]
 draft: true
@@ -108,7 +108,7 @@ df |>
 ## Results
 - Metric: recall per species (share of recordings whose dominant detection was the right species)
 
-![Precision by Bird Species](/blogs/birdnet_default_model_plot.png)
+![Precision by Bird Species](/blogs/birdnet_default_model_plot.webp)
 
 - Spotted Dove: 100%
 - White-breasted Waterhen: 100%

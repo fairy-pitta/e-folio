@@ -1,0 +1,41 @@
+---
+import { resolveMedia } from '../lib/media';
+
+interface Props {
+  src: string;
+  alt: string;
+  // Set on the cover image: it is the largest thing above the fold, so it loads
+  // eagerly and at high priority instead of waiting its turn.
+  priority?: boolean;
+}
+
+const { src, alt, priority = false } = Astro.props;
+const media = await resolveMedia(src);
+---
+
+<figure class="figure">
+  {media.kind === 'video' ? (
+    <video
+      src={media.src}
+      poster={media.poster}
+      width={media.width}
+      height={media.height}
+      autoplay
+      muted
+      loop
+      playsinline
+      preload={priority ? 'auto' : 'metadata'}
+      aria-label={alt}
+    />
+  ) : (
+    <img
+      src={media.src}
+      alt={alt}
+      width={media.width}
+      height={media.height}
+      loading={priority ? 'eager' : 'lazy'}
+      fetchpriority={priority ? 'high' : 'low'}
+      decoding="async"
+    />
+  )}
+</figure>

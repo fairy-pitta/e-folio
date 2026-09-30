@@ -2,13 +2,13 @@
 title: "Code Annotator — Annotated Code Snippet Generator"
 description: "Create beautiful, annotated code snippets for documentation, presentations, and teaching — entirely in the browser."
 date: "22 Mar, 2026"
-coverImage: "/projects/code-annotator/screenshot.png"
+coverImage: "/projects/code-annotator/screenshot.webp"
 tags: ["Web App", "JavaScript", "Cloudflare Workers", "Prism.js", "Canvas"]
 liveUrl: ""
 githubUrl: "https://github.com/fairy-pitta/code-annotator"
 gallery: [
-  "/projects/code-annotator/demo.gif",
-  "/projects/code-annotator/example-output.png"
+  "/projects/code-annotator/demo.mp4",
+  "/projects/code-annotator/example-output.webp"
 ]
 ---
 
@@ -16,7 +16,7 @@ gallery: [
 
 Code Annotator is a fully client-side tool for creating annotated code snippets. Select any text in your code, attach annotation cards with rich formatting, position them freely on a canvas, and export the result as a PNG — all without leaving the browser.
 
-![Code Annotator demo](/projects/code-annotator/demo.gif)
+![Code Annotator demo](/projects/code-annotator/demo.mp4)
 
 ---
 
@@ -85,7 +85,7 @@ I wanted a single tool where I paste code, select text, write annotations, and e
 
 ## Example Output
 
-![Example annotated code output](/projects/code-annotator/example-output.png)
+![Example annotated code output](/projects/code-annotator/example-output.webp)
 
 ---
 

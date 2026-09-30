@@ -11,7 +11,7 @@ interface Props {
 const {
   title = 'Shuna Maekawa — Software Engineer',
   description = 'Shuna Maekawa (fairy-pitta), full-stack software engineer based in Singapore.',
-  ogImage = '/new-favicon.png',
+  ogImage = '/og-default.png',
 } = Astro.props;
 
 const base = Astro.site ?? Astro.url;
@@ -42,7 +42,7 @@ const hasFeed = getAllBlogPosts().length > 0;
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
     {hasFeed && <link rel="alternate" type="application/rss+xml" title="Shuna Maekawa — Writing" href="/rss.xml" />}
-    <link rel="icon" type="image/png" sizes="32x32" href="/new-favicon_t.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
     <link rel="icon" type="image/svg+xml" href="/new-favicon_svg.svg" />
     <link rel="apple-touch-icon" href="/apple-icon.png" />
     <link rel="manifest" href="/manifest.json" />

@@ -2,15 +2,15 @@
 title: "Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz"
 description: "An interactive quiz web app to test out your bird call knowledge"
 date: "Oct 15, 2024"
-coverImage: "/projects/callquiz/CallQuiz_main.png"
+coverImage: "/projects/callquiz/CallQuiz_main.webp"
 tags: ["React", "Django", "Birds"]
 liveUrl: "https://quiz.singbirds.net/"
 githubUrl: "https://github.com/fairy-pitta/Singbirds-frontend"
 gallery: [
-  "/projects/callquiz/CallQuiz_correct.png",
-  "/projects/callquiz/CallQuiz_home.png",
-  "/projects/callquiz/CallQuiz_result.png",
-  "/projects/callquiz/CallQuiz_top.png"
+  "/projects/callquiz/CallQuiz_correct.webp",
+  "/projects/callquiz/CallQuiz_home.webp",
+  "/projects/callquiz/CallQuiz_result.webp",
+  "/projects/callquiz/CallQuiz_top.webp"
 ]
 ---
 

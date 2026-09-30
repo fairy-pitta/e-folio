@@ -1,5 +1,25 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, beforeAll, afterAll } from 'vitest'
+import fs from 'node:fs/promises'
+import os from 'node:os'
+import path from 'node:path'
+import sharp from 'sharp'
 import { markdownToHtml } from './markdown'
+
+// Stands in for public/, so the sizing and GIF-to-video swap can be exercised
+// without depending on the real assets.
+let mediaRoot: string
+
+beforeAll(async () => {
+  mediaRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'markdown-media-'))
+  const blank = sharp({ create: { width: 640, height: 360, channels: 3, background: '#000' } })
+  await blank.clone().webp().toFile(path.join(mediaRoot, 'shot.webp'))
+  await blank.clone().webp().toFile(path.join(mediaRoot, 'clip.poster.webp'))
+  await fs.writeFile(path.join(mediaRoot, 'clip.mp4'), 'not really a video')
+})
+
+afterAll(async () => {
+  await fs.rm(mediaRoot, { recursive: true, force: true })
+})
 
 describe('markdownToHtml', () => {
   it('test_convert_paragraph_returns_html_p_tag', async () => {
@@ -51,6 +71,22 @@ describe('markdownToHtml', () => {
   it('test_convert_empty_string_returns_empty_string', async () => {
     const result = await markdownToHtml('')
     expect(result.trim()).toBe('')
+  })
+
+  it('test_convert_local_image_adds_intrinsic_dimensions', async () => {
+    const result = await markdownToHtml('![alt](/shot.webp)', mediaRoot)
+    expect(result).toContain('width="640"')
+    expect(result).toContain('height="360"')
+  })
+
+  it('test_convert_mp4_image_syntax_returns_looping_video', async () => {
+    const result = await markdownToHtml('![demo](/clip.mp4)', mediaRoot)
+    expect(result).toContain('<video')
+    expect(result).toContain('src="/clip.mp4"')
+    expect(result).toContain('poster="/clip.poster.webp"')
+    expect(result).toContain('loop')
+    expect(result).toContain('muted')
+    expect(result).not.toContain('<img')
   })
 
   it('test_convert_unordered_list_returns_ul', async () => {

@@ -2,14 +2,14 @@
 title: "Mapping Singapore's Avian Life: Inside the Singapore Bird Observation Map"
 description: "An interative map of Singapore Birds in the past 23 years."
 date: "15 May, 2025"
-coverImage: "/projects/sgbirdsmap/map_top.png"
+coverImage: "/projects/sgbirdsmap/map_top.webp"
 tags: ["Web App", "Next.js", "Cloudflare", "Amplify"]
 liveUrl: "https://sgbirdsmap.singbirds.net"
 githubUrl: "https://github.com/fairy-pitta/SGBirdMap"
 gallery: [
-  "/projects/sgbirdsmap/map1.png",
-  "/projects/sgbirdsmap/map2.png",
-  "/projects/sgbirdsmap/map3.png"
+  "/projects/sgbirdsmap/map1.webp",
+  "/projects/sgbirdsmap/map2.webp",
+  "/projects/sgbirdsmap/map3.webp"
 ]
 ---
 

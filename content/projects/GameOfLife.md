@@ -2,12 +2,12 @@
 title: "Game Of Life: A Cellular Automaton Brought to Life in the Browser"
 description: "Watch colorful patterns unfold in Conway's Game of Life, an interactive simulation of cellular automata."
 date: "19 May, 2025"
-coverImage: "/projects/gameoflife/gameoflife-top.png"
+coverImage: "/projects/gameoflife/gameoflife-top.webp"
 tags: ["Web App", "Next.js"]
 liveUrl: "https://fairy-pitta.github.io/Game-Of-Life/"
 githubUrl: "https://github.com/fairy-pitta/Game-Of-Life"
 gallery: [
-  "/projects/gameoflife/gameoflife-gif.gif",
+  "/projects/gameoflife/gameoflife-gif.mp4",
 ]
 ---
 

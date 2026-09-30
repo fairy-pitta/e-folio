@@ -2,6 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 import { getAllProjects, formatDate, projectLinks, type Project } from '../../lib/content';
 import { markdownToHtml } from '../../lib/markdown';
+import Figure from '../../components/Figure.astro';
 
 export function getStaticPaths() {
   return getAllProjects().map((project) => ({
@@ -40,17 +41,13 @@ const gallery = (frontmatter.gallery ?? []).filter((src) => src.trim() !== '');
   )}
 
   {frontmatter.coverImage?.trim() && (
-    <figure class="figure">
-      <img src={frontmatter.coverImage} alt={frontmatter.title} width="1280" height="720" decoding="async" />
-    </figure>
+    <Figure src={frontmatter.coverImage} alt={frontmatter.title} priority />
   )}
 
   <article class="prose" set:html={html} />
 
   {gallery.map((src) => (
-    <figure class="figure">
-      <img src={src} alt={`${frontmatter.title} screenshot`} loading="lazy" decoding="async" />
-    </figure>
+    <Figure src={src} alt={`${frontmatter.title} screenshot`} />
   ))}
 
   <p class="footer-nav">← <a href="/projects">All projects</a></p>

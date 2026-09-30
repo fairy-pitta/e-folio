@@ -18,6 +18,11 @@ export default tseslint.config(
     },
   },
   {
+    // Build scripts run in Node, not the browser.
+    files: ["scripts/**"],
+    languageOptions: { globals: { console: "readonly" } },
+  },
+  {
     ignores: ["dist/", "node_modules/", ".astro/"],
   },
 )

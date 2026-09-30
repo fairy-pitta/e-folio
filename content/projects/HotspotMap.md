@@ -2,13 +2,13 @@
 title: "Held–Karp TSP Visualizer"
 description: "A Held–Karp TSP visualizer that uses realistic travel-time cost matrices."
 date: "13 Oct, 2025"
-coverImage: "/projects/held-karp/hk.png"
+coverImage: "/projects/held-karp/hk.webp"
 tags: ["Web App", "Next.js", "TypeScript", "Cloudflare Workers", "Algorithms", "TSP"]
 liveUrl: ""
 githubUrl: "https://github.com/fairy-pitta/hotspot_map"
 gallery: [
-  "/projects/held-karp/hk-2.png",
-  "/projects/held-karp/hk-3.png"
+  "/projects/held-karp/hk-2.webp",
+  "/projects/held-karp/hk-3.webp"
 ]
 ---
 
