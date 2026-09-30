@@ -77,6 +77,12 @@ const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
     </ul>
   </Section>
 
+  <Section title="Awards">
+    {cv.awards.map((award) => (
+      <Row meta={award.period}>{award.title}</Row>
+    ))}
+  </Section>
+
   <Section title="Skills">
     {cv.skills.map((group) => (
       <p style="margin:0"><span class="muted">{group.label}</span> {group.items.join(', ')}</p>

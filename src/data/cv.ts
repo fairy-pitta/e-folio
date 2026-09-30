@@ -23,6 +23,11 @@ export interface CvSkillGroup {
   items: string[]
 }
 
+export interface CvAward {
+  title: string
+  period: string
+}
+
 export interface Cv {
   name: string
   handle: string
@@ -33,6 +38,7 @@ export interface Cv {
   experience: CvExperience[]
   education: CvEducation[]
   certifications: string[]
+  awards: CvAward[]
   skills: CvSkillGroup[]
 }
 
@@ -135,6 +141,12 @@ export const cv: Cv = {
     "IPA Applied Information Technology Engineer (2024)",
     "IPA Fundamental Information Technology Engineer (2023)",
     "Singapore Class 3CA driving licence (2024)",
+  ],
+  awards: [
+    { title: "CIN Outstanding Volunteer, NParks", period: "2021, 2022" },
+    { title: "Singapore Bird Race — 2nd, Novice category", period: "2021" },
+    { title: "Singapore Bird Race — 4th, Marathon category", period: "2023" },
+    { title: "Singapore Bird Race — 3rd, Marathon category", period: "2024, 2025" },
   ],
   skills: [
     { label: "Languages", items: ["Python", "TypeScript", "R"] },

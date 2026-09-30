@@ -45,6 +45,14 @@ describe('cv', () => {
     }
   })
 
+  it('test_read_awards_returns_title_and_period_for_each', () => {
+    expect(cv.awards.length).toBeGreaterThan(0)
+    for (const award of cv.awards) {
+      expect(award.title.trim(), award.title).not.toBe('')
+      expect(award.period.trim(), award.title).not.toBe('')
+    }
+  })
+
   it('links_use_https_or_mailto', () => {
     for (const link of cv.links) {
       expect(link.href).toMatch(/^(https:\/\/|mailto:)/)
