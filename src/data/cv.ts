@@ -63,7 +63,7 @@ export const cv: Cv = {
     { label: "Qiita", href: "https://qiita.com/Pitta" },
   ],
   summary:
-    "Full-stack engineer working across React, TypeScript and Python, from database design to deployment. Currently building client and internal systems at WAO Singapore.",
+    "I am a software engineer and project manager at a tuition centre in Singapore. I found the joy of data wrangling at university while majoring in Environmental Studies, and I have worked half as a teacher and half as an engineer ever since. Software architecture, database design and cloud infrastructure are what I care about most — the certifications below reflect that. Through this work I want to make a difference in people's lives.",
   experience: [
     {
       role: "Software Engineer",
