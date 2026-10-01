@@ -66,17 +66,18 @@ export const cv: Cv = {
     "I am a software engineer and project manager at a tuition centre in Singapore. I found the joy of data wrangling at university while majoring in Environmental Studies, and I have worked half as a teacher and half as an engineer ever since. Software architecture, database design and cloud infrastructure are what I care about most — the certifications below reflect that. Through this work I want to make a difference in people's lives.",
   experience: [
     {
-      role: "Software Engineer",
+      role: "Software Engineer / Project Manager",
       org: "WAO Singapore / WAO Tech (WAO Corporation group)",
       period: "Dec 2023 – Present",
       bullets: [
+        "Project manager on client and internal work: scope and schedule, requirements, estimates and proposals, and the day-to-day direction of a team of four to eight in-house engineers.",
+        "Teach maths, English, science and introductory programming one-on-one — around half of the job.",
         "Lead engineer on an accounting and budgeting SaaS for an external client (Django, Vue 3, PostgreSQL, AWS) — largest contributor over 15 months. Clean Architecture / DDD backend, Feature-Sliced frontend, AWS CDK infrastructure with OIDC-based GitHub Actions deploys, Playwright E2E and visual regression tests.",
-        "Sole developer of the tuition centre's operations platform (Hono, Drizzle, Cloudflare Workers / D1 / R2, React 19): member management, monthly invoicing with PDF generation, and email / WhatsApp messaging — replacing a manual spreadsheet workflow. Around 2,000 automated tests including contract and real-API E2E; halved the Worker bundle (2.6 MB → 1.2 MB).",
+        "Sole developer of the tuition centre's operations platform (Hono, Drizzle, Cloudflare Workers / D1 / R2, React 19): member management, monthly invoicing with PDF generation, and email / WhatsApp messaging — replacing a manual spreadsheet workflow. Around 2,000 automated tests including contract and real-API E2E.",
         "Built parts of an AI document-revision pipeline for a client: OCR (Azure Document Intelligence) and an LLM (Claude on AWS Bedrock) turn scanned rules into Word files with tracked changes. Worked on test infrastructure, the storage migration and OCR accuracy evaluation.",
         "Maintain the tuition centre's public website: custom WordPress theme with headless CMS content, SEO and performance work, and visual regression tests.",
         "Automated back-office work: scanned-document sorting, exam-paper collection, and email archiving on AWS SES / Lambda.",
-        "Ran an internal session for the engineering team on agentic coding with Claude Code.",
-        "Also teach maths, English, science and introductory programming one-on-one.",
+        "Designed the engineering onboarding, mentor the team through code review, and ran an internal session on agentic coding with Claude Code.",
       ],
     },
     {
