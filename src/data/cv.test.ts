@@ -45,6 +45,18 @@ describe('cv', () => {
     }
   })
 
+  it('test_read_tagline_returns_one_line_under_the_search_result_limit', () => {
+    expect(cv.tagline.trim()).not.toBe('')
+    expect(cv.tagline).not.toMatch(/\n/)
+    expect(cv.tagline.length).toBeLessThanOrEqual(155)
+  })
+
+  it('test_read_headline_carries_no_location_separator', () => {
+    // The location is its own field; the markup joins them.
+    expect(cv.headline).not.toContain('·')
+    expect(cv.location.trim()).not.toBe('')
+  })
+
   it('test_read_certifications_returns_name_year_and_https_link', () => {
     expect(cv.certifications.length).toBeGreaterThan(0)
     for (const certification of cv.certifications) {

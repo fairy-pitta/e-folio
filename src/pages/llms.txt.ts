@@ -3,6 +3,7 @@
 // permissions: robots.txt remains the place for access rules.
 
 import type { APIContext } from "astro"
+import { cv } from "../data/cv"
 import {
   HOME,
   INDEX_PAGES,
@@ -13,8 +14,7 @@ import {
   type SiteEntry,
 } from "../lib/site-map"
 
-const SUMMARY =
-  "Portfolio and CV of Shuna Maekawa (fairy-pitta), a full-stack software engineer in Singapore working across React, TypeScript and Python. Holds the CV, write-ups of personal projects, and notes on software engineering."
+const CONTENTS = "Holds the CV, write-ups of personal projects, and notes on software engineering."
 
 function link(entry: SiteEntry, site: URL | string): string {
   const url = absoluteUrl(entry.path, site)
@@ -32,7 +32,7 @@ export function GET(context: APIContext) {
   const lines = [
     `# ${HOME.title}`,
     "",
-    `> ${SUMMARY}`,
+    `> ${cv.tagline} ${CONTENTS}`,
     "",
     ...section("Pages", [HOME, ...INDEX_PAGES], site),
     ...section("Projects", projectEntries(), site),

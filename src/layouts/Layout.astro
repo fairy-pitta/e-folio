@@ -1,6 +1,7 @@
 ---
 import '../styles/site.css';
 import { getAllBlogPosts } from '../lib/content';
+import { cv } from '../data/cv';
 
 interface Props {
   title?: string;
@@ -9,8 +10,8 @@ interface Props {
 }
 
 const {
-  title = 'Shuna Maekawa — Software Engineer',
-  description = 'Shuna Maekawa (fairy-pitta), full-stack software engineer based in Singapore.',
+  title = `${cv.name} — ${cv.headline}`,
+  description = cv.tagline,
   ogImage = '/og-default.png',
 } = Astro.props;
 

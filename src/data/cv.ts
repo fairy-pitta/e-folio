@@ -40,6 +40,11 @@ export interface Cv {
   name: string
   handle: string
   headline: string
+  location: string
+  // One sentence for the places that introduce the site rather than show it:
+  // the meta description, the social card and llms.txt. Kept under 155
+  // characters so search results do not truncate it.
+  tagline: string
   email: string
   links: CvLink[]
   summary: string
@@ -54,7 +59,10 @@ export interface Cv {
 export const cv: Cv = {
   name: "Shuna Maekawa",
   handle: "fairy-pitta",
-  headline: "Software Engineer · Singapore",
+  headline: "Software Engineer & Project Manager",
+  location: "Singapore",
+  tagline:
+    "Shuna Maekawa (fairy-pitta) — software engineer and project manager in Singapore, working on software architecture, database design and cloud.",
   email: "shuna120700@gmail.com",
   links: [
     { label: "Email", href: "mailto:shuna120700@gmail.com" },

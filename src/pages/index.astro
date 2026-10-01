@@ -17,7 +17,7 @@ const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
 <Layout>
   <header>
     <h1>{cv.name} <span class="muted" style="font-weight:400">({cv.handle})</span></h1>
-    <p class="muted">{cv.headline}</p>
+    <p class="muted">{cv.headline} · {cv.location}</p>
     <p class="links">
       {cv.links.map((link, i) => (
         <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
