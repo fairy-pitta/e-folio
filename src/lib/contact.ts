@@ -4,7 +4,8 @@ export interface ContactMessage {
   message: string
 }
 
-export const CONTACT_ENDPOINT = "https://resend-worker.shuna120700.workers.dev/api/contact"
+// Served by functions/api/contact.ts on the same origin, so no CORS and no workers.dev.
+export const CONTACT_ENDPOINT = "/api/contact"
 
 export const CONTACT_TIMEOUT_MS = 15000
 
