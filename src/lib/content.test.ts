@@ -79,12 +79,22 @@ describe('getAllProjects', () => {
 })
 
 describe('getFeaturedProjects', () => {
-  it('test_read_featured_projects_after_ocr_vfs_removal_returns_remaining_three', () => {
+  it('test_read_featured_projects_returns_the_five_side_projects_in_order', () => {
     expect(getFeaturedProjects().map((p) => p.slug)).toEqual([
+      'SBBirdMap',
       'Portree',
-      'CCAccountSwitcher',
       'PrintableSpectrogram',
+      'CodeAnnotator',
+      'CCAccountSwitcher',
     ])
+  })
+
+  it('test_read_featured_projects_returns_short_name_and_technical_point_for_each', () => {
+    for (const project of getFeaturedProjects()) {
+      expect(project.frontmatter.name?.trim(), project.slug).toBeTruthy()
+      expect(project.frontmatter.technicalPoint?.trim(), project.slug).toBeTruthy()
+      expect(project.frontmatter.technicalPoint, project.slug).not.toMatch(/\n/)
+    }
   })
 
   it('respects_the_limit', () => {
@@ -117,6 +127,25 @@ describe('project content', () => {
     for (const project of getAllProjects()) {
       const text = JSON.stringify(project.frontmatter) + project.content
       expect(findForbidden(text), project.slug).toEqual([])
+    }
+  })
+
+  it('test_read_bird_map_frontmatter_returns_demo_and_repo_and_fixed_typo', () => {
+    const map = getAllProjects().find((project) => project.slug === 'SBBirdMap')!
+    expect(map.frontmatter.githubUrl).toBe('https://github.com/fairy-pitta/SGBirdMap')
+    expect(map.frontmatter.liveUrl).toBe('https://sgbirdsmap.fairy-pitta.net')
+    expect(map.frontmatter.description).not.toContain('interative')
+  })
+
+  it('test_read_portree_frontmatter_returns_qiita_article_link', () => {
+    const portree = getAllProjects().find((project) => project.slug === 'Portree')!
+    expect(portree.frontmatter.articleUrl).toBe('https://qiita.com/Pitta/items/4a6537a3450aa6f8f050')
+    expect(portree.frontmatter.articleLabel).toBe('Article on Qiita (Japanese)')
+  })
+
+  it('test_read_project_content_contains_no_test_counts', () => {
+    for (const project of getAllProjects()) {
+      expect(project.content, project.slug).not.toMatch(/\b\d+\s+(\[[^\]]+\]\([^)]+\)\s+)?tests\b/i)
     }
   })
 })

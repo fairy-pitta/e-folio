@@ -27,6 +27,13 @@ export interface ProjectFrontmatter {
   gallery?: string[]
   featured?: boolean
   order?: number
+  // Short name for the homepage accordion; the title is written for the project page.
+  name?: string
+  // One or two sentences on the engineering choice worth noticing, shown on the homepage.
+  technicalPoint?: string
+  // A write-up hosted elsewhere, such as a Qiita article.
+  articleUrl?: string
+  articleLabel?: string
 }
 
 export interface BlogPost {
@@ -115,7 +122,7 @@ export function getAllProjects(): Project[] {
   return readMarkdownFiles<ProjectFrontmatter>(projectsDirectory)
 }
 
-export function getFeaturedProjects(limit = 4): Project[] {
+export function getFeaturedProjects(limit = 5): Project[] {
   return getAllProjects()
     .filter((project) => project.frontmatter.featured === true)
     .sort((a, b) => (a.frontmatter.order ?? Infinity) - (b.frontmatter.order ?? Infinity))

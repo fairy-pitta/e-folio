@@ -10,6 +10,10 @@ gallery: [
   "/projects/code-annotator/demo.mp4",
   "/projects/code-annotator/example-output.webp"
 ]
+featured: true
+order: 4
+name: "Code Annotator"
+technicalPoint: "Runs entirely in the browser, with Prism.js for highlighting and an HTML5 Canvas pipeline for PNG export, so no code leaves the user's machine."
 ---
 
 ## Overview

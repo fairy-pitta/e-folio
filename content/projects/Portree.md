@@ -5,13 +5,17 @@ date: "6 Feb, 2026"
 coverImage: "/projects/portree/portree_main.mp4"
 tags: ["CLI Tool", "Go", "Git Worktree", "TUI", "Developer Tools"]
 featured: true
-order: 1
+order: 2
 liveUrl: ""
 githubUrl: "https://github.com/fairy-pitta/portree"
 gallery: [
   "/projects/portree/portree_tui.mp4",
   "/projects/portree/portree_init.mp4"
 ]
+name: "portree"
+technicalPoint: "Each worktree's ports come from a hash of its branch name (FNV-32), so a branch gets the same ports every time without a shared registry. A built-in reverse proxy routes branch-name.localhost to the right server."
+articleUrl: "https://qiita.com/Pitta/items/4a6537a3450aa6f8f050"
+articleLabel: "Article on Qiita (Japanese)"
 ---
 
 ## Overview

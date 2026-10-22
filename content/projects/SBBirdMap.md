@@ -1,6 +1,6 @@
 ---
 title: "Mapping Singapore's Avian Life: Inside the Singapore Bird Observation Map"
-description: "An interative map of Singapore Birds in the past 23 years."
+description: "An interactive map of Singapore Birds in the past 23 years."
 date: "15 May, 2025"
 coverImage: "/projects/sgbirdsmap/map_top.webp"
 tags: ["Web App", "Next.js", "Cloudflare", "D1"]
@@ -11,6 +11,10 @@ gallery: [
   "/projects/sgbirdsmap/map2.webp",
   "/projects/sgbirdsmap/map3.webp"
 ]
+featured: true
+order: 1
+name: "SG Bird Observation Map"
+technicalPoint: "Observations from the eBird API are synced into the map's own database by a scheduled job every night, so the map filters by date and species without calling eBird on each visit."
 ---
 
 ## Overview

@@ -5,12 +5,14 @@ date: "20 Jun, 2026"
 coverImage: "/projects/cc-account-switcher/demo.mp4"
 tags: ["CLI Tool", "Bash", "Claude Code", "Homebrew", "npm"]
 featured: true
-order: 2
+order: 5
 liveUrl: "https://www.npmjs.com/package/@fairy-pitta/cc-account-switcher"
 githubUrl: "https://github.com/fairy-pitta/cc-account-switcher"
 gallery: [
   "/projects/cc-account-switcher/install.mp4"
 ]
+name: "CC Account Switcher"
+technicalPoint: "A single Bash 3.2 script, so it runs on the stock macOS shell with no extra dependencies. A switch that fails halfway rolls back automatically, and credentials are kept in the macOS keychain or in protected files on Linux and WSL."
 ---
 
 ## Overview
@@ -28,7 +30,7 @@ CC Account Switcher manages several Claude Code accounts on one machine and swit
 ## Engineering
 
 - A single Bash 3.2+ script, so it runs on the stock macOS shell without extra dependencies
-- 85 [bats](https://github.com/bats-core/bats-core) tests covering concurrency, isolation and platform differences, run in GitHub Actions
+- A [bats](https://github.com/bats-core/bats-core) test suite covering concurrency, isolation and platform differences, run in GitHub Actions
 - Release pipeline that publishes to GitHub Releases, a Homebrew tap and npm
 - Japanese localisation of the CLI and docs
 

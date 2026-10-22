@@ -5,10 +5,12 @@ date: "31 Jan, 2026"
 coverImage: "/projects/printable-spectrogram/spectrogram_main.webp"
 tags: ["Web App", "TypeScript", "React", "Rust", "WASM", "Audio Processing", "DSP"]
 featured: true
-order: 4
+order: 3
 liveUrl: "https://spectrogram.fairy-pitta.net/"
 githubUrl: "https://github.com/fairy-pitta/printable_spectrogram"
 gallery: []
+name: "Printable Spectrogram"
+technicalPoint: "The STFT runs in Rust compiled to WebAssembly, so the whole tool works in the browser with no server. Annotations stay as SVG, so exported figures remain vector graphics."
 ---
 
 ## Overview
