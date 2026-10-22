@@ -40,6 +40,8 @@
      3. **Operations platform for a tuition centre** — Excel の請求を置き換え。会員管理、月次請求、メール・WhatsApp・SMS。結果: 月約100件、月5時間の手作業削減、請求の誤り約10% → ほぼゼロ、本人が一人で運用中。
 5. **Experience**: 既存のアコーディオン。勤め先名を伏せる。
 6. **Side projects（アコーディオン5件）**: SG Bird Observation Map、portree、Printable Spectrogram、Code Annotator、CC Account Switcher。開くと「何を作ったか」「技術上のポイント」「デモ / GitHub」。portree からは Qiita の解説記事（日本語）にリンクする。
+   - SG Bird Observation Map はリポジトリ（fairy-pitta/SGBirdMap）が非公開なので、デモ（https://sgbirdsmap.fairy-pitta.net）へのリンクだけにする。GitHub リンクは付けない。
+   - リンクを付ける前に、各 URL が 200 を返すことを確認する（Code Annotator はデモ URL が空なので GitHub のみ）。
 7. **Education / Certifications / Skills**: CV に合わせる。Frameworks は `Django, React, Hono`（Vue と Next.js は載せない）。
 8. **Contact**: フォーム＋「CV available on request」。
 
