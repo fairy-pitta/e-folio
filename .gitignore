@@ -29,3 +29,6 @@ pnpm-debug.log*
 # leftover local CMS data
 data.db*
 uploads/
+
+# private terms for src/lib/public-safety.ts (never commit)
+.private-terms.txt
