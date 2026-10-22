@@ -1,6 +1,6 @@
 ---
 title: "Mapping Singapore's Avian Life: Inside the Singapore Bird Observation Map"
-description: "An interative map of Singapore Birds in the past 23 years."
+description: "An interactive map of Singapore birds over two decades."
 date: "15 May, 2025"
 coverImage: "/projects/sgbirdsmap/map_top.webp"
 tags: ["Web App", "Next.js", "Cloudflare", "D1"]
@@ -11,11 +11,15 @@ gallery: [
   "/projects/sgbirdsmap/map2.webp",
   "/projects/sgbirdsmap/map3.webp"
 ]
+featured: true
+order: 1
+name: "SG Bird Observation Map"
+technicalPoint: "Observations from the eBird API are synced into the map's own database by a scheduled job every night, so the map filters by date and species without calling eBird on each visit."
 ---
 
 ## Overview
 
-The **Singapore Bird Observation Map** is a web-based interactive tool designed to help users explore the rich avian diversity of Singapore. Built on real-time data from the **eBird API**, this app allows you to discover **where and when** specific bird species have been observed across the island. Whether you're a casual birdwatcher, a researcher, or just curious about local wildlife, this map provides an engaging way to visualize bird activity in Singapore.
+The **Singapore Bird Observation Map** is a web-based interactive tool designed to help users explore the rich avian diversity of Singapore. Built on data synced nightly from the **eBird API**, this app allows you to discover **where and when** specific bird species have been observed across the island. Whether you are a casual birdwatcher, a researcher, or just curious about local wildlife, this map provides an engaging way to visualise bird activity in Singapore.
 
 Users can filter observations by **date range** and **species**, switch between a **point map** and a **heatmap**, and zoom in on precise locations for detailed insight. All sightings are mapped using coordinates provided by eBird checklists, with the data updated **daily** via automated backend processes.
 
@@ -65,6 +69,6 @@ Users can filter observations by **date range** and **species**, switch between 
 
 ## Closing Thoughts
 
-Singapore is home to a vibrant array of bird species, both resident and migratory. This map makes it easier than ever to track their presence and movements across the island. Whether you're spotting a hornbill in Changi or a plover in Sungei Buloh, the Singapore Bird Observation Map helps you **connect data to the land** — and learn a little more about the feathered lives around you.
+Singapore is home to a vibrant array of bird species, both resident and migratory. This map makes it easier than ever to track their presence and movements across the island. Whether you are spotting a hornbill in Changi or a plover in Sungei Buloh, the Singapore Bird Observation Map helps you **connect data to the land** — and learn a little more about the feathered lives around you.
 
 Made with 🐦 & ❤️ for Singapore's birding community.

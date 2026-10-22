@@ -8,6 +8,9 @@ export interface CvExperience {
   org: string
   period: string
   bullets: string[]
+  // Shown under the role as nested accordions. Industry only: no client names,
+  // screenshots or code (see the design doc).
+  projects?: CvProject[]
 }
 
 export interface CvEducation {
@@ -36,6 +39,18 @@ export interface CvAward {
   period: string
 }
 
+export interface CvProject {
+  title: string
+  // One line for the closed accordion.
+  summary: string
+  tags: string[]
+  problem: string
+  role: string
+  // The body of the project: what was decided, and why.
+  decisions: string[]
+  outcome: string
+}
+
 export interface Cv {
   name: string
   handle: string
@@ -45,9 +60,11 @@ export interface Cv {
   // the meta description, the social card and llms.txt. Kept under 155
   // characters so search results do not truncate it.
   tagline: string
-  email: string
   links: CvLink[]
   summary: string
+  // Three short lines under the name: what to hire for, in the reader's terms.
+  strengths: string[]
+  availability: string
   experience: CvExperience[]
   education: CvEducation[]
   certifications: CvCertification[]
@@ -55,7 +72,9 @@ export interface Cv {
   skills: CvSkillGroup[]
 }
 
-// Source: career-ops/cv.md. Keep address, visa status, client figures and GPA out of this file.
+// Source: the CV. Keep address, visa status, client names and figures,
+// GPA, the employer's name, the phone number and the email address out of this
+// file: the site is public, the PDF CV is not (src/lib/public-safety.ts).
 export const cv: Cv = {
   name: "Shuna Maekawa",
   handle: "fairy-pitta",
@@ -63,28 +82,72 @@ export const cv: Cv = {
   location: "Singapore",
   tagline:
     "Shuna Maekawa (fairy-pitta) — software engineer and project manager in Singapore, working on software architecture, database design and cloud.",
-  email: "shuna120700@gmail.com",
   links: [
-    { label: "Email", href: "mailto:shuna120700@gmail.com" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/shunamaekawa" },
     { label: "GitHub", href: "https://github.com/fairy-pitta" },
-    { label: "Qiita", href: "https://qiita.com/Pitta" },
   ],
   summary:
-    "I am a software engineer and project manager at a tuition centre in Singapore. I found the joy of data wrangling at university while majoring in Environmental Studies, and I have worked half as a teacher and half as an engineer ever since. Software architecture, database design and cloud infrastructure are what I care about most — the certifications below reflect that. Through this work I want to make a difference in people's lives.",
+    "Solutions architect and software engineer in Singapore. As lead engineer and project manager, I work on data modelling, cloud architecture and LLM agent design, and take systems through to delivery. I also lead and mentor the engineers who build them.",
+  strengths: [
+    "Designs LLM agents and the evaluation that keeps them reliable",
+    "Designs AWS systems from the data model to deployment",
+    "Works with clients to turn requirements into features, and leads the team that builds them",
+  ],
+  availability: "Available from April 2027",
   experience: [
     {
-      role: "Software Engineer / Project Manager",
-      org: "WAO Singapore / WAO Tech (WAO Corporation group)",
+      role: "Software Engineer & Project Manager",
+      org: "A software company in Singapore, part of a Japanese group",
       period: "Dec 2023 – Present",
       bullets: [
-        "Project manager on client and internal work: scope and schedule, requirements, estimates and proposals, and the day-to-day direction of a team of four to eight in-house engineers.",
-        "Teach maths, English, science and introductory programming one-on-one — around half of the job.",
-        "Lead engineer on an accounting and budgeting SaaS for an external client (Django, Vue 3, PostgreSQL, AWS) — largest contributor over 15 months. Clean Architecture / DDD backend, Feature-Sliced frontend, AWS CDK infrastructure with OIDC-based GitHub Actions deploys, Playwright E2E and visual regression tests.",
-        "Ran the tuition centre's operations platform replacement as project manager and developer in a team of three (Hono, Drizzle, Cloudflare Workers / D1 / R2, React 19): member management, monthly invoicing with PDF generation, and email / WhatsApp messaging — replacing a manual spreadsheet workflow. Around 2,000 automated tests including contract and real-API E2E.",
-        "Participated in an AI document-revision pipeline as an architect and reviewer for a client: OCR (Azure Document Intelligence) and an LLM (Claude on AWS Bedrock) turn scanned rules into Word files with tracked changes. Worked on test infrastructure, the storage migration and OCR accuracy evaluation.",
-        "Implemented the tuition centre's official website: custom WordPress theme with headless CMS content, SEO and performance work, and visual regression tests.",
-        "Designed the engineering onboarding, mentor the team through code review, and ran an internal session on agentic coding with Claude Code.",
+        "About half of the role is software engineering and project management, and half is one-on-one tuition.",
+        "Led engineering teams across client and internal projects, from scoping to delivery.",
+        "Designed the engineering onboarding process, and have run training for incoming intern engineers several times.",
+        "Teach mathematics, English, science and computer science one-on-one, from Grade 1 to Grade 12.",
+      ],
+      projects: [
+        {
+          title: "LLM agent for a financial management SaaS",
+          summary: "A tool-calling agent that answers finance questions over customer accounting data.",
+          tags: ["Vue", "Django", "PostgreSQL", "AWS"],
+          problem:
+            "A client-commissioned reporting platform turns annual P&L statements into information a business can act on. It needed an agent that answers finance questions over each customer's accounting data. An agent that calls tools to fetch data will still write a confident answer when a tool returns nothing, or returns the wrong thing.",
+          role:
+            "Principal engineer and project manager. I led a team of nine engineers, was the client's direct technical contact, designed the architecture and owned code review.",
+          decisions: [
+            "Every tool has a typed output contract with three outcomes: valid, empty or invalid. The agent answers only from a valid result. An empty or invalid result is handled as such, instead of being passed to the model as if it were data.",
+            "A golden-set harness runs a fixed set of questions with known answers against every prompt or model change, so a change that makes the answers worse is caught before release.",
+          ],
+          outcome: "The agent is in development. Its production launch is planned for April 2027.",
+        },
+        {
+          title: "Document AI for revising condominium bylaws",
+          summary: "OCR and an LLM turn scanned bylaws into a revised draft in Word.",
+          tags: ["Next.js", "Python", "GCP", "Azure"],
+          problem:
+            "A Japanese property-management group revises condominium management bylaws against the standard bylaws. The bylaws it starts from are scanned paper documents.",
+          role: "Architect, and reviewer of the code that the delivery engineers write.",
+          decisions: [
+            "The work has three steps: OCR of the scanned bylaws, comparison with the standard bylaws by an LLM, and export to Word. Each step is slow and fails in its own way, so I split them into three services (OCR, revision and export) joined by a file-handoff contract. A step that fails can be retried on its own, without running the steps before it again.",
+            "OCR and LLM output will sometimes be partly wrong. I designed how those outputs are handled so that a person can check them before they are used.",
+          ],
+          outcome:
+            "The system takes a scanned set of bylaws to a revised draft in Word, which a person checks before use. I continue to review the delivery engineers' implementations.",
+        },
+        {
+          title: "Operations platform for a tuition centre",
+          summary: "Member records, monthly invoices and messaging in one system, replacing invoicing in Excel.",
+          tags: ["Cloudflare", "Hono"],
+          problem:
+            "The centre produced its monthly invoices from Excel by hand. The work took hours every month, and roughly one invoice in ten had an error.",
+          role: "Sole engineer and operator. I built the system and I still run it.",
+          decisions: [
+            "Member records, invoices and messages live in one system, so each invoice is generated from the same member record that the message goes to, instead of being copied between spreadsheets.",
+            "Messages go out over email, WhatsApp and SMS from the same place, so a family is reached on the channel it uses.",
+          ],
+          outcome:
+            "The system sends around 100 invoices a month. It saves about five hours of manual work every month, and invoicing errors went from roughly 10% to near zero. It is in production use across the centre's operations.",
+        },
       ],
     },
     {
@@ -119,8 +182,8 @@ export const cv: Cv = {
     {
       school: "Yale-NUS College",
       country: "Singapore",
-      degree: "BSc (Hons), First Class Honours",
-      period: "2019 – 2023",
+      degree: "BSc (Honours), First Class",
+      period: "Aug 2019 – May 2023",
       bullets: [
         "Major in Environmental Studies",
         "Minor in Mathematical, Computational & Statistical Science",
@@ -132,10 +195,10 @@ export const cv: Cv = {
       school: "United World College Costa Rica",
       country: "Costa Rica",
       degree: "International Baccalaureate Diploma",
-      period: "2017 – 2019",
+      period: "Aug 2017 – May 2019",
     },
     {
-      school: "Nishiyamato Gakuen Academy",
+      school: "Nishiyamato Gakuen",
       country: "Japan",
       degree: "Junior and senior high school",
       period: "2013 – 2017",
@@ -160,11 +223,6 @@ export const cv: Cv = {
     { name: "IPA Database Specialist", year: "2024", href: "https://www.ipa.go.jp/en/about/it-talents/itee.html" },
     { name: "IPA Applied Information Technology Engineer", year: "2024", href: "https://www.ipa.go.jp/en/about/it-talents/itee.html" },
     { name: "IPA Fundamental Information Technology Engineer", year: "2023", href: "https://www.ipa.go.jp/en/about/it-talents/itee.html" },
-    {
-      name: "Singapore Class 3CA driving licence",
-      year: "2024",
-      href: "https://www.police.gov.sg/Knowledge-Hub/Traffic/Traffic-Matters/Singapore-Driving-Licence",
-    },
   ],
   awards: [
     { title: "CIN Outstanding Volunteer, NParks", period: "2021, 2022" },
@@ -174,9 +232,17 @@ export const cv: Cv = {
   ],
   skills: [
     { label: "Languages", items: ["Python", "TypeScript", "R"] },
-    { label: "Frameworks", items: ["React", "Next.js", "Vue", "Hono", "Django"] },
+    { label: "Frameworks", items: ["Django", "React", "Hono"] },
     { label: "Cloud", items: ["AWS", "Cloudflare", "Vercel", "Supabase"] },
     { label: "Data", items: ["PostgreSQL", "SQLite"] },
-    { label: "Spoken", items: ["Japanese (native)", "English (fluent)"] },
+    { label: "Spoken", items: ["Japanese (native)", "English (fluent)", "Spanish (beginner)"] },
+    { label: "Licence", items: ["Singapore Class 3CA driving licence (2024)"] },
   ],
+}
+
+// Throws at build time rather than rendering a dead link.
+export function linkHref(label: string): string {
+  const link = cv.links.find((candidate) => candidate.label === label)
+  if (!link) throw new Error(`No link labelled ${label} in cv.links`)
+  return link.href
 }

@@ -5,10 +5,12 @@ date: "31 Jan, 2026"
 coverImage: "/projects/printable-spectrogram/spectrogram_main.webp"
 tags: ["Web App", "TypeScript", "React", "Rust", "WASM", "Audio Processing", "DSP"]
 featured: true
-order: 4
+order: 3
 liveUrl: "https://spectrogram.fairy-pitta.net/"
 githubUrl: "https://github.com/fairy-pitta/printable_spectrogram"
 gallery: []
+name: "Printable Spectrogram"
+technicalPoint: "The STFT runs in Rust compiled to WebAssembly, so the whole tool works in the browser with no server. Annotations stay as SVG, so exported figures remain vector graphics."
 ---
 
 ## Overview
@@ -45,19 +47,19 @@ I wanted a tool that does all of this in the browser, with real-time preview and
 - **Optional mel-scale** frequency axis
 - **Noise reduction** via spectral subtraction
 
-### Visualization
+### Visualisation
 
 - High-quality spectrogram rendering (Canvas/WebGL)
-- Multiple colormaps (viridis, magma, grayscale)
+- Multiple colour maps (viridis, magma, grayscale)
 - Adjustable brightness, contrast, gamma
 - Axes with proper time (seconds) and frequency (Hz/mel) labels
-- Colorbar with dB scale
+- Colour bar with dB scale
 
 ### Annotation Layer
 
 - SVG-based annotation layer over the spectrogram
 - Text labels, arrows, rectangles, highlights
-- Annotations remain vector-based (not rasterized)
+- Annotations remain vector-based (not rasterised)
 
 ### Publication-Quality Export
 
@@ -71,7 +73,7 @@ I wanted a tool that does all of this in the browser, with real-time preview and
 
 - **DSP Core**: Rust compiled to WebAssembly (rustfft)
 - **Frontend**: React + TypeScript + Vite
-- **Visualization**: Canvas API
+- **Visualisation**: Canvas API
 - **Annotations**: SVG
 - **Testing**: Vitest (TypeScript), Cargo (Rust)
 
@@ -123,7 +125,7 @@ Currently in active development. Core infrastructure is complete, with ongoing w
 - Full UI implementation
 - Web Worker integration
 - Advanced annotation features
-- Performance optimization
+- Performance optimisation
 
 ---
 
