@@ -72,6 +72,8 @@ h1 { font-size: 1.4rem; font-weight: 600; line-height: 1.3; margin: 0; }
 .job > summary::before { content: "+"; position: absolute; left: 0; color: var(--faint); }
 .job[open] > summary::before { content: "−"; }
 .job > .bullets { padding-left: 2.4em; }
+.job > .projects { margin-top: 10px; padding-left: 1.2em; }
+.projects > .job + .job { margin-top: 8px; }
 .job > .case { margin: 6px 0 0; padding-left: 1.2em; font-size: .875rem; color: var(--muted); }
 .case dt { margin-top: 10px; font-weight: 600; color: var(--fg); }
 .case dd { margin: 2px 0 0; }

@@ -3,7 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Section from '../components/Section.astro';
 import Row from '../components/Row.astro';
 import Contact from '../components/Contact.astro';
-import CaseStudy from '../components/CaseStudy.astro';
+import ExperienceProject from '../components/ExperienceProject.astro';
 import { cv } from '../data/cv';
 import SideProject from '../components/SideProject.astro';
 import { getFeaturedProjects } from '../lib/content';
@@ -27,10 +27,6 @@ const projects = getFeaturedProjects();
     <p class="summary">{cv.summary}</p>
   </header>
 
-  <Section title="Case studies">
-    {cv.caseStudies.map((study) => <CaseStudy study={study} />)}
-  </Section>
-
   <Section title="Experience">
     {cv.experience.map((job, i) => (
       <details class="job" open={i === 0}>
@@ -41,6 +37,11 @@ const projects = getFeaturedProjects();
         <ul class="bullets">
           {job.bullets.map((bullet) => <li>{bullet}</li>)}
         </ul>
+        {job.projects && (
+          <div class="projects">
+            {job.projects.map((project) => <ExperienceProject project={project} />)}
+          </div>
+        )}
       </details>
     ))}
   </Section>

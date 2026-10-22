@@ -55,8 +55,9 @@ describe('indexablePages', () => {
 })
 
 describe('HOME', () => {
-  it('test_read_home_description_names_case_studies_and_side_projects', () => {
-    expect(HOME.description).toContain('case studies')
+  it('test_read_home_description_names_project_details_and_side_projects', () => {
+    expect(HOME.description).toContain('project details')
+    expect(HOME.description.toLowerCase()).not.toContain('case stud')
     expect(HOME.description).toContain('side projects')
   })
 })

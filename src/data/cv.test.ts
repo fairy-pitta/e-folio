@@ -2,6 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { cv, linkHref } from './cv'
 import { findForbidden } from '../lib/public-safety'
 
+// The three projects of the current job, shown as nested accordions under it.
+const projects = cv.experience[0].projects ?? []
+
 describe('cv', () => {
   it('has_required_top_level_fields', () => {
     expect(cv.name).toBe('Shuna Maekawa')
@@ -135,9 +138,9 @@ describe('cv', () => {
     },
   )
 
-  it('test_read_case_studies_returns_three_with_every_part_filled', () => {
-    expect(cv.caseStudies).toHaveLength(3)
-    for (const study of cv.caseStudies) {
+  it('test_read_current_job_projects_returns_three_with_every_part_filled', () => {
+    expect(projects).toHaveLength(3)
+    for (const study of projects) {
       for (const field of [study.title, study.summary, study.problem, study.role, study.outcome]) {
         expect(field.trim(), study.title).not.toBe('')
       }
@@ -147,28 +150,40 @@ describe('cv', () => {
     }
   })
 
-  it('test_read_case_study_summaries_returns_single_lines', () => {
-    for (const study of cv.caseStudies) {
+  it('test_read_projects_only_under_current_job_returns_one_owner', () => {
+    expect(cv.experience.slice(1).every((job) => !job.projects)).toBe(true)
+  })
+
+  it('test_read_current_job_bullets_without_project_roles_returns_no_repeat', () => {
+    // Each project's role is told once, inside its accordion, not again as a bullet.
+    const bullets = cv.experience[0].bullets.join(' ').toLowerCase()
+    for (const phrase of ['financial management saas', 'document-revision', 'operations platform']) {
+      expect(bullets, phrase).not.toContain(phrase)
+    }
+  })
+
+  it('test_read_project_summaries_returns_single_lines', () => {
+    for (const study of projects) {
       expect(study.summary, study.title).not.toMatch(/\n/)
       expect(study.summary.length, study.title).toBeLessThanOrEqual(110)
     }
   })
 
-  it('test_read_case_studies_contains_no_volume_metrics', () => {
-    const text = JSON.stringify(cv.caseStudies)
+  it('test_read_projects_contains_no_volume_metrics', () => {
+    const text = JSON.stringify(projects)
     expect(text).not.toMatch(/\b\d[\d,]*\s+(tests?|commits?|tables?|lines)\b/i)
     expect(text).not.toMatch(/% of (the )?code/i)
   })
 
-  it('test_read_llm_agent_case_study_says_launch_is_planned_not_shipped', () => {
-    const agent = cv.caseStudies[0]
+  it('test_read_llm_agent_project_says_launch_is_planned_not_shipped', () => {
+    const agent = projects[0]
     expect(agent.title).toBe('LLM agent for a financial management SaaS')
     expect(agent.outcome).toContain('planned for April 2027')
     expect(JSON.stringify(agent)).not.toMatch(/\bshipped\b|\blaunched\b|\bin production\b/i)
   })
 
-  it('test_read_tuition_platform_case_study_keeps_field_results', () => {
-    const platform = cv.caseStudies[2]
+  it('test_read_tuition_platform_project_keeps_field_results', () => {
+    const platform = projects[2]
     expect(platform.outcome).toContain('around 100 invoices a month')
     expect(platform.outcome).toContain('about five hours')
     expect(platform.outcome).toContain('roughly 10% to near zero')

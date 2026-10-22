@@ -8,6 +8,9 @@ export interface CvExperience {
   org: string
   period: string
   bullets: string[]
+  // Shown under the role as nested accordions. Industry only: no client names,
+  // screenshots or code (see the design doc).
+  projects?: CvProject[]
 }
 
 export interface CvEducation {
@@ -36,14 +39,14 @@ export interface CvAward {
   period: string
 }
 
-export interface CvCaseStudy {
+export interface CvProject {
   title: string
   // One line for the closed accordion.
   summary: string
   tags: string[]
   problem: string
   role: string
-  // The body of the case study: what was decided, and why.
+  // The body of the project: what was decided, and why.
   decisions: string[]
   outcome: string
 }
@@ -62,8 +65,6 @@ export interface Cv {
   // Three short lines under the name: what to hire for, in the reader's terms.
   strengths: string[]
   availability: string
-  // Industry only: no client names, screenshots or code (see the design doc).
-  caseStudies: CvCaseStudy[]
   experience: CvExperience[]
   education: CvEducation[]
   certifications: CvCertification[]
@@ -93,50 +94,6 @@ export const cv: Cv = {
     "Works with clients to turn requirements into features, and leads the team that builds them",
   ],
   availability: "Available from April 2027",
-  caseStudies: [
-    {
-      title: "LLM agent for a financial management SaaS",
-      summary: "A tool-calling agent that answers finance questions over customer accounting data.",
-      tags: ["Vue", "Django", "PostgreSQL", "AWS"],
-      problem:
-        "A client-commissioned reporting platform turns annual P&L statements into information a business can act on. It needed an agent that answers finance questions over each customer's accounting data. An agent that calls tools to fetch data will still write a confident answer when a tool returns nothing, or returns the wrong thing.",
-      role:
-        "Principal engineer and project manager. I led a team of nine engineers, was the client's direct technical contact, designed the architecture and owned code review.",
-      decisions: [
-        "Every tool has a typed output contract with three outcomes: valid, empty or invalid. The agent answers only from a valid result. An empty or invalid result is handled as such, instead of being passed to the model as if it were data.",
-        "A golden-set harness runs a fixed set of questions with known answers against every prompt or model change, so a change that makes the answers worse is caught before release.",
-      ],
-      outcome: "The agent is in development. Its production launch is planned for April 2027.",
-    },
-    {
-      title: "Document AI for revising condominium bylaws",
-      summary: "OCR and an LLM turn scanned bylaws into a revised draft in Word.",
-      tags: ["Next.js", "Python", "GCP", "Azure"],
-      problem:
-        "A Japanese property-management group revises condominium management bylaws against the standard bylaws. The bylaws it starts from are scanned paper documents.",
-      role: "Architect, and reviewer of the code that the delivery engineers write.",
-      decisions: [
-        "The work has three steps: OCR of the scanned bylaws, comparison with the standard bylaws by an LLM, and export to Word. Each step is slow and fails in its own way, so I split them into three services (OCR, revision and export) joined by a file-handoff contract. A step that fails can be retried on its own, without running the steps before it again.",
-        "OCR and LLM output will sometimes be partly wrong. I designed how those outputs are handled so that a person can check them before they are used.",
-      ],
-      outcome:
-        "The system takes a scanned set of bylaws to a revised draft in Word, which a person checks before use. I continue to review the delivery engineers' implementations.",
-    },
-    {
-      title: "Operations platform for a tuition centre",
-      summary: "Member records, monthly invoices and messaging in one system, replacing invoicing in Excel.",
-      tags: ["Cloudflare", "Hono"],
-      problem:
-        "The centre produced its monthly invoices from Excel by hand. The work took hours every month, and roughly one invoice in ten had an error.",
-      role: "Sole engineer and operator. I built the system and I still run it.",
-      decisions: [
-        "Member records, invoices and messages live in one system, so each invoice is generated from the same member record that the message goes to, instead of being copied between spreadsheets.",
-        "Messages go out over email, WhatsApp and SMS from the same place, so a family is reached on the channel it uses.",
-      ],
-      outcome:
-        "The system sends around 100 invoices a month. It saves about five hours of manual work every month, and invoicing errors went from roughly 10% to near zero. It is in production use across the centre's operations.",
-    },
-  ],
   experience: [
     {
       role: "Software Engineer & Project Manager",
@@ -145,9 +102,52 @@ export const cv: Cv = {
       bullets: [
         "About half of the role is software engineering and project management, and half is one-on-one tuition.",
         "Led engineering teams across client and internal projects, from scoping to delivery.",
-        "Principal engineer and project manager on a financial management SaaS, architect and reviewer on a document-revision AI platform, and sole engineer and operator of a tuition centre's operations platform. The case studies above cover each one.",
         "Designed the engineering onboarding process, and have run training for incoming intern engineers several times.",
         "Teach mathematics, English, science and computer science one-on-one, from Grade 1 to Grade 12.",
+      ],
+      projects: [
+        {
+          title: "LLM agent for a financial management SaaS",
+          summary: "A tool-calling agent that answers finance questions over customer accounting data.",
+          tags: ["Vue", "Django", "PostgreSQL", "AWS"],
+          problem:
+            "A client-commissioned reporting platform turns annual P&L statements into information a business can act on. It needed an agent that answers finance questions over each customer's accounting data. An agent that calls tools to fetch data will still write a confident answer when a tool returns nothing, or returns the wrong thing.",
+          role:
+            "Principal engineer and project manager. I led a team of nine engineers, was the client's direct technical contact, designed the architecture and owned code review.",
+          decisions: [
+            "Every tool has a typed output contract with three outcomes: valid, empty or invalid. The agent answers only from a valid result. An empty or invalid result is handled as such, instead of being passed to the model as if it were data.",
+            "A golden-set harness runs a fixed set of questions with known answers against every prompt or model change, so a change that makes the answers worse is caught before release.",
+          ],
+          outcome: "The agent is in development. Its production launch is planned for April 2027.",
+        },
+        {
+          title: "Document AI for revising condominium bylaws",
+          summary: "OCR and an LLM turn scanned bylaws into a revised draft in Word.",
+          tags: ["Next.js", "Python", "GCP", "Azure"],
+          problem:
+            "A Japanese property-management group revises condominium management bylaws against the standard bylaws. The bylaws it starts from are scanned paper documents.",
+          role: "Architect, and reviewer of the code that the delivery engineers write.",
+          decisions: [
+            "The work has three steps: OCR of the scanned bylaws, comparison with the standard bylaws by an LLM, and export to Word. Each step is slow and fails in its own way, so I split them into three services (OCR, revision and export) joined by a file-handoff contract. A step that fails can be retried on its own, without running the steps before it again.",
+            "OCR and LLM output will sometimes be partly wrong. I designed how those outputs are handled so that a person can check them before they are used.",
+          ],
+          outcome:
+            "The system takes a scanned set of bylaws to a revised draft in Word, which a person checks before use. I continue to review the delivery engineers' implementations.",
+        },
+        {
+          title: "Operations platform for a tuition centre",
+          summary: "Member records, monthly invoices and messaging in one system, replacing invoicing in Excel.",
+          tags: ["Cloudflare", "Hono"],
+          problem:
+            "The centre produced its monthly invoices from Excel by hand. The work took hours every month, and roughly one invoice in ten had an error.",
+          role: "Sole engineer and operator. I built the system and I still run it.",
+          decisions: [
+            "Member records, invoices and messages live in one system, so each invoice is generated from the same member record that the message goes to, instead of being copied between spreadsheets.",
+            "Messages go out over email, WhatsApp and SMS from the same place, so a family is reached on the channel it uses.",
+          ],
+          outcome:
+            "The system sends around 100 invoices a month. It saves about five hours of manual work every month, and invoicing errors went from roughly 10% to near zero. It is in production use across the centre's operations.",
+        },
       ],
     },
     {

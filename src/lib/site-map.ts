@@ -14,7 +14,7 @@ export interface SiteEntry {
 export const HOME: SiteEntry = {
   path: "/",
   title: "Shuna Maekawa",
-  description: "Strengths, case studies, experience, side projects, education, certifications and skills.",
+  description: "Strengths, experience with project details, side projects, education, certifications and skills.",
 }
 
 export const INDEX_PAGES: SiteEntry[] = [

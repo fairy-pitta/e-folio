@@ -60,9 +60,9 @@ describe('built site', () => {
     expect(summary).toBeGreaterThan(availability)
   })
 
-  it('test_render_case_studies_returns_three_closed_accordions_with_four_parts', () => {
+  it('test_render_current_job_returns_three_closed_project_accordions_with_four_parts', () => {
     const home = page('index.html')
-    const openings = home.match(/<details class="job case-study"[^>]*>/g) ?? []
+    const openings = home.match(/<details class="job experience-project"[^>]*>/g) ?? []
     expect(openings).toHaveLength(3)
     for (const opening of openings) expect(opening).not.toMatch(/\sopen\b/)
     for (const heading of ['Problem', 'My role', 'Key decisions', 'Outcome']) {
@@ -71,12 +71,22 @@ describe('built site', () => {
     }
   })
 
-  it('test_render_home_orders_case_studies_before_experience', () => {
+  it('test_render_projects_nests_them_inside_current_job_in_experience', () => {
     const home = page('index.html')
-    const caseStudies = home.indexOf('>Case studies</h2>')
     const experience = home.indexOf('>Experience</h2>')
-    expect(caseStudies).toBeGreaterThan(-1)
-    expect(experience).toBeGreaterThan(caseStudies)
+    const currentJob = home.indexOf('A software company in Singapore, part of a Japanese group')
+    const firstProject = home.indexOf('<details class="job experience-project"')
+    const nextJob = home.indexOf('Mandai Wildlife Group')
+    expect(experience).toBeGreaterThan(-1)
+    expect(currentJob).toBeGreaterThan(experience)
+    expect(firstProject).toBeGreaterThan(currentJob)
+    expect(nextJob).toBeGreaterThan(firstProject)
+  })
+
+  it('test_render_home_without_case_studies_section_returns_no_mention', () => {
+    for (const file of ['index.html', 'llms.txt']) {
+      expect(page(file).toLowerCase(), file).not.toMatch(/case[ -]stud/)
+    }
   })
 
   it('test_render_side_projects_returns_five_closed_accordions_with_links', () => {
