@@ -73,8 +73,9 @@ export interface Cv {
 }
 
 // Source: the CV. Keep address, visa status, client names and figures,
-// GPA, the employer's name, the phone number and the email address out of this
-// file: the site is public, the PDF CV is not (src/lib/public-safety.ts).
+// grades, the employer's name, the phone number and the email address out of this
+// file: the site is public, the PDF CV is not (src/lib/public-safety.ts; the
+// specific terms live in the gitignored .private-terms.txt).
 export const cv: Cv = {
   name: "Shuna Maekawa",
   handle: "fairy-pitta",

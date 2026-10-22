@@ -101,7 +101,8 @@ describe('cv', () => {
 
   it('test_serialise_cv_contains_no_email_address_or_mailto', () => {
     expect('email' in cv).toBe(false)
-    expect(JSON.stringify(cv)).not.toMatch(/shuna120700|mailto:/i)
+    expect(findForbidden(JSON.stringify(cv), [])).not.toContain('email address')
+    expect(JSON.stringify(cv)).not.toMatch(/mailto:/i)
   })
 
   it('test_look_up_link_href_by_label_returns_the_url', () => {
@@ -188,27 +189,6 @@ describe('cv', () => {
     expect(platform.outcome).toContain('about five hours')
     expect(platform.outcome).toContain('roughly 10% to near zero')
   })
-
-  it.each([
-    'Tampines',
-    '520297',
-    'Employment Pass',
-    '(EP',
-    'PR pending',
-    'GPA',
-    '4.52',
-    'Forval',
-    'Crossgear',
-    'Haseko',
-    'Hasegawa',
-    '1000 users',
-    '9-person',
-  ])(
-    'does_not_publish_%s',
-    (secret) => {
-      expect(JSON.stringify(cv)).not.toContain(secret)
-    },
-  )
 
   it('test_read_frameworks_returns_django_react_hono_only', () => {
     expect(cv.skills.find((group) => group.label === 'Frameworks')?.items).toEqual(['Django', 'React', 'Hono'])

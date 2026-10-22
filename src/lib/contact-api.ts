@@ -4,6 +4,9 @@
 
 export interface ContactEnv {
   RESEND_API_KEY?: string
+  // Where submissions are delivered. A Cloudflare Pages secret, so the
+  // owner's personal address stays out of this public repository.
+  CONTACT_TO?: string
 }
 
 export interface ParsedContact {
@@ -14,7 +17,6 @@ export interface ParsedContact {
 
 // singbirds.net is not a verified Resend domain any more (and expires 2026-10-25).
 export const CONTACT_FROM = "contact@fairy-pitta.net"
-export const CONTACT_TO = "shunaruna@gmail.com"
 export const RESEND_ENDPOINT = "https://api.resend.com/emails"
 
 export const FIELD_LIMITS = { name: 200, email: 320, message: 10000 } as const
@@ -45,10 +47,10 @@ export function escapeHtml(value: string): string {
     .replace(/'/g, "&#39;")
 }
 
-export function buildResendBody(contact: ParsedContact) {
+export function buildResendBody(contact: ParsedContact, to: string) {
   return {
     from: CONTACT_FROM,
-    to: CONTACT_TO,
+    to,
     reply_to: contact.email,
     subject: `New contact form submission from ${contact.name}`,
     html: [
@@ -82,7 +84,7 @@ export async function handleContactRequest(
   const contact = parseContact(raw)
   if (!contact) return jsonResponse({ success: false, error: "invalid-payload" }, 400)
 
-  if (!env.RESEND_API_KEY) return jsonResponse({ success: false, error: "not-configured" }, 500)
+  if (!env.RESEND_API_KEY || !env.CONTACT_TO) return jsonResponse({ success: false, error: "not-configured" }, 500)
 
   let upstream: Response
   try {
@@ -92,7 +94,7 @@ export async function handleContactRequest(
         Authorization: `Bearer ${env.RESEND_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(buildResendBody(contact)),
+      body: JSON.stringify(buildResendBody(contact, env.CONTACT_TO)),
     })
   } catch {
     return jsonResponse({ success: false, error: "upstream-unreachable" }, 502)

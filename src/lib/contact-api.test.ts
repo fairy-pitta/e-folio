@@ -1,13 +1,15 @@
 import { describe, it, expect, vi } from 'vitest'
 import {
   CONTACT_FROM,
-  CONTACT_TO,
   RESEND_ENDPOINT,
   FIELD_LIMITS,
   parseContact,
   buildResendBody,
   handleContactRequest,
 } from './contact-api'
+
+const TO = 'owner@example.com'
+const ENV = { RESEND_API_KEY: 'test-key', CONTACT_TO: TO }
 
 const valid = { name: 'Ada', email: 'ada@example.com', message: 'Hello there' }
 
@@ -56,28 +58,28 @@ describe('parseContact', () => {
 
 describe('buildResendBody', () => {
   it('test_build_resend_body_uses_verified_fairy_pitta_sender', () => {
-    const body = buildResendBody(valid)
+    const body = buildResendBody(valid, TO)
     expect(body.from).toBe('contact@fairy-pitta.net')
-    expect(body.to).toBe('shunaruna@gmail.com')
+    expect(body.to).toBe(TO)
     expect(body.reply_to).toBe('ada@example.com')
     expect(body.subject).toContain('Ada')
   })
 
   it('test_build_resend_body_with_html_in_message_returns_escaped_markup', () => {
-    const body = buildResendBody({ ...valid, message: '<script>alert(1)</script>' })
+    const body = buildResendBody({ ...valid, message: '<script>alert(1)</script>' }, TO)
     expect(body.html).not.toContain('<script>')
     expect(body.html).toContain('&lt;script&gt;')
   })
 
   it('test_build_resend_body_with_newlines_returns_line_breaks', () => {
-    expect(buildResendBody({ ...valid, message: 'a\nb' }).html).toContain('a<br/>b')
+    expect(buildResendBody({ ...valid, message: 'a\nb' }, TO).html).toContain('a<br/>b')
   })
 })
 
 describe('handleContactRequest', () => {
   it('test_handle_contact_request_with_valid_payload_returns_success_true', async () => {
     const fetchImpl = okFetch()
-    const response = await handleContactRequest(postRequest(valid), { RESEND_API_KEY: 'test-key' }, fetchImpl)
+    const response = await handleContactRequest(postRequest(valid), ENV, fetchImpl)
 
     expect(response.status).toBe(200)
     await expect(response.json()).resolves.toEqual({ success: true })
@@ -89,12 +91,12 @@ describe('handleContactRequest', () => {
     expect((init.headers as Record<string, string>).Authorization).toBe('Bearer test-key')
     const sent = JSON.parse(String(init.body))
     expect(sent.from).toBe(CONTACT_FROM)
-    expect(sent.to).toBe(CONTACT_TO)
+    expect(sent.to).toBe(TO)
   })
 
   it('test_handle_contact_request_with_invalid_payload_returns_400_without_calling_resend', async () => {
     const fetchImpl = okFetch()
-    const response = await handleContactRequest(postRequest({ name: '', email: 'x', message: '' }), { RESEND_API_KEY: 'test-key' }, fetchImpl)
+    const response = await handleContactRequest(postRequest({ name: '', email: 'x', message: '' }), ENV, fetchImpl)
 
     expect(response.status).toBe(400)
     expect(fetchImpl).not.toHaveBeenCalled()
@@ -102,7 +104,7 @@ describe('handleContactRequest', () => {
 
   it('test_handle_contact_request_with_malformed_json_returns_400', async () => {
     const fetchImpl = okFetch()
-    const response = await handleContactRequest(postRequest('{not json'), { RESEND_API_KEY: 'test-key' }, fetchImpl)
+    const response = await handleContactRequest(postRequest('{not json'), ENV, fetchImpl)
 
     expect(response.status).toBe(400)
     expect(fetchImpl).not.toHaveBeenCalled()
@@ -116,9 +118,17 @@ describe('handleContactRequest', () => {
     expect(fetchImpl).not.toHaveBeenCalled()
   })
 
+  it('test_handle_contact_request_without_recipient_returns_500', async () => {
+    const fetchImpl = okFetch()
+    const response = await handleContactRequest(postRequest(valid), { RESEND_API_KEY: 'test-key' }, fetchImpl)
+
+    expect(response.status).toBe(500)
+    expect(fetchImpl).not.toHaveBeenCalled()
+  })
+
   it('test_handle_contact_request_when_resend_rejects_returns_502', async () => {
     const fetchImpl = vi.fn(async () => new Response('{"message":"domain not verified"}', { status: 403 }))
-    const response = await handleContactRequest(postRequest(valid), { RESEND_API_KEY: 'test-key' }, fetchImpl)
+    const response = await handleContactRequest(postRequest(valid), ENV, fetchImpl)
 
     expect(response.status).toBe(502)
     await expect(response.json()).resolves.toMatchObject({ success: false })
@@ -128,14 +138,14 @@ describe('handleContactRequest', () => {
     const fetchImpl = vi.fn(async () => {
       throw new Error('getaddrinfo ENOTFOUND')
     })
-    const response = await handleContactRequest(postRequest(valid), { RESEND_API_KEY: 'test-key' }, fetchImpl)
+    const response = await handleContactRequest(postRequest(valid), ENV, fetchImpl)
 
     expect(response.status).toBe(502)
   })
 
   it('test_handle_contact_request_never_echoes_api_key_in_response', async () => {
     const fetchImpl = vi.fn(async () => new Response('nope', { status: 403 }))
-    const response = await handleContactRequest(postRequest(valid), { RESEND_API_KEY: 'super-secret' }, fetchImpl)
+    const response = await handleContactRequest(postRequest(valid), { ...ENV, RESEND_API_KEY: 'super-secret' }, fetchImpl)
 
     expect(await response.text()).not.toContain('super-secret')
   })
