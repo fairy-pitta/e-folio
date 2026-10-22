@@ -90,4 +90,12 @@ describe('built site', () => {
     expect(home).toContain('href="https://github.com/fairy-pitta/code-annotator"')
     expect(home).toContain('>Side projects</h2>')
   })
+
+  it('test_render_home_and_404_without_blog_link_keeps_blog_page_built', () => {
+    for (const file of ['index.html', '404.html']) {
+      expect(page(file), file).not.toMatch(/href="\/blog/)
+    }
+    expect(page('index.html')).not.toContain('>Writing</h2>')
+    expect(existsSync(join(DIST, 'blog', 'index.html'))).toBe(true)
+  })
 })

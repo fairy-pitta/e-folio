@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { absoluteUrl, blogEntries, indexablePages, projectEntries } from './site-map'
+import { HOME, absoluteUrl, blogEntries, indexablePages, projectEntries } from './site-map'
 
 const SITE = 'https://fairy-pitta.net'
 
@@ -51,5 +51,12 @@ describe('indexablePages', () => {
     for (const entry of indexablePages()) {
       expect(entry.path, entry.title).toMatch(/^\//)
     }
+  })
+})
+
+describe('HOME', () => {
+  it('test_read_home_description_names_case_studies_and_side_projects', () => {
+    expect(HOME.description).toContain('case studies')
+    expect(HOME.description).toContain('side projects')
   })
 })

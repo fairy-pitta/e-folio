@@ -6,14 +6,9 @@ import Contact from '../components/Contact.astro';
 import CaseStudy from '../components/CaseStudy.astro';
 import { cv } from '../data/cv';
 import SideProject from '../components/SideProject.astro';
-import WritingRow from '../components/WritingRow.astro';
-import { getAllBlogPosts, getFeaturedProjects } from '../lib/content';
-import { fetchQiitaItems } from '../lib/qiita';
-import { toWritingItems } from '../lib/writing';
+import { getFeaturedProjects } from '../lib/content';
 
 const projects = getFeaturedProjects();
-const posts = getAllBlogPosts();
-const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
 ---
 
 <Layout>
@@ -54,15 +49,6 @@ const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
     {projects.map((project) => <SideProject project={project} />)}
     <p class="more"><a href="/projects">All projects →</a></p>
   </Section>
-
-  {writing.length > 0 && (
-    <Section title="Writing">
-      {writing.map((item) => <WritingRow item={item} />)}
-      <p class="more">
-        <a href="/blog">All writing →</a>{posts.length > 0 && <> · <a href="/rss.xml">RSS</a></>}
-      </p>
-    </Section>
-  )}
 
   <Section title="Education">
     {cv.education.map((edu) => (
