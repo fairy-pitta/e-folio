@@ -15,6 +15,8 @@ describe('findForbidden (generic patterns)', () => {
     ['+6591234567', 'phone number (+65)'],
     ['call 9123 4567 today', 'phone number (8 digits)'],
     ['6123-4567', 'phone number (8 digits)'],
+    ['Call 9123 4567.', 'phone number (8 digits)'],
+    ['tel:9123-4567', 'phone number (8 digits)'],
     ['someone@private-mail.test.com', 'email address'],
     ['<a href="mailto:someone@example.com">', 'mailto link'],
     ['OCR-VFS — Visual Fidelity Scorer', 'removed project (OCR-VFS)'],
@@ -32,6 +34,7 @@ describe('findForbidden (generic patterns)', () => {
     'ada@example.com',
     'react@18.3.1',
     'Published 2026-10-22',
+    'version 9123 4567.8',
   ])('test_find_forbidden_with_harmless_text_returns_no_match_%s', (text) => {
     expect(findForbidden(text, [])).toEqual([])
   })

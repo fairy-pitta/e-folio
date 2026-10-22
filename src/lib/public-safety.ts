@@ -42,7 +42,7 @@ export const GENERIC_FORBIDDEN: ForbiddenPattern[] = [
   // A local number written as two groups of four (8123 4567, 6123-4567).
   // Unseparated 8-digit runs are left to the private list: minified JS is full
   // of them (86400000 ms in a day).
-  { label: 'phone number (8 digits)', pattern: /(?<![\w.:/-])[3689]\d{3}[\s-]\d{4}(?![\w.-])/ },
+  { label: 'phone number (8 digits)', pattern: /(?<![\w./-])[3689]\d{3}[\s-]\d{4}(?!\w|[.-]\d)/ },
   { label: 'mailto link', pattern: /mailto:/i },
   { label: 'removed project (OCR-VFS)', pattern: /ocr-?vfs/i },
 ]
