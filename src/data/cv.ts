@@ -64,7 +64,6 @@ export interface Cv {
   summary: string
   // Three short lines under the name: what to hire for, in the reader's terms.
   strengths: string[]
-  availability: string
   experience: CvExperience[]
   education: CvEducation[]
   certifications: CvCertification[]
@@ -94,7 +93,6 @@ export const cv: Cv = {
     "Designs AWS systems from the data model to deployment",
     "Works with clients to turn requirements into features, and leads the team that builds them",
   ],
-  availability: "Available from April 2027",
   experience: [
     {
       role: "Software Engineer & Project Manager",

@@ -50,14 +50,12 @@ describe('built site', () => {
     expect(home).not.toContain('data-email')
   })
 
-  it('test_render_home_header_orders_strengths_availability_then_summary', () => {
+  it('test_render_home_header_orders_strengths_then_summary', () => {
     const home = page('index.html')
     const strengths = home.indexOf('Designs LLM agents and the evaluation that keeps them reliable')
-    const availability = home.indexOf('Available from April 2027')
     const summary = home.indexOf('Solutions architect and software engineer in Singapore.')
     expect(strengths).toBeGreaterThan(-1)
-    expect(availability).toBeGreaterThan(strengths)
-    expect(summary).toBeGreaterThan(availability)
+    expect(summary).toBeGreaterThan(strengths)
   })
 
   it('test_render_current_job_returns_three_closed_project_accordions_with_four_parts', () => {

@@ -118,10 +118,6 @@ describe('cv', () => {
     cv.strengths.forEach((line) => expect(line.trim()).not.toBe(''))
   })
 
-  it('test_read_availability_returns_month_and_year', () => {
-    expect(cv.availability).toBe('Available from April 2027')
-  })
-
   it('test_read_summary_without_employer_opens_with_role_and_place', () => {
     expect(cv.summary.startsWith('Solutions architect and software engineer in Singapore.')).toBe(true)
   })
