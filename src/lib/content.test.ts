@@ -9,6 +9,7 @@ import {
   projectLinks,
   type ProjectFrontmatter,
 } from './content'
+import { findForbidden } from './public-safety'
 
 const utc = (y: number, m: number, d: number) => new Date(Date.UTC(y, m - 1, d))
 
@@ -78,11 +79,10 @@ describe('getAllProjects', () => {
 })
 
 describe('getFeaturedProjects', () => {
-  it('returns_the_four_featured_projects_in_order', () => {
+  it('test_read_featured_projects_after_ocr_vfs_removal_returns_remaining_three', () => {
     expect(getFeaturedProjects().map((p) => p.slug)).toEqual([
       'Portree',
       'CCAccountSwitcher',
-      'OcrVfs',
       'PrintableSpectrogram',
     ])
   })
@@ -105,5 +105,18 @@ describe('projectLinks', () => {
       { label: 'Code', href: 'https://github.com/x' },
       { label: 'Live', href: 'https://x.dev' },
     ])
+  })
+})
+
+describe('project content', () => {
+  it('test_read_projects_excludes_withdrawn_ocr_vfs', () => {
+    expect(getAllProjects().map((project) => project.slug)).not.toContain('OcrVfs')
+  })
+
+  it('test_read_project_files_contains_no_forbidden_strings', () => {
+    for (const project of getAllProjects()) {
+      const text = JSON.stringify(project.frontmatter) + project.content
+      expect(findForbidden(text), project.slug).toEqual([])
+    }
   })
 })
