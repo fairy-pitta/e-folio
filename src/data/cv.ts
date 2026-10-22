@@ -77,7 +77,7 @@ export const cv: Cv = {
       period: "Dec 2023 – Present",
       bullets: [
         "About half of the role is software engineering and project management, and half is one-on-one tuition.",
-        "Led teams of up to ten engineers across client and internal projects, from scoping through delivery.",
+        "Led engineering teams across client and internal projects, from scoping to delivery.",
         "Principal engineer and project manager on a financial management SaaS, architect and reviewer on a document-revision AI platform, and sole engineer and operator of a tuition centre's operations platform. The case studies above cover each one.",
         "Designed the engineering onboarding process, and have run training for incoming intern engineers several times.",
         "Teach mathematics, English, science and computer science one-on-one, from Grade 1 to Grade 12.",
