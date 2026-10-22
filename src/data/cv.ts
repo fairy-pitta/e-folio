@@ -182,8 +182,8 @@ export const cv: Cv = {
     {
       school: "Yale-NUS College",
       country: "Singapore",
-      degree: "BSc (Hons), First Class Honours",
-      period: "2019 – 2023",
+      degree: "BSc (Honours), First Class",
+      period: "Aug 2019 – May 2023",
       bullets: [
         "Major in Environmental Studies",
         "Minor in Mathematical, Computational & Statistical Science",
@@ -195,10 +195,10 @@ export const cv: Cv = {
       school: "United World College Costa Rica",
       country: "Costa Rica",
       degree: "International Baccalaureate Diploma",
-      period: "2017 – 2019",
+      period: "Aug 2017 – May 2019",
     },
     {
-      school: "Nishiyamato Gakuen Academy",
+      school: "Nishiyamato Gakuen",
       country: "Japan",
       degree: "Junior and senior high school",
       period: "2013 – 2017",
@@ -223,11 +223,6 @@ export const cv: Cv = {
     { name: "IPA Database Specialist", year: "2024", href: "https://www.ipa.go.jp/en/about/it-talents/itee.html" },
     { name: "IPA Applied Information Technology Engineer", year: "2024", href: "https://www.ipa.go.jp/en/about/it-talents/itee.html" },
     { name: "IPA Fundamental Information Technology Engineer", year: "2023", href: "https://www.ipa.go.jp/en/about/it-talents/itee.html" },
-    {
-      name: "Singapore Class 3CA driving licence",
-      year: "2024",
-      href: "https://www.police.gov.sg/Knowledge-Hub/Traffic/Traffic-Matters/Singapore-Driving-Licence",
-    },
   ],
   awards: [
     { title: "CIN Outstanding Volunteer, NParks", period: "2021, 2022" },
@@ -237,10 +232,11 @@ export const cv: Cv = {
   ],
   skills: [
     { label: "Languages", items: ["Python", "TypeScript", "R"] },
-    { label: "Frameworks", items: ["React", "Next.js", "Vue", "Hono", "Django"] },
+    { label: "Frameworks", items: ["Django", "React", "Hono"] },
     { label: "Cloud", items: ["AWS", "Cloudflare", "Vercel", "Supabase"] },
     { label: "Data", items: ["PostgreSQL", "SQLite"] },
-    { label: "Spoken", items: ["Japanese (native)", "English (fluent)"] },
+    { label: "Spoken", items: ["Japanese (native)", "English (fluent)", "Spanish (beginner)"] },
+    { label: "Licence", items: ["Singapore Class 3CA driving licence (2024)"] },
   ],
 }
 

@@ -194,4 +194,29 @@ describe('cv', () => {
       expect(JSON.stringify(cv)).not.toContain(secret)
     },
   )
+
+  it('test_read_frameworks_returns_django_react_hono_only', () => {
+    expect(cv.skills.find((group) => group.label === 'Frameworks')?.items).toEqual(['Django', 'React', 'Hono'])
+  })
+
+  it('test_read_certifications_returns_the_six_on_the_cv_in_order', () => {
+    expect(cv.certifications.map((certification) => certification.name)).toEqual([
+      'AWS Certified Solutions Architect – Professional',
+      'AWS Certified Generative AI Developer – Professional',
+      'AWS Certified Solutions Architect – Associate',
+      'IPA Database Specialist',
+      'IPA Applied Information Technology Engineer',
+      'IPA Fundamental Information Technology Engineer',
+    ])
+  })
+
+  it('test_read_skills_keeps_driving_licence_outside_certifications', () => {
+    expect(cv.skills.find((group) => group.label === 'Licence')?.items).toEqual([
+      'Singapore Class 3CA driving licence (2024)',
+    ])
+  })
+
+  it('test_read_first_degree_returns_cv_wording', () => {
+    expect(cv.education[0].degree).toBe('BSc (Honours), First Class')
+  })
 })
