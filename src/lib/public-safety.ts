@@ -4,6 +4,7 @@
 // vitest, and the built dist/ is checked after every build by
 // tests/dist/published-output.test.ts, which `pnpm build` runs.
 //
+// Word-bounded so that content hashes in Astro file names cannot trigger them.
 // No /g flag on any pattern: RegExp.test with /g keeps state between calls.
 
 export interface ForbiddenPattern {
@@ -12,8 +13,8 @@ export interface ForbiddenPattern {
 }
 
 export const FORBIDDEN: ForbiddenPattern[] = [
-  { label: "employer name (WAO)", pattern: /wao/i },
-  { label: "phone number", pattern: /8851/ },
+  { label: "employer name (WAO)", pattern: /\bwao\b/i },
+  { label: "phone number", pattern: /(?<!\w)8851(?:\s?0049)?(?!\w)/ },
   { label: "email address", pattern: /shuna120700/i },
   { label: "mailto link", pattern: /mailto:/i },
   { label: "removed project (OCR-VFS)", pattern: /ocr-?vfs/i },
