@@ -105,6 +105,28 @@ describe('getFeaturedProjects', () => {
 describe('projectLinks', () => {
   const base: ProjectFrontmatter = { title: 't', description: 'd', date: '2025-01-01', tags: [] }
 
+  it('test_build_links_with_article_url_appends_article_after_code_and_live', () => {
+    expect(
+      projectLinks({
+        ...base,
+        githubUrl: 'https://github.com/x',
+        liveUrl: 'https://x.dev',
+        articleUrl: 'https://qiita.com/x/items/1',
+        articleLabel: 'Article on Qiita (Japanese)',
+      }),
+    ).toEqual([
+      { label: 'Code', href: 'https://github.com/x' },
+      { label: 'Live', href: 'https://x.dev' },
+      { label: 'Article on Qiita (Japanese)', href: 'https://qiita.com/x/items/1' },
+    ])
+  })
+
+  it('test_build_links_with_article_url_but_no_label_uses_article', () => {
+    expect(projectLinks({ ...base, articleUrl: 'https://example.com/post' })).toEqual([
+      { label: 'Article', href: 'https://example.com/post' },
+    ])
+  })
+
   it('omits_empty_and_missing_urls', () => {
     expect(projectLinks({ ...base, githubUrl: '', liveUrl: '  ' })).toEqual([])
     expect(projectLinks(base)).toEqual([])

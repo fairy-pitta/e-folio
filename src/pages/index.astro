@@ -5,6 +5,7 @@ import Row from '../components/Row.astro';
 import Contact from '../components/Contact.astro';
 import CaseStudy from '../components/CaseStudy.astro';
 import { cv } from '../data/cv';
+import SideProject from '../components/SideProject.astro';
 import WritingRow from '../components/WritingRow.astro';
 import { getAllBlogPosts, getFeaturedProjects } from '../lib/content';
 import { fetchQiitaItems } from '../lib/qiita';
@@ -49,12 +50,8 @@ const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
     ))}
   </Section>
 
-  <Section title="Projects">
-    {projects.map((project) => (
-      <Row meta={project.frontmatter.tags.slice(0, 2).join(' · ')}>
-        <a href={`/projects/${project.slug}`}>{project.frontmatter.title}</a>
-      </Row>
-    ))}
+  <Section title="Side projects">
+    {projects.map((project) => <SideProject project={project} />)}
     <p class="more"><a href="/projects">All projects →</a></p>
   </Section>
 

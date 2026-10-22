@@ -129,9 +129,17 @@ export function getFeaturedProjects(limit = 5): Project[] {
     .slice(0, limit)
 }
 
-export function projectLinks(frontmatter: ProjectFrontmatter): { label: "Code" | "Live"; href: string }[] {
-  const links: { label: "Code" | "Live"; href: string }[] = []
+export interface ProjectLink {
+  label: string
+  href: string
+}
+
+export function projectLinks(frontmatter: ProjectFrontmatter): ProjectLink[] {
+  const links: ProjectLink[] = []
   if (frontmatter.githubUrl?.trim()) links.push({ label: "Code", href: frontmatter.githubUrl.trim() })
   if (frontmatter.liveUrl?.trim()) links.push({ label: "Live", href: frontmatter.liveUrl.trim() })
+  if (frontmatter.articleUrl?.trim()) {
+    links.push({ label: frontmatter.articleLabel?.trim() || "Article", href: frontmatter.articleUrl.trim() })
+  }
   return links
 }

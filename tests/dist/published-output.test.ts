@@ -78,4 +78,16 @@ describe('built site', () => {
     expect(caseStudies).toBeGreaterThan(-1)
     expect(experience).toBeGreaterThan(caseStudies)
   })
+
+  it('test_render_side_projects_returns_five_closed_accordions_with_links', () => {
+    const home = page('index.html')
+    const openings = home.match(/<details class="job side-project"[^>]*>/g) ?? []
+    expect(openings).toHaveLength(5)
+    for (const opening of openings) expect(opening).not.toMatch(/\sopen\b/)
+    expect(home).toContain('href="https://sgbirdsmap.fairy-pitta.net"')
+    expect(home).toContain('href="https://github.com/fairy-pitta/SGBirdMap"')
+    expect(home).toContain('href="https://qiita.com/Pitta/items/4a6537a3450aa6f8f050"')
+    expect(home).toContain('href="https://github.com/fairy-pitta/code-annotator"')
+    expect(home).toContain('>Side projects</h2>')
+  })
 })
