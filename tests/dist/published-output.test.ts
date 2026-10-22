@@ -7,8 +7,9 @@ const DIST = resolve(__dirname, '../../dist')
 
 // Everything a reader, crawler or agent can read as text. Images and video are
 // left out: the only generated images are the OG cards, drawn from page titles
-// that the HTML carries too.
-const TEXT_EXTENSIONS = new Set(['.html', '.txt', '.xml', '.js', '.css', '.json', '.svg'])
+// that the HTML carries too. Files with no extension (such as _headers) are
+// read as text as well.
+const TEXT_EXTENSIONS = new Set(['.html', '.txt', '.xml', '.js', '.mjs', '.css', '.json', '.svg', '.map', '.webmanifest'])
 
 function walk(dir: string): string[] {
   return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
@@ -28,7 +29,7 @@ describe('built site', () => {
 
   it('test_scan_text_files_in_dist_returns_no_forbidden_strings', () => {
     const leaks = walk(DIST)
-      .filter((file) => TEXT_EXTENSIONS.has(extname(file)))
+      .filter((file) => (extname(file) === '' || TEXT_EXTENSIONS.has(extname(file))))
       .flatMap((file) =>
         findForbidden(readFileSync(file, 'utf8')).map((label) => `${relative(DIST, file)}: ${label}`),
       )
