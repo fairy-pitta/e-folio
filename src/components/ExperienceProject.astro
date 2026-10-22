@@ -1,0 +1,30 @@
+---
+import type { CvProject } from '../data/cv';
+
+interface Props {
+  project: CvProject;
+}
+
+const { project } = Astro.props;
+---
+
+<details class="job experience-project">
+  <summary class="row">
+    <span class="row-main"><span class="role">{project.title}</span> — {project.summary}</span>
+    <span class="row-meta">{project.tags.join(' · ')}</span>
+  </summary>
+  <dl class="case">
+    <dt>Problem</dt>
+    <dd>{project.problem}</dd>
+    <dt>My role</dt>
+    <dd>{project.role}</dd>
+    <dt>Key decisions</dt>
+    <dd>
+      <ul class="bullets">
+        {project.decisions.map((decision) => <li>{decision}</li>)}
+      </ul>
+    </dd>
+    <dt>Outcome</dt>
+    <dd>{project.outcome}</dd>
+  </dl>
+</details>

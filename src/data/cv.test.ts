@@ -1,5 +1,9 @@
 import { describe, it, expect } from 'vitest'
-import { cv } from './cv'
+import { cv, linkHref } from './cv'
+import { findForbidden } from '../lib/public-safety'
+
+// The three projects of the current job, shown as nested accordions under it.
+const projects = cv.experience[0].projects ?? []
 
 describe('cv', () => {
   it('has_required_top_level_fields', () => {
@@ -7,12 +11,26 @@ describe('cv', () => {
     expect(cv.handle).toBe('fairy-pitta')
     expect(cv.headline).toBeTruthy()
     expect(cv.summary).toBeTruthy()
-    expect(cv.email).toMatch(/^[^@\s]+@[^@\s]+\.[a-z]+$/)
     expect(cv.experience.length).toBeGreaterThan(0)
     expect(cv.education.length).toBeGreaterThan(0)
     expect(cv.certifications.length).toBeGreaterThan(0)
     expect(cv.skills.length).toBeGreaterThan(0)
   })
+
+  it('test_serialise_cv_contains_no_forbidden_strings', () => {
+    expect(findForbidden(JSON.stringify(cv))).toEqual([])
+  })
+
+  it('test_read_current_job_org_returns_anonymised_employer', () => {
+    expect(cv.experience[0].org).toBe('A software company in Singapore, part of a Japanese group')
+  })
+
+  it.each(['automated tests', 'largest contributor', 'commits', 'lines of code'])(
+    'test_serialise_cv_without_volume_metric_%s_returns_no_match',
+    (metric) => {
+      expect(JSON.stringify(cv).toLowerCase()).not.toContain(metric)
+    },
+  )
 
   it('has_no_empty_entries', () => {
     for (const job of cv.experience) {
@@ -74,10 +92,101 @@ describe('cv', () => {
     }
   })
 
-  it('links_use_https_or_mailto', () => {
+  it('test_read_header_links_returns_linkedin_and_github_over_https', () => {
+    expect(cv.links.map((link) => link.label)).toEqual(['LinkedIn', 'GitHub'])
     for (const link of cv.links) {
-      expect(link.href).toMatch(/^(https:\/\/|mailto:)/)
+      expect(link.href, link.label).toMatch(/^https:\/\//)
     }
+  })
+
+  it('test_serialise_cv_contains_no_email_address_or_mailto', () => {
+    expect('email' in cv).toBe(false)
+    expect(JSON.stringify(cv)).not.toMatch(/shuna120700|mailto:/i)
+  })
+
+  it('test_look_up_link_href_by_label_returns_the_url', () => {
+    expect(linkHref('LinkedIn')).toBe('https://www.linkedin.com/in/shunamaekawa')
+  })
+
+  it('test_look_up_link_href_with_unknown_label_throws', () => {
+    expect(() => linkHref('Fax')).toThrow(/Fax/)
+  })
+
+  it('test_read_strengths_returns_three_non_empty_lines', () => {
+    expect(cv.strengths).toHaveLength(3)
+    cv.strengths.forEach((line) => expect(line.trim()).not.toBe(''))
+  })
+
+  it('test_read_availability_returns_month_and_year', () => {
+    expect(cv.availability).toBe('Available from April 2027')
+  })
+
+  it('test_read_summary_without_employer_opens_with_role_and_place', () => {
+    expect(cv.summary.startsWith('Solutions architect and software engineer in Singapore.')).toBe(true)
+  })
+
+  it('test_serialise_cv_contains_no_contractions', () => {
+    // Possessive 's is fine; contractions are not (house style).
+    const contraction = /\b\w+(n['’]t|['’](ll|re|ve|m|d))\b|\b(it|that|there|here|what|who|he|she)['’]s\b/i
+    expect(JSON.stringify(cv)).not.toMatch(contraction)
+  })
+
+  it.each(['passionate', 'leverage', 'seamless', 'the part I enjoy most', 'cutting-edge'])(
+    'test_serialise_cv_without_stock_phrase_%s_returns_no_match',
+    (phrase) => {
+      expect(JSON.stringify(cv).toLowerCase()).not.toContain(phrase.toLowerCase())
+    },
+  )
+
+  it('test_read_current_job_projects_returns_three_with_every_part_filled', () => {
+    expect(projects).toHaveLength(3)
+    for (const study of projects) {
+      for (const field of [study.title, study.summary, study.problem, study.role, study.outcome]) {
+        expect(field.trim(), study.title).not.toBe('')
+      }
+      expect(study.tags.length, study.title).toBeGreaterThan(0)
+      expect(study.decisions.length, study.title).toBeGreaterThan(0)
+      study.decisions.forEach((decision) => expect(decision.trim(), study.title).not.toBe(''))
+    }
+  })
+
+  it('test_read_projects_only_under_current_job_returns_one_owner', () => {
+    expect(cv.experience.slice(1).every((job) => !job.projects)).toBe(true)
+  })
+
+  it('test_read_current_job_bullets_without_project_roles_returns_no_repeat', () => {
+    // Each project's role is told once, inside its accordion, not again as a bullet.
+    const bullets = cv.experience[0].bullets.join(' ').toLowerCase()
+    for (const phrase of ['financial management saas', 'document-revision', 'operations platform']) {
+      expect(bullets, phrase).not.toContain(phrase)
+    }
+  })
+
+  it('test_read_project_summaries_returns_single_lines', () => {
+    for (const study of projects) {
+      expect(study.summary, study.title).not.toMatch(/\n/)
+      expect(study.summary.length, study.title).toBeLessThanOrEqual(110)
+    }
+  })
+
+  it('test_read_projects_contains_no_volume_metrics', () => {
+    const text = JSON.stringify(projects)
+    expect(text).not.toMatch(/\b\d[\d,]*\s+(tests?|commits?|tables?|lines)\b/i)
+    expect(text).not.toMatch(/% of (the )?code/i)
+  })
+
+  it('test_read_llm_agent_project_says_launch_is_planned_not_shipped', () => {
+    const agent = projects[0]
+    expect(agent.title).toBe('LLM agent for a financial management SaaS')
+    expect(agent.outcome).toContain('planned for April 2027')
+    expect(JSON.stringify(agent)).not.toMatch(/\bshipped\b|\blaunched\b|\bin production\b/i)
+  })
+
+  it('test_read_tuition_platform_project_keeps_field_results', () => {
+    const platform = projects[2]
+    expect(platform.outcome).toContain('around 100 invoices a month')
+    expect(platform.outcome).toContain('about five hours')
+    expect(platform.outcome).toContain('roughly 10% to near zero')
   })
 
   it.each([
@@ -100,4 +209,29 @@ describe('cv', () => {
       expect(JSON.stringify(cv)).not.toContain(secret)
     },
   )
+
+  it('test_read_frameworks_returns_django_react_hono_only', () => {
+    expect(cv.skills.find((group) => group.label === 'Frameworks')?.items).toEqual(['Django', 'React', 'Hono'])
+  })
+
+  it('test_read_certifications_returns_the_six_on_the_cv_in_order', () => {
+    expect(cv.certifications.map((certification) => certification.name)).toEqual([
+      'AWS Certified Solutions Architect – Professional',
+      'AWS Certified Generative AI Developer – Professional',
+      'AWS Certified Solutions Architect – Associate',
+      'IPA Database Specialist',
+      'IPA Applied Information Technology Engineer',
+      'IPA Fundamental Information Technology Engineer',
+    ])
+  })
+
+  it('test_read_skills_keeps_driving_licence_outside_certifications', () => {
+    expect(cv.skills.find((group) => group.label === 'Licence')?.items).toEqual([
+      'Singapore Class 3CA driving licence (2024)',
+    ])
+  })
+
+  it('test_read_first_degree_returns_cv_wording', () => {
+    expect(cv.education[0].degree).toBe('BSc (Honours), First Class')
+  })
 })

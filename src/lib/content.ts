@@ -27,6 +27,13 @@ export interface ProjectFrontmatter {
   gallery?: string[]
   featured?: boolean
   order?: number
+  // Short name for the homepage accordion; the title is written for the project page.
+  name?: string
+  // One or two sentences on the engineering choice worth noticing, shown on the homepage.
+  technicalPoint?: string
+  // A write-up hosted elsewhere, such as a Qiita article.
+  articleUrl?: string
+  articleLabel?: string
 }
 
 export interface BlogPost {
@@ -115,16 +122,24 @@ export function getAllProjects(): Project[] {
   return readMarkdownFiles<ProjectFrontmatter>(projectsDirectory)
 }
 
-export function getFeaturedProjects(limit = 4): Project[] {
+export function getFeaturedProjects(limit = 5): Project[] {
   return getAllProjects()
     .filter((project) => project.frontmatter.featured === true)
     .sort((a, b) => (a.frontmatter.order ?? Infinity) - (b.frontmatter.order ?? Infinity))
     .slice(0, limit)
 }
 
-export function projectLinks(frontmatter: ProjectFrontmatter): { label: "Code" | "Live"; href: string }[] {
-  const links: { label: "Code" | "Live"; href: string }[] = []
+export interface ProjectLink {
+  label: string
+  href: string
+}
+
+export function projectLinks(frontmatter: ProjectFrontmatter): ProjectLink[] {
+  const links: ProjectLink[] = []
   if (frontmatter.githubUrl?.trim()) links.push({ label: "Code", href: frontmatter.githubUrl.trim() })
   if (frontmatter.liveUrl?.trim()) links.push({ label: "Live", href: frontmatter.liveUrl.trim() })
+  if (frontmatter.articleUrl?.trim()) {
+    links.push({ label: frontmatter.articleLabel?.trim() || "Article", href: frontmatter.articleUrl.trim() })
+  }
   return links
 }

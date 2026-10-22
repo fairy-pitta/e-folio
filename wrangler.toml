@@ -1,5 +1,8 @@
 # wrangler.toml ── ルートに置いて Git にコミット
-name                 = "singbirds-portfolio"
+# name は Cloudflare Pages の実在プロジェクト名（fairy-pitta.net を配信している e-folio）。
+# 本番は GitHub 連携ビルドで、ここの name は使われない。手で `wrangler pages deploy` した
+# ときに別プロジェクトが作られないよう、実名に揃えている。
+name                 = "e-folio"
 compatibility_date   = "2025-07-12"
 
 pages_build_output_dir = "dist"
