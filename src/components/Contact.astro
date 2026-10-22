@@ -1,8 +1,13 @@
 ---
-import { cv } from '../data/cv';
+import { linkHref } from '../data/cv';
+
+// The site never shows an email address. When the form cannot be used, the
+// fallback is LinkedIn.
+const linkedin = linkHref('LinkedIn');
 ---
 
-<form class="contact" id="contact-form" data-email={cv.email} hidden>
+<p class="contact-note">CV available on request.</p>
+<form class="contact" id="contact-form" data-fallback={linkedin} hidden>
   <label>Name<input name="name" required autocomplete="name" /></label>
   <label>Email<input name="email" type="email" required autocomplete="email" /></label>
   <label>Message<textarea name="message" rows="5" required></textarea></label>
@@ -10,7 +15,7 @@ import { cv } from '../data/cv';
 </form>
 <p class="status" id="contact-status" role="status" aria-live="polite"></p>
 <noscript>
-  <p>Email me at <a href={`mailto:${cv.email}`}>{cv.email}</a>.</p>
+  <p>Please message me on <a href={linkedin}>LinkedIn</a>.</p>
 </noscript>
 
 <script>
@@ -20,7 +25,7 @@ import { cv } from '../data/cv';
   const status = document.getElementById('contact-status');
 
   if (form && status) {
-    const email = form.dataset.email ?? '';
+    const fallback = form.dataset.fallback ?? '';
     const button = form.querySelector('button') as HTMLButtonElement;
     form.hidden = false;
 
@@ -39,16 +44,16 @@ import { cv } from '../data/cv';
 
       if (ok) {
         form.remove();
-        status.textContent = "Thanks — I'll get back to you soon.";
+        status.textContent = 'Thanks — I will get back to you soon.';
         return;
       }
 
       button.disabled = false;
       button.textContent = 'Send';
       const link = document.createElement('a');
-      link.href = `mailto:${email}`;
-      link.textContent = email;
-      status.replaceChildren('Something went wrong. Please email me directly at ', link, '.');
+      link.href = fallback;
+      link.textContent = 'LinkedIn';
+      status.replaceChildren('Something went wrong. Please message me on ', link, '.');
     });
   }
 </script>

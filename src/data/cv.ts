@@ -45,7 +45,6 @@ export interface Cv {
   // the meta description, the social card and llms.txt. Kept under 155
   // characters so search results do not truncate it.
   tagline: string
-  email: string
   links: CvLink[]
   summary: string
   experience: CvExperience[]
@@ -55,7 +54,9 @@ export interface Cv {
   skills: CvSkillGroup[]
 }
 
-// Source: career-ops/cv.md. Keep address, visa status, client figures and GPA out of this file.
+// Source: career-ops/cv.md. Keep address, visa status, client names and figures,
+// GPA, the employer's name, the phone number and the email address out of this
+// file: the site is public, the PDF CV is not (src/lib/public-safety.ts).
 export const cv: Cv = {
   name: "Shuna Maekawa",
   handle: "fairy-pitta",
@@ -63,12 +64,9 @@ export const cv: Cv = {
   location: "Singapore",
   tagline:
     "Shuna Maekawa (fairy-pitta) — software engineer and project manager in Singapore, working on software architecture, database design and cloud.",
-  email: "shuna120700@gmail.com",
   links: [
-    { label: "Email", href: "mailto:shuna120700@gmail.com" },
     { label: "LinkedIn", href: "https://www.linkedin.com/in/shunamaekawa" },
     { label: "GitHub", href: "https://github.com/fairy-pitta" },
-    { label: "Qiita", href: "https://qiita.com/Pitta" },
   ],
   summary:
     "I am a software engineer and project manager at a tuition centre in Singapore. I found the joy of data wrangling at university while majoring in Environmental Studies, and I have worked half as a teacher and half as an engineer ever since. Software architecture, database design and cloud infrastructure are what I care about most — the certifications below reflect that. Through this work I want to make a difference in people's lives.",
@@ -179,4 +177,11 @@ export const cv: Cv = {
     { label: "Data", items: ["PostgreSQL", "SQLite"] },
     { label: "Spoken", items: ["Japanese (native)", "English (fluent)"] },
   ],
+}
+
+// Throws at build time rather than rendering a dead link.
+export function linkHref(label: string): string {
+  const link = cv.links.find((candidate) => candidate.label === label)
+  if (!link) throw new Error(`No link labelled ${label} in cv.links`)
+  return link.href
 }

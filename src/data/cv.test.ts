@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { cv } from './cv'
+import { cv, linkHref } from './cv'
 
 describe('cv', () => {
   it('has_required_top_level_fields', () => {
@@ -7,7 +7,6 @@ describe('cv', () => {
     expect(cv.handle).toBe('fairy-pitta')
     expect(cv.headline).toBeTruthy()
     expect(cv.summary).toBeTruthy()
-    expect(cv.email).toMatch(/^[^@\s]+@[^@\s]+\.[a-z]+$/)
     expect(cv.experience.length).toBeGreaterThan(0)
     expect(cv.education.length).toBeGreaterThan(0)
     expect(cv.certifications.length).toBeGreaterThan(0)
@@ -74,10 +73,24 @@ describe('cv', () => {
     }
   })
 
-  it('links_use_https_or_mailto', () => {
+  it('test_read_header_links_returns_linkedin_and_github_over_https', () => {
+    expect(cv.links.map((link) => link.label)).toEqual(['LinkedIn', 'GitHub'])
     for (const link of cv.links) {
-      expect(link.href).toMatch(/^(https:\/\/|mailto:)/)
+      expect(link.href, link.label).toMatch(/^https:\/\//)
     }
+  })
+
+  it('test_serialise_cv_contains_no_email_address_or_mailto', () => {
+    expect('email' in cv).toBe(false)
+    expect(JSON.stringify(cv)).not.toMatch(/shuna120700|mailto:/i)
+  })
+
+  it('test_look_up_link_href_by_label_returns_the_url', () => {
+    expect(linkHref('LinkedIn')).toBe('https://www.linkedin.com/in/shunamaekawa')
+  })
+
+  it('test_look_up_link_href_with_unknown_label_throws', () => {
+    expect(() => linkHref('Fax')).toThrow(/Fax/)
   })
 
   it.each([

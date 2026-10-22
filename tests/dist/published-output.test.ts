@@ -17,6 +17,10 @@ function walk(dir: string): string[] {
   })
 }
 
+function page(path: string): string {
+  return readFileSync(join(DIST, path), 'utf8')
+}
+
 describe('built site', () => {
   it('test_read_dist_after_build_contains_home_page', () => {
     expect(existsSync(join(DIST, 'index.html')), 'run `pnpm build` first').toBe(true)
@@ -37,4 +41,11 @@ describe('built site', () => {
   })
 
   // Page-structure checks are added by later tasks below this line.
+
+  it('test_render_contact_section_offers_cv_on_request_and_linkedin_fallback', () => {
+    const home = page('index.html')
+    expect(home).toContain('CV available on request.')
+    expect(home).toContain('data-fallback="https://www.linkedin.com/in/shunamaekawa"')
+    expect(home).not.toContain('data-email')
+  })
 })
