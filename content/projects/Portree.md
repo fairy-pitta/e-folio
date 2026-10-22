@@ -47,7 +47,7 @@ In a typical monorepo setup with frontend and backend services:
 - **Environment variable injection** — `$PORT`, `$PT_BRANCH`, `$PT_BACKEND_URL`, etc. are injected automatically
 - **TUI dashboard** — Interactive terminal UI to start, stop, restart, and monitor all services
 - **Process lifecycle management** — Graceful shutdown, log files, and stale PID cleanup
-- **Per-worktree overrides** — Customize commands, ports, and env vars per branch
+- **Per-worktree overrides** — Customise commands, ports, and env vars per branch
 
 ---
 

@@ -47,19 +47,19 @@ I wanted a tool that does all of this in the browser, with real-time preview and
 - **Optional mel-scale** frequency axis
 - **Noise reduction** via spectral subtraction
 
-### Visualization
+### Visualisation
 
 - High-quality spectrogram rendering (Canvas/WebGL)
-- Multiple colormaps (viridis, magma, grayscale)
+- Multiple colour maps (viridis, magma, grayscale)
 - Adjustable brightness, contrast, gamma
 - Axes with proper time (seconds) and frequency (Hz/mel) labels
-- Colorbar with dB scale
+- Colour bar with dB scale
 
 ### Annotation Layer
 
 - SVG-based annotation layer over the spectrogram
 - Text labels, arrows, rectangles, highlights
-- Annotations remain vector-based (not rasterized)
+- Annotations remain vector-based (not rasterised)
 
 ### Publication-Quality Export
 
@@ -73,7 +73,7 @@ I wanted a tool that does all of this in the browser, with real-time preview and
 
 - **DSP Core**: Rust compiled to WebAssembly (rustfft)
 - **Frontend**: React + TypeScript + Vite
-- **Visualization**: Canvas API
+- **Visualisation**: Canvas API
 - **Annotations**: SVG
 - **Testing**: Vitest (TypeScript), Cargo (Rust)
 
@@ -125,7 +125,7 @@ Currently in active development. Core infrastructure is complete, with ongoing w
 - Full UI implementation
 - Web Worker integration
 - Advanced annotation features
-- Performance optimization
+- Performance optimisation
 
 ---
 
