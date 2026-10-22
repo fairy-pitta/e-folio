@@ -72,17 +72,15 @@ export const cv: Cv = {
     "I am a software engineer and project manager at a tuition centre in Singapore. I found the joy of data wrangling at university while majoring in Environmental Studies, and I have worked half as a teacher and half as an engineer ever since. Software architecture, database design and cloud infrastructure are what I care about most — the certifications below reflect that. Through this work I want to make a difference in people's lives.",
   experience: [
     {
-      role: "Software Engineer / Project Manager",
-      org: "WAO Singapore / WAO Tech (WAO Corporation group)",
+      role: "Software Engineer & Project Manager",
+      org: "A software company in Singapore, part of a Japanese group",
       period: "Dec 2023 – Present",
       bullets: [
-        "Project manager on client and internal work: scope and schedule, requirements, estimates and proposals, and the day-to-day direction of a team of four to eight in-house engineers.",
-        "Teach maths, English, science and introductory programming one-on-one — around half of the job.",
-        "Lead engineer on an accounting and budgeting SaaS for an external client (Django, Vue 3, PostgreSQL, AWS) — largest contributor over 15 months. Clean Architecture / DDD backend, Feature-Sliced frontend, AWS CDK infrastructure with OIDC-based GitHub Actions deploys, Playwright E2E and visual regression tests.",
-        "Ran the tuition centre's operations platform replacement as project manager and developer in a team of three (Hono, Drizzle, Cloudflare Workers / D1 / R2, React 19): member management, monthly invoicing with PDF generation, and email / WhatsApp messaging — replacing a manual spreadsheet workflow. Around 2,000 automated tests including contract and real-API E2E.",
-        "Participated in an AI document-revision pipeline as an architect and reviewer for a client: OCR (Azure Document Intelligence) and an LLM (Claude on AWS Bedrock) turn scanned rules into Word files with tracked changes. Worked on test infrastructure, the storage migration and OCR accuracy evaluation.",
-        "Implemented the tuition centre's official website: custom WordPress theme with headless CMS content, SEO and performance work, and visual regression tests.",
-        "Designed the engineering onboarding, mentor the team through code review, and ran an internal session on agentic coding with Claude Code.",
+        "About half of the role is software engineering and project management, and half is one-on-one tuition.",
+        "Led teams of up to ten engineers across client and internal projects, from scoping through delivery.",
+        "Principal engineer and project manager on a financial management SaaS, architect and reviewer on a document-revision AI platform, and sole engineer and operator of a tuition centre's operations platform. The case studies above cover each one.",
+        "Designed the engineering onboarding process, and have run training for incoming intern engineers several times.",
+        "Teach mathematics, English, science and computer science one-on-one, from Grade 1 to Grade 12.",
       ],
     },
     {

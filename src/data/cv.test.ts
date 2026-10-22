@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { cv, linkHref } from './cv'
+import { findForbidden } from '../lib/public-safety'
 
 describe('cv', () => {
   it('has_required_top_level_fields', () => {
@@ -12,6 +13,21 @@ describe('cv', () => {
     expect(cv.certifications.length).toBeGreaterThan(0)
     expect(cv.skills.length).toBeGreaterThan(0)
   })
+
+  it('test_serialise_cv_contains_no_forbidden_strings', () => {
+    expect(findForbidden(JSON.stringify(cv))).toEqual([])
+  })
+
+  it('test_read_current_job_org_returns_anonymised_employer', () => {
+    expect(cv.experience[0].org).toBe('A software company in Singapore, part of a Japanese group')
+  })
+
+  it.each(['automated tests', 'largest contributor', 'commits', 'lines of code'])(
+    'test_serialise_cv_without_volume_metric_%s_returns_no_match',
+    (metric) => {
+      expect(JSON.stringify(cv).toLowerCase()).not.toContain(metric)
+    },
+  )
 
   it('has_no_empty_entries', () => {
     for (const job of cv.experience) {
