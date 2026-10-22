@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro check && astro build",
+    "build": "astro check && astro build && vitest run --config vitest.dist.config.ts",
     "media": "node scripts/optimize-media.mjs",
     "preview": "astro preview",
     "astro": "astro",
