@@ -47,6 +47,9 @@ export interface Cv {
   tagline: string
   links: CvLink[]
   summary: string
+  // Three short lines under the name: what to hire for, in the reader's terms.
+  strengths: string[]
+  availability: string
   experience: CvExperience[]
   education: CvEducation[]
   certifications: CvCertification[]
@@ -69,7 +72,13 @@ export const cv: Cv = {
     { label: "GitHub", href: "https://github.com/fairy-pitta" },
   ],
   summary:
-    "I am a software engineer and project manager at a tuition centre in Singapore. I found the joy of data wrangling at university while majoring in Environmental Studies, and I have worked half as a teacher and half as an engineer ever since. Software architecture, database design and cloud infrastructure are what I care about most — the certifications below reflect that. Through this work I want to make a difference in people's lives.",
+    "Solutions architect and software engineer in Singapore. As lead engineer and project manager, I work on data modelling, cloud architecture and LLM agent design, and take systems through to delivery. I also lead and mentor the engineers who build them.",
+  strengths: [
+    "Designs LLM agents and the evaluation that keeps them reliable",
+    "Designs AWS systems from the data model to deployment",
+    "Works with clients to turn requirements into features, and leads the team that builds them",
+  ],
+  availability: "Available from April 2027",
   experience: [
     {
       role: "Software Engineer & Project Manager",

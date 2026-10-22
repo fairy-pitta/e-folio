@@ -23,6 +23,10 @@ const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
         <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
       ))}
     </p>
+    <ul class="bullets strengths">
+      {cv.strengths.map((line) => <li>{line}</li>)}
+    </ul>
+    <p class="availability">{cv.availability}</p>
     <p class="summary">{cv.summary}</p>
   </header>
 

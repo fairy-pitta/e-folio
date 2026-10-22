@@ -109,6 +109,32 @@ describe('cv', () => {
     expect(() => linkHref('Fax')).toThrow(/Fax/)
   })
 
+  it('test_read_strengths_returns_three_non_empty_lines', () => {
+    expect(cv.strengths).toHaveLength(3)
+    cv.strengths.forEach((line) => expect(line.trim()).not.toBe(''))
+  })
+
+  it('test_read_availability_returns_month_and_year', () => {
+    expect(cv.availability).toBe('Available from April 2027')
+  })
+
+  it('test_read_summary_without_employer_opens_with_role_and_place', () => {
+    expect(cv.summary.startsWith('Solutions architect and software engineer in Singapore.')).toBe(true)
+  })
+
+  it('test_serialise_cv_contains_no_contractions', () => {
+    // Possessive 's is fine; contractions are not (house style).
+    const contraction = /\b\w+(n['’]t|['’](ll|re|ve|m|d))\b|\b(it|that|there|here|what|who|he|she)['’]s\b/i
+    expect(JSON.stringify(cv)).not.toMatch(contraction)
+  })
+
+  it.each(['passionate', 'leverage', 'seamless', 'the part I enjoy most', 'cutting-edge'])(
+    'test_serialise_cv_without_stock_phrase_%s_returns_no_match',
+    (phrase) => {
+      expect(JSON.stringify(cv).toLowerCase()).not.toContain(phrase.toLowerCase())
+    },
+  )
+
   it.each([
     'Tampines',
     '520297',
