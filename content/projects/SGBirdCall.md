@@ -4,7 +4,6 @@ description: "An interactive quiz web app to test out your bird call knowledge"
 date: "Oct 15, 2024"
 coverImage: "/projects/callquiz/CallQuiz_main.webp"
 tags: ["React", "Django", "Birds"]
-githubUrl: "https://github.com/fairy-pitta/Singbirds-frontend"
 gallery: [
   "/projects/callquiz/CallQuiz_correct.webp",
   "/projects/callquiz/CallQuiz_home.webp",

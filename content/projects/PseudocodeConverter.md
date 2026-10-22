@@ -5,7 +5,6 @@ date: "Oct 13, 2025"
 coverImage: "/projects/Pseudocode/pseudocode.webp"
 tags: ["Web App", "Python", "Java", "IB", "Computer Science"]
 liveUrl: "https://pseudocode-converter.fairy-pitta.net/"
-githubUrl: "https://github.com/fairy-pitta/pseudocode-converter"
 gallery: [
   "/projects/Pseudocode/fizzbuzz.webp"
 ]
@@ -76,7 +75,6 @@ Pseudocode Converter is a web application that transforms source code into stand
 ## Links
 
 - Live: https://pseudocode-converter.fairy-pitta.net/
-- GitHub: https://github.com/fairy-pitta/pseudocode-converter
 - npm (Java → IB pseudocode): https://www.npmjs.com/package/java2ib
 - npm (Python → IB pseudocode): https://www.npmjs.com/package/python2ib
 
