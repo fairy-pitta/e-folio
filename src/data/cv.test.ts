@@ -135,6 +135,45 @@ describe('cv', () => {
     },
   )
 
+  it('test_read_case_studies_returns_three_with_every_part_filled', () => {
+    expect(cv.caseStudies).toHaveLength(3)
+    for (const study of cv.caseStudies) {
+      for (const field of [study.title, study.summary, study.problem, study.role, study.outcome]) {
+        expect(field.trim(), study.title).not.toBe('')
+      }
+      expect(study.tags.length, study.title).toBeGreaterThan(0)
+      expect(study.decisions.length, study.title).toBeGreaterThan(0)
+      study.decisions.forEach((decision) => expect(decision.trim(), study.title).not.toBe(''))
+    }
+  })
+
+  it('test_read_case_study_summaries_returns_single_lines', () => {
+    for (const study of cv.caseStudies) {
+      expect(study.summary, study.title).not.toMatch(/\n/)
+      expect(study.summary.length, study.title).toBeLessThanOrEqual(110)
+    }
+  })
+
+  it('test_read_case_studies_contains_no_volume_metrics', () => {
+    const text = JSON.stringify(cv.caseStudies)
+    expect(text).not.toMatch(/\b\d[\d,]*\s+(tests?|commits?|tables?|lines)\b/i)
+    expect(text).not.toMatch(/% of (the )?code/i)
+  })
+
+  it('test_read_llm_agent_case_study_says_launch_is_planned_not_shipped', () => {
+    const agent = cv.caseStudies[0]
+    expect(agent.title).toBe('LLM agent for a financial management SaaS')
+    expect(agent.outcome).toContain('planned for April 2027')
+    expect(JSON.stringify(agent)).not.toMatch(/\bshipped\b|\blaunched\b|\bin production\b/i)
+  })
+
+  it('test_read_tuition_platform_case_study_keeps_field_results', () => {
+    const platform = cv.caseStudies[2]
+    expect(platform.outcome).toContain('around 100 invoices a month')
+    expect(platform.outcome).toContain('about five hours')
+    expect(platform.outcome).toContain('roughly 10% to near zero')
+  })
+
   it.each([
     'Tampines',
     '520297',
