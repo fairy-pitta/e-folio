@@ -59,4 +59,23 @@ describe('built site', () => {
     expect(availability).toBeGreaterThan(strengths)
     expect(summary).toBeGreaterThan(availability)
   })
+
+  it('test_render_case_studies_returns_three_closed_accordions_with_four_parts', () => {
+    const home = page('index.html')
+    const openings = home.match(/<details class="job case-study"[^>]*>/g) ?? []
+    expect(openings).toHaveLength(3)
+    for (const opening of openings) expect(opening).not.toMatch(/\sopen\b/)
+    for (const heading of ['Problem', 'My role', 'Key decisions', 'Outcome']) {
+      const count = (home.match(new RegExp(`<dt[^>]*>${heading}</dt>`, 'g')) ?? []).length
+      expect(count, heading).toBe(3)
+    }
+  })
+
+  it('test_render_home_orders_case_studies_before_experience', () => {
+    const home = page('index.html')
+    const caseStudies = home.indexOf('>Case studies</h2>')
+    const experience = home.indexOf('>Experience</h2>')
+    expect(caseStudies).toBeGreaterThan(-1)
+    expect(experience).toBeGreaterThan(caseStudies)
+  })
 })

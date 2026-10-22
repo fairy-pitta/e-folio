@@ -3,6 +3,7 @@ import Layout from '../layouts/Layout.astro';
 import Section from '../components/Section.astro';
 import Row from '../components/Row.astro';
 import Contact from '../components/Contact.astro';
+import CaseStudy from '../components/CaseStudy.astro';
 import { cv } from '../data/cv';
 import WritingRow from '../components/WritingRow.astro';
 import { getAllBlogPosts, getFeaturedProjects } from '../lib/content';
@@ -29,6 +30,10 @@ const writing = toWritingItems(posts, await fetchQiitaItems()).slice(0, 3);
     <p class="availability">{cv.availability}</p>
     <p class="summary">{cv.summary}</p>
   </header>
+
+  <Section title="Case studies">
+    {cv.caseStudies.map((study) => <CaseStudy study={study} />)}
+  </Section>
 
   <Section title="Experience">
     {cv.experience.map((job, i) => (
