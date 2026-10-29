@@ -8,7 +8,7 @@ interface Props {
 const { project } = Astro.props;
 ---
 
-<details class="job experience-project">
+<details class="job experience-project" id={project.id}>
   <summary class="row">
     <span class="row-main"><span class="role">{project.title}</span> — {project.summary}</span>
     <span class="row-meta">{project.tags.join(' · ')}</span>

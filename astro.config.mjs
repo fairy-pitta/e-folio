@@ -8,6 +8,10 @@ export default defineConfig({
     // One request less before first paint; the sheet is a few KB.
     inlineStylesheets: "always",
   },
+  // The project index became the Work page at /.
+  redirects: {
+    "/projects": "/",
+  },
   prefetch: {
     defaultStrategy: "hover",
     prefetchAll: true,

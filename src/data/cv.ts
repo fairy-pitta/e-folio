@@ -40,10 +40,17 @@ export interface CvAward {
 }
 
 export interface CvProject {
+  // Anchor on the About page, which the Work page's job cards link to.
+  id: string
   title: string
   // One line for the closed accordion.
   summary: string
   tags: string[]
+  // Built for the employer itself rather than for a client.
+  internal?: boolean
+  // The short forms on the Work page's job cards.
+  roleLabel: string
+  highlight: string
   problem: string
   role: string
   // The body of the project: what was decided, and why.
@@ -62,6 +69,8 @@ export interface Cv {
   tagline: string
   links: CvLink[]
   summary: string
+  // One sentence at the top of the Work page: what to hire for.
+  pitch: string
   // Three short lines under the name: what to hire for, in the reader's terms.
   strengths: string[]
   availability: string
@@ -82,13 +91,15 @@ export const cv: Cv = {
   headline: "Software Engineer & Project Manager",
   location: "Singapore",
   tagline:
-    "Shuna Maekawa (fairy-pitta) — software engineer and project manager in Singapore, working on software architecture, database design and cloud.",
+    "Shuna Maekawa (fairy-pitta), software engineer and project manager in Singapore. I design systems from the data model to deployment and build them.",
   links: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/shunamaekawa" },
     { label: "GitHub", href: "https://github.com/fairy-pitta" },
   ],
   summary:
-    "Solutions architect and software engineer in Singapore. As lead engineer and project manager, I work on data modelling, cloud architecture and LLM agent design, and take systems through to delivery. I also lead and mentor the engineers who build them.",
+    "Software engineer and project manager in Singapore. I design systems from the data model to deployment and build them. Most recently, that was a financial reporting SaaS with an LLM agent, which I designed from scratch and built with a team of engineers. I studied ecology at Yale-NUS, and hence my personal projects often involve birds and sound.",
+  pitch:
+    "I design LLM agents and AWS systems, from the data model to delivery, and lead the teams that build them.",
   strengths: [
     "Designs LLM agents and the evaluation that keeps them reliable",
     "Designs AWS systems from the data model to deployment",
@@ -97,57 +108,66 @@ export const cv: Cv = {
   availability: "Available from April 2027",
   experience: [
     {
-      role: "Software Engineer & Project Manager",
+      role: "Lead Engineer & Project Manager",
       org: "A software company in Singapore, part of a Japanese group",
       period: "Dec 2023 – Present",
       bullets: [
-        "About half of the role is software engineering and project management, and half is one-on-one tuition.",
         "Led engineering teams across client and internal projects, from scoping to delivery.",
         "Designed the engineering onboarding process, and have run training for incoming intern engineers several times.",
-        "Teach mathematics, English, science and computer science one-on-one, from Grade 1 to Grade 12.",
+        "Part of the role is one-on-one tuition in mathematics, English, science and computer science.",
       ],
       projects: [
         {
-          title: "LLM agent for a financial management SaaS",
-          summary: "A tool-calling agent that answers finance questions over customer accounting data.",
+          id: "finance-saas",
+          title: "Financial reporting SaaS with an LLM agent",
+          summary: "A reporting platform I designed and built from scratch, with an agent that answers finance questions.",
           tags: ["Vue", "Django", "PostgreSQL", "AWS"],
+          roleLabel: "Designed and built it from scratch; led a team of 9",
+          highlight: "Platform and agent designed from the data model up",
           problem:
-            "A client-commissioned reporting platform turns annual P&L statements into information a business can act on. It needed an agent that answers finance questions over each customer's accounting data. An agent that calls tools to fetch data will still write a confident answer when a tool returns nothing, or returns the wrong thing.",
+            "A client asked for a reporting platform that turns yearly P&L statements into figures a business can act on. It also needed an agent that answers finance questions from each customer's accounting data. The agent calls tools to fetch that data. When a tool returns nothing, or the wrong thing, a model will still write an answer that sounds sure.",
           role:
-            "Principal engineer and project manager. I led a team of nine engineers, was the client's direct technical contact, designed the architecture and owned code review.",
+            "Lead engineer and project manager. I designed the platform from scratch and built it, including the agent. I led a team of nine engineers, answered the client's technical questions directly and reviewed the team's code.",
           decisions: [
-            "Every tool has a typed output contract with three outcomes: valid, empty or invalid. The agent answers only from a valid result. An empty or invalid result is handled as such, instead of being passed to the model as if it were data.",
-            "A golden-set harness runs a fixed set of questions with known answers against every prompt or model change, so a change that makes the answers worse is caught before release.",
+            "Each tool returns one of three results: valid, empty or invalid. The agent answers only from a valid result. When a result is empty or invalid, the agent says so instead of treating it as data.",
+            "A fixed set of questions with known answers is run after every change to a prompt or model. If the answers get worse, we see it before release.",
           ],
-          outcome: "The agent is in development. Its production launch is planned for April 2027.",
+          outcome: "The platform, including the agent, is in development. Its launch is planned for April 2027.",
         },
         {
+          id: "document-ai",
           title: "Document AI for revising condominium bylaws",
           summary: "OCR and an LLM turn scanned bylaws into a revised draft in Word.",
           tags: ["Next.js", "Python", "GCP", "Azure"],
+          roleLabel: "Architect & code reviewer",
+          highlight: "OCR, revision and export run as three services that can be retried separately",
           problem:
-            "A Japanese property-management group revises condominium management bylaws against the standard bylaws. The bylaws it starts from are scanned paper documents.",
-          role: "Architect, and reviewer of the code that the delivery engineers write.",
+            "A Japanese property-management group updates condominium bylaws so that they follow the standard bylaws. The bylaws it starts from are scans of paper documents.",
+          role: "Architect. I also review the code that the delivery engineers write.",
           decisions: [
-            "The work has three steps: OCR of the scanned bylaws, comparison with the standard bylaws by an LLM, and export to Word. Each step is slow and fails in its own way, so I split them into three services (OCR, revision and export) joined by a file-handoff contract. A step that fails can be retried on its own, without running the steps before it again.",
-            "OCR and LLM output will sometimes be partly wrong. I designed how those outputs are handled so that a person can check them before they are used.",
+            "The work has three steps: read the scans with OCR, compare the text with the standard bylaws using an LLM, and export the result to Word. Each step is slow and fails in its own way, so each runs as a separate service, and the services pass files to each other in an agreed format. When one step fails, it can be run again without repeating the steps before it.",
+            "OCR and LLM output is sometimes partly wrong, so I designed the flow so that a person checks it before it is used.",
           ],
           outcome:
-            "The system takes a scanned set of bylaws to a revised draft in Word, which a person checks before use. I continue to review the delivery engineers' implementations.",
+            "The system is in use. It turns a scanned set of bylaws into a revised draft in Word, which a person checks before use. I still review the delivery engineers' code.",
         },
         {
+          id: "tuition-ops",
           title: "Operations platform for a tuition centre",
           summary: "Member records, monthly invoices and messaging in one system, replacing invoicing in Excel.",
           tags: ["Cloudflare", "Hono"],
+          internal: true,
+          roleLabel: "Sole engineer & operator",
+          highlight: "About 100 invoices a month, with errors down from 10% to almost none",
           problem:
-            "The centre produced its monthly invoices from Excel by hand. The work took hours every month, and roughly one invoice in ten had an error.",
-          role: "Sole engineer and operator. I built the system and I still run it.",
+            "The company runs a tuition centre, which made its monthly invoices by hand in Excel. This took hours every month, and about one invoice in ten had a mistake.",
+          role: "I am the only engineer. I built the system and still run it.",
           decisions: [
-            "Member records, invoices and messages live in one system, so each invoice is generated from the same member record that the message goes to, instead of being copied between spreadsheets.",
-            "Messages go out over email, WhatsApp and SMS from the same place, so a family is reached on the channel it uses.",
+            "Member records, invoices and messages are kept in one system. Each invoice is made from the same member record that the message is sent to, so nothing is copied between spreadsheets.",
+            "Email, WhatsApp and SMS are sent from the same place, so each family gets messages on the channel it uses.",
           ],
           outcome:
-            "The system sends around 100 invoices a month. It saves about five hours of manual work every month, and invoicing errors went from roughly 10% to near zero. It is in production use across the centre's operations.",
+            "The system sends around 100 invoices a month. It saves about five hours of manual work each month, and invoice errors went from roughly 10% to near zero. The centre uses it for its day-to-day work.",
         },
       ],
     },
@@ -198,12 +218,6 @@ export const cv: Cv = {
       degree: "International Baccalaureate Diploma",
       period: "Aug 2017 – May 2019",
     },
-    {
-      school: "Nishiyamato Gakuen",
-      country: "Japan",
-      degree: "Junior and senior high school",
-      period: "2013 – 2017",
-    },
   ],
   certifications: [
     {
@@ -227,17 +241,15 @@ export const cv: Cv = {
   ],
   awards: [
     { title: "CIN Outstanding Volunteer, NParks", period: "2021, 2022" },
-    { title: "Singapore Bird Race — 2nd, Novice category", period: "2021" },
-    { title: "Singapore Bird Race — 4th, Marathon category", period: "2023" },
-    { title: "Singapore Bird Race — 3rd, Marathon category", period: "2024, 2025" },
+    { title: "Singapore Bird Race — 3rd in the Marathon category (2024, 2025), 4th (2023), 2nd in Novice (2021)", period: "2021 – 2025" },
   ],
   skills: [
     { label: "Languages", items: ["Python", "TypeScript", "R"] },
-    { label: "Frameworks", items: ["Django", "React", "Hono"] },
-    { label: "Cloud", items: ["AWS", "Cloudflare", "Vercel", "Supabase"] },
+    { label: "Frameworks", items: ["Django", "React", "Next.js", "Hono"] },
+    { label: "Cloud", items: ["AWS (EC2, S3, Bedrock, Amplify)", "Cloudflare", "Vercel", "Supabase"] },
+    { label: "Tools", items: ["Docker"] },
     { label: "Data", items: ["PostgreSQL", "SQLite"] },
     { label: "Spoken", items: ["Japanese (native)", "English (fluent)", "Spanish (beginner)"] },
-    { label: "Licence", items: ["Singapore Class 3CA driving licence (2024)"] },
   ],
 }
 

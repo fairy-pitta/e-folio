@@ -1,87 +1,39 @@
 ---
 title: "Printable Spectrogram"
-description: "A fully client-side web application that generates high-resolution spectrograms with publication-quality annotated exports, powered by Rust/WASM."
+description: "Turns a recording into a configurable, annotated spectrogram you can export for a paper, without installing Python."
 date: "31 Jan, 2026"
 coverImage: "/projects/printable-spectrogram/spectrogram_main.webp"
 tags: ["Web App", "TypeScript", "React", "Rust", "WASM", "Audio Processing", "DSP"]
-featured: true
-order: 3
+stack: "Browser · Rust/WASM"
+highlight: "The STFT is written in Rust and compiled to WebAssembly"
 liveUrl: "https://spectrogram.fairy-pitta.net/"
 githubUrl: "https://github.com/fairy-pitta/printable_spectrogram"
 gallery: []
-name: "Printable Spectrogram"
-technicalPoint: "The STFT runs in Rust compiled to WebAssembly, so the whole tool works in the browser with no server. Annotations stay as SVG, so exported figures remain vector graphics."
 ---
 
-## Overview
+## Background
 
-Printable Spectrogram is a fully client-side web application that generates high-resolution spectrograms comparable in configurability to librosa. It supports real-time audio input and allows publication-quality annotated exports suitable for academic papers and presentations.
+To make a spectrogram for a paper I used to install Python with librosa and matplotlib, write a script to set the STFT parameters, then add labels in another program. It took several rounds before a figure was ready.
 
-No server, no backend—everything runs in the browser.
+Printable Spectrogram does this in the browser. You upload a recording, adjust the settings while watching the preview, add labels and export the figure.
 
----
+## What it does
 
-## The Problem
+- Upload WAV, MP3, OGG or M4A
+- STFT settings: `n_fft` from 512 to 4096, `hop_length`, Hann, Hamming or Blackman window, magnitude or power, dB range, reference dB and top dB
+- Linear or log frequency axis, and adjustable time and frequency ranges
+- Colour maps (viridis, magma, greyscale), brightness, contrast, gamma and smoothing
+- Axes and a colour bar in dB
+- Text, arrow and rectangle annotations
+- Export as SVG, or as PNG at 150, 300 or 600 dpi
 
-Creating publication-quality spectrograms typically requires:
-- Installing Python with librosa/matplotlib
-- Writing scripts to configure STFT parameters
-- Manual annotation in separate tools
-- Multiple steps to get a figure ready for a paper
+## Design
 
-I wanted a tool that does all of this in the browser, with real-time preview and direct SVG/PNG export.
+The STFT is the slowest part, so it is written in Rust (rustfft) and compiled to WebAssembly. The tool still runs without a server.
 
----
+Annotations are drawn in a separate SVG layer. In an SVG export they stay as vector graphics.
 
-## Features
-
-### Audio Processing (Client-side only)
-
-- **Input Sources**: WAV file upload or real-time microphone input
-- **STFT Configuration**:
-  - `n_fft` (1024 / 2048 / 4096)
-  - `hop_length`
-  - Window functions (Hann, Hamming, Blackman)
-  - Magnitude or power spectrum
-  - dB scaling with adjustable range
-- **Optional mel-scale** frequency axis
-- **Noise reduction** via spectral subtraction
-
-### Visualisation
-
-- High-quality spectrogram rendering (Canvas/WebGL)
-- Multiple colour maps (viridis, magma, grayscale)
-- Adjustable brightness, contrast, gamma
-- Axes with proper time (seconds) and frequency (Hz/mel) labels
-- Colour bar with dB scale
-
-### Annotation Layer
-
-- SVG-based annotation layer over the spectrogram
-- Text labels, arrows, rectangles, highlights
-- Annotations remain vector-based (not rasterised)
-
-### Publication-Quality Export
-
-- **SVG**: Spectrogram + annotations as scalable vector graphics
-- **PNG**: User-defined resolution (300–600 dpi for print)
-- Exported figures ready for direct use in academic papers
-
----
-
-## Tech Stack
-
-- **DSP Core**: Rust compiled to WebAssembly (rustfft)
-- **Frontend**: React + TypeScript + Vite
-- **Visualisation**: Canvas API
-- **Annotations**: SVG
-- **Testing**: Vitest (TypeScript), Cargo (Rust)
-
----
-
-## Architecture
-
-This project follows **Clean Architecture** principles with a **Test-Driven Development** approach:
+The code is split into domain, use-case, infrastructure and presentation layers. The DSP code and the UI are tested separately, with Cargo for Rust and Vitest for TypeScript.
 
 ```
 ┌─────────────────────────────────────────┐
@@ -95,41 +47,6 @@ This project follows **Clean Architecture** principles with a **Test-Driven Deve
 └─────────────────────────────────────────┘
 ```
 
-### Project Structure
+## Stack
 
-```
-.
-├── src/
-│   ├── domain/              # Pure business logic, entities, interfaces
-│   ├── usecases/            # Application orchestration
-│   ├── infrastructure/      # External interfaces (WASM, audio, canvas)
-│   └── presentation/        # React components
-├── rust-dsp/               # Rust WASM DSP core
-└── tests/                  # Integration tests
-```
-
----
-
-## Why Rust/WASM?
-
-Heavy DSP operations like STFT require significant computation. By implementing the DSP core in Rust and compiling to WebAssembly:
-- Near-native performance in the browser
-- Runs in a Web Worker to keep UI responsive
-- Type-safe, memory-safe audio processing
-
----
-
-## Development Status
-
-Currently in active development. Core infrastructure is complete, with ongoing work on:
-- Full UI implementation
-- Web Worker integration
-- Advanced annotation features
-- Performance optimisation
-
----
-
-## Links
-
-* Live Demo: https://spectrogram.fairy-pitta.net/
-* GitHub: https://github.com/fairy-pitta/printable_spectrogram
+React, TypeScript and Vite, with Rust and wasm-pack for the DSP code.

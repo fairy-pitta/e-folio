@@ -1,6 +1,7 @@
 import fs from "fs"
 import path from "path"
 import matter from "gray-matter"
+import { SHORT_MONTHS, monthIndex } from "./months"
 
 const blogDirectory = path.join(process.cwd(), "content", "blog")
 const projectsDirectory = path.join(process.cwd(), "content", "projects")
@@ -25,15 +26,17 @@ export interface ProjectFrontmatter {
   liveUrl?: string
   githubUrl?: string
   gallery?: string[]
-  featured?: boolean
-  order?: number
-  // Short name for the homepage accordion; the title is written for the project page.
-  name?: string
-  // One or two sentences on the engineering choice worth noticing, shown on the homepage.
-  technicalPoint?: string
+  // Where the project is distributed, such as npm. Not a demo, so it never earns a LIVE stamp.
+  packageUrl?: string
+  // One line on the card: an outcome where there is one, otherwise the engineering choice.
+  highlight?: string
+  // Older or retired work, listed briefly below the main grid.
+  earlier?: boolean
   // A write-up hosted elsewhere, such as a Qiita article.
   articleUrl?: string
   articleLabel?: string
+  // What it runs on, for the specimen label: "Browser · Rust/WASM".
+  stack?: string
 }
 
 export interface BlogPost {
@@ -48,11 +51,9 @@ export interface Project {
   frontmatter: ProjectFrontmatter
   content: string
   date: Date
-}
-
-const MONTHS: Record<string, number> = {
-  jan: 0, feb: 1, mar: 2, apr: 3, may: 4, jun: 5,
-  jul: 6, aug: 7, sep: 8, oct: 9, nov: 10, dec: 11,
+  // Catalogue number in the order the projects were made, oldest first, so
+  // adding a project never renumbers the ones already listed.
+  number: number
 }
 
 function buildUtcDate(year: number, month: number | undefined, day: number): Date | null {
@@ -74,9 +75,9 @@ export function parseContentDate(value: unknown, source: string): Date {
     const dayFirst = text.match(/^(\d{1,2}) ([A-Za-z]+)\.?,? (\d{4})$/)
     const iso = text.match(/^(\d{4})-(\d{2})-(\d{2})$/)
     if (monthFirst) {
-      date = buildUtcDate(Number(monthFirst[3]), MONTHS[monthFirst[1].slice(0, 3).toLowerCase()], Number(monthFirst[2]))
+      date = buildUtcDate(Number(monthFirst[3]), monthIndex(monthFirst[1]), Number(monthFirst[2]))
     } else if (dayFirst) {
-      date = buildUtcDate(Number(dayFirst[3]), MONTHS[dayFirst[2].slice(0, 3).toLowerCase()], Number(dayFirst[1]))
+      date = buildUtcDate(Number(dayFirst[3]), monthIndex(dayFirst[2]), Number(dayFirst[1]))
     } else if (iso) {
       date = buildUtcDate(Number(iso[1]), Number(iso[2]) - 1, Number(iso[3]))
     }
@@ -119,27 +120,44 @@ export function getAllBlogPosts({ includeDrafts = false }: { includeDrafts?: boo
 }
 
 export function getAllProjects(): Project[] {
-  return readMarkdownFiles<ProjectFrontmatter>(projectsDirectory)
+  const projects = readMarkdownFiles<ProjectFrontmatter>(projectsDirectory)
+  return projects.map((project, i) => ({ ...project, number: projects.length - i }))
 }
 
-export function getFeaturedProjects(limit = 5): Project[] {
-  return getAllProjects()
-    .filter((project) => project.frontmatter.featured === true)
-    .sort((a, b) => (a.frontmatter.order ?? Infinity) - (b.frontmatter.order ?? Infinity))
-    .slice(0, limit)
+export function formatCatalogueNumber(number: number): string {
+  return String(number).padStart(3, "0")
 }
+
+export function formatMonthYear(date: Date): string {
+  return `${SHORT_MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}`
+}
+
+export type ProjectStatus = "LIVE" | "OSS" | "ARCHIVED"
+
+// The stamp on a specimen card: something to try, only code to read, or neither.
+export function projectStatus(frontmatter: ProjectFrontmatter): ProjectStatus {
+  if (frontmatter.liveUrl?.trim()) return "LIVE"
+  if (frontmatter.githubUrl?.trim()) return "OSS"
+  return "ARCHIVED"
+}
+
+export type ProjectLinkKind = "live" | "code" | "package" | "article"
 
 export interface ProjectLink {
+  kind: ProjectLinkKind
   label: string
   href: string
 }
 
+// In display order: the demo first, since trying it is what most readers came for.
 export function projectLinks(frontmatter: ProjectFrontmatter): ProjectLink[] {
-  const links: ProjectLink[] = []
-  if (frontmatter.githubUrl?.trim()) links.push({ label: "Code", href: frontmatter.githubUrl.trim() })
-  if (frontmatter.liveUrl?.trim()) links.push({ label: "Live", href: frontmatter.liveUrl.trim() })
-  if (frontmatter.articleUrl?.trim()) {
-    links.push({ label: frontmatter.articleLabel?.trim() || "Article", href: frontmatter.articleUrl.trim() })
-  }
-  return links
+  const candidates: [ProjectLinkKind, string, string | undefined][] = [
+    ["live", "Try the live demo", frontmatter.liveUrl],
+    ["code", "Source code", frontmatter.githubUrl],
+    ["package", "Package on npm", frontmatter.packageUrl],
+    ["article", frontmatter.articleLabel?.trim() || "Article", frontmatter.articleUrl],
+  ]
+  return candidates
+    .filter(([, , href]) => href?.trim())
+    .map(([kind, label, href]) => ({ kind, label, href: href!.trim() }))
 }

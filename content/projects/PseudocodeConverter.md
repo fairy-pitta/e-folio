@@ -1,9 +1,11 @@
 ---
-title: "Pseudocode Converter: Convert Code to IB‑Compliant Pseudocode"
-description: "A web tool that converts Python or Java code into IB‑compliant pseudocode for Computer Science courses and examinations."
+title: "Pseudocode Converter"
+description: "Converts Python or Java into IB, AP CSP, Cambridge IGCSE or A Level pseudocode as you type."
 date: "Oct 13, 2025"
-coverImage: "/projects/Pseudocode/pseudocode.webp"
-tags: ["Web App", "Python", "Java", "IB", "Computer Science"]
+coverImage: "/projects/Pseudocode/converter-demo.mp4"
+tags: ["Web App", "TypeScript", "Python", "Java", "Compilers", "Computer Science"]
+stack: "Browser · TypeScript, Lezer"
+highlight: "Supports four exam boards through one intermediate representation"
 liveUrl: "https://pseudocode-converter.fairy-pitta.net/"
 githubUrl: "https://github.com/fairy-pitta/pseudocode-converter"
 gallery: [
@@ -11,73 +13,35 @@ gallery: [
 ]
 ---
 
-## Overview
+## Background
 
-Pseudocode Converter is a web application that transforms source code into standardized, IB‑compliant pseudocode suitable for teaching, assignments, and exam preparation in Computer Science. It helps students and instructors quickly produce clear, consistent pseudocode from familiar programming languages.
+Computer Science exams ask students to write algorithms in pseudocode, and each exam board uses its own notation. Students usually write their programs in Python or Java first.
 
----
+Pseudocode Converter shows a Python or Java program in the notation of IB, AP Computer Science Principles, Cambridge IGCSE (0478) or Cambridge International A Level (9618). The output updates as you type, and any source language can be converted to any of the four.
 
-## Features
+For each combination the site also has a rules page. It explains how each construct is converted and links to the exam board's reference document.
 
-- IB‑style pseudocode conversion for Python and Java
-- Standardized keywords and block structure for readability and assessment
-- Coverage for core control flow: conditionals, loops (FOR / WHILE / REPEAT–UNTIL)
-- Procedures/functions, arrays/lists, and boolean expressions
-- Instant output ready to copy into reports, worksheets, or exam responses
+## How it works
 
----
+1. The code is parsed with [Lezer](https://lezer.codemirror.net/) (`@lezer/python`, `@lezer/java`).
+2. The syntax tree is turned into a small intermediate representation that does not depend on the source language.
+3. Constructs that a standard does not have, such as `for` over a range or `+=`, are rewritten.
+4. A printer for each standard writes out the pseudocode.
 
-## Tech Stack
+```ts
+const { pseudocode, diagnostics } = convert("for i in range(3):\n    print(i)", { from: "python", to: "igcse" })
+```
 
-- Next.js (UI) + TypeScript
-- AST‑based conversion pipeline that analyzes code structure
-- Fully serverless: static hosting on Cloudflare Pages; no backend; conversion runs client‑side in the browser
-- Modular, self‑authored npm libraries for language support:
-  - java2ib — Java → IB‑style pseudocode (MIT)
-  - python2ib — Python → IB‑style pseudocode (MIT)
-- Cloudflare Pages deployment for fast, reliable delivery
+![FizzBuzz in Python and IB pseudocode](/projects/Pseudocode/fizzbuzz.webp)
 
----
+## Design
 
-## Design & Architecture
+Because every language goes through the same intermediate representation, adding a language means writing one new parser frontend, and adding an exam board means writing one new printer.
 
-- Uses AST (Abstract Syntax Tree) analysis to understand control flow, declarations, and expressions before mapping them to IB‑compliant pseudocode
-- All parsing and conversion runs entirely in the browser (client‑side); input code is never sent to any server
-- Parsers are split into independent npm libraries to keep the main repo lean and extensible:
-  - java2ib: converts Java AST to IB‑style pseudocode
-  - python2ib: converts Python AST to IB‑style pseudocode
-- Both parser libraries are self‑authored in TypeScript and published under the MIT license
-- Why separate libraries?
-  - Extensibility: add new languages in the future without bloating the core project
-  - Maintainability: version, test, and release each parser independently
-  - Reusability: others can import the libraries directly in their own projects
-  - Licensing: both libraries are published under MIT for open use
+When a line cannot be converted, the converter reports it next to the output and carries on with the rest.
 
----
+Everything runs in the browser and no code is sent anywhere, so the site is served as static files.
 
-## How It Works
+## Stack
 
-1. Paste Python or Java code into the editor.
-2. Click Convert to generate IB‑style pseudocode via AST‑based parsing powered by the language libraries.
-3. Review the output and copy it directly into your assignment or notes.
-4. If something looks off, report the case so it can be improved.
-
----
-
-## IB Pseudocode Alignment
-
-- Follows widely used IB Computer Science pseudocode conventions (keywords, block structure, indentation)
-- Emphasizes clear naming and language‑agnostic constructs
-- Conservative handling of edge cases to avoid ambiguity
-- School‑specific differences can be accommodated over time
-
----
-
-## Links
-
-- Live: https://pseudocode-converter.fairy-pitta.net/
-- GitHub: https://github.com/fairy-pitta/pseudocode-converter
-- npm (Java → IB pseudocode): https://www.npmjs.com/package/java2ib
-- npm (Python → IB pseudocode): https://www.npmjs.com/package/python2ib
-
----
+Next.js 15 (static export), React 18, TypeScript, Tailwind CSS, shadcn/ui, Monaco Editor and Lezer. The converter is tested with Vitest. Hosted on Cloudflare Pages, with tests and a build run by GitHub Actions on each pull request.

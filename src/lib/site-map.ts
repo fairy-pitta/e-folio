@@ -2,6 +2,7 @@
 // the two can never drift apart. Paths carry the trailing slash that the built
 // pages and their canonical links use.
 
+import { cv } from "../data/cv"
 import { getAllBlogPosts, getAllProjects } from "./content"
 
 export interface SiteEntry {
@@ -13,12 +14,17 @@ export interface SiteEntry {
 
 export const HOME: SiteEntry = {
   path: "/",
-  title: "Shuna Maekawa",
-  description: "Strengths, experience with project details, side projects, education, certifications and skills.",
+  title: cv.name,
+  description: "Work: projects from my job and personal projects, each with a short label and a link to the full write-up.",
 }
 
 export const INDEX_PAGES: SiteEntry[] = [
-  { path: "/projects/", title: "Projects", description: "Index of project write-ups." },
+  {
+    path: "/about/",
+    title: "About",
+    description: "Strengths, a history of jobs and schooling with details of projects from my job, certifications and skills.",
+  },
+  { path: "/contact/", title: "Contact", description: "Contact form." },
   { path: "/blog/", title: "Writing", description: "Notes on software engineering." },
 ]
 

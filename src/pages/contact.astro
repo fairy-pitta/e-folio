@@ -1,0 +1,15 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ContactForm from '../components/Contact.astro';
+import { cv, linkHref } from '../data/cv';
+---
+
+<Layout title="Contact" description={`Send a message to ${cv.name}.`}>
+  <h1 class="display">Contact</h1>
+  <p class="lede">
+    You can message me on <a href={linkHref('LinkedIn')}>LinkedIn</a> or use the form below.
+  </p>
+  <div class="contact-area">
+    <ContactForm />
+  </div>
+</Layout>

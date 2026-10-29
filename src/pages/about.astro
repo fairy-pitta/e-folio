@@ -1,0 +1,105 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Section from '../components/Section.astro';
+import Row from '../components/Row.astro';
+import ExperienceProject from '../components/ExperienceProject.astro';
+import { cv } from '../data/cv';
+import { buildHistory } from '../lib/history';
+
+const history = buildHistory(cv.experience, cv.education);
+---
+
+<Layout title="About">
+  <h1 class="display">{cv.name} <span class="handle">{cv.handle}</span></h1>
+  <p class="meta">{cv.headline} · {cv.location}</p>
+  <p class="links">
+    {cv.links.map((link, i) => (
+      <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
+    ))}
+  </p>
+  <p class="summary">{cv.summary}</p>
+  <ul class="bullets strengths">
+    {cv.strengths.map((line) => <li>{line}</li>)}
+  </ul>
+  <p class="availability">{cv.availability}</p>
+
+  <section class="section" id="history">
+    <h2 class="section-title">History</h2>
+    <ol class="history">
+      {history.map((entry, i) => {
+        const sameYear = i > 0 && history[i - 1].year === entry.year;
+        return (
+          <li class:list={['history-entry', `history-${entry.kind.toLowerCase()}`, { 'history-current': entry.current }]}>
+            <div class="history-when">
+              <span class:list={['history-year', { 'history-year-repeat': sameYear }]}>{entry.year}</span>
+              <span class="history-period">{entry.period}</span>
+            </div>
+            <div class="history-body">
+              <span class="history-kind">{entry.current ? 'Now · ' : ''}{entry.kind}</span>
+              <details class="job" open={i === 0}>
+                <summary>
+                  <span class="role">{entry.title}</span>
+                  <span class="history-org">{entry.org}</span>
+                </summary>
+                {entry.bullets.length > 0 && (
+                  <ul class="bullets">
+                    {entry.bullets.map((bullet) => <li>{bullet}</li>)}
+                  </ul>
+                )}
+                {entry.projects && (
+                  <div class="projects">
+                    {entry.projects.map((project) => <ExperienceProject project={project} />)}
+                  </div>
+                )}
+              </details>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
+  </section>
+
+  <Section title="Certifications">
+    <ul class="bullets">
+      {cv.certifications.map((certification) => (
+        <li>
+          <a href={certification.href} target="_blank" rel="noopener noreferrer">{certification.name}</a>
+          <span class="muted"> ({certification.year})</span>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section title="Awards">
+    {cv.awards.map((award) => (
+      <Row meta={award.period}>{award.title}</Row>
+    ))}
+  </Section>
+
+  <Section title="Skills">
+    <dl class="skills">
+      {cv.skills.map((group) => (
+        <>
+          <dt>{group.label}</dt>
+          <dd>{group.items.join(', ')}</dd>
+        </>
+      ))}
+    </dl>
+  </Section>
+</Layout>
+
+<script>
+  // A client card on the Work page links to /about#<id>: open that write-up,
+  // and the job around it, so the reader lands on the text rather than a closed row.
+  function openTarget() {
+    const id = decodeURIComponent(location.hash.slice(1));
+    const target = id ? document.getElementById(id) : null;
+    if (!(target instanceof HTMLDetailsElement)) return;
+    for (let node: Element | null = target; node; node = node.parentElement?.closest('details') ?? null) {
+      (node as HTMLDetailsElement).open = true;
+    }
+    target.scrollIntoView({ block: 'start' });
+  }
+  document.addEventListener('astro:page-load', openTarget);
+  window.addEventListener('hashchange', openTarget);
+</script>

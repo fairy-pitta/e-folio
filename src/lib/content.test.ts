@@ -5,7 +5,9 @@ import {
   formatDate,
   getAllBlogPosts,
   getAllProjects,
-  getFeaturedProjects,
+  formatCatalogueNumber,
+  formatMonthYear,
+  projectStatus,
   projectLinks,
   type ProjectFrontmatter,
 } from './content'
@@ -78,65 +80,71 @@ describe('getAllProjects', () => {
   })
 })
 
-describe('getFeaturedProjects', () => {
-  it('test_read_featured_projects_returns_the_five_side_projects_in_order', () => {
-    expect(getFeaturedProjects().map((p) => p.slug)).toEqual([
-      'SBBirdMap',
-      'Portree',
-      'PrintableSpectrogram',
-      'CodeAnnotator',
-      'CCAccountSwitcher',
-    ])
+describe('project catalogue', () => {
+  it('test_number_projects_by_date_gives_oldest_number_one', () => {
+    const projects = getAllProjects()
+    expect(projects.map((p) => p.number)).toEqual(projects.map((_, i) => projects.length - i))
+    expect(projects.at(-1)?.slug).toBe('SGBirdCall')
   })
 
-  it('test_read_featured_projects_returns_short_name_and_technical_point_for_each', () => {
-    for (const project of getFeaturedProjects()) {
-      expect(project.frontmatter.name?.trim(), project.slug).toBeTruthy()
-      expect(project.frontmatter.technicalPoint?.trim(), project.slug).toBeTruthy()
-      expect(project.frontmatter.technicalPoint, project.slug).not.toMatch(/\n/)
+  it('test_read_projects_returns_stack_and_one_line_highlight_for_each', () => {
+    for (const project of getAllProjects()) {
+      expect(project.frontmatter.stack?.trim(), project.slug).toBeTruthy()
+      expect(project.frontmatter.highlight?.trim(), project.slug).toBeTruthy()
+      expect(project.frontmatter.highlight!.length, project.slug).toBeLessThanOrEqual(80)
     }
   })
 
-  it('respects_the_limit', () => {
-    expect(getFeaturedProjects(2)).toHaveLength(2)
+  it('test_format_catalogue_number_pads_to_three_digits', () => {
+    expect(formatCatalogueNumber(7)).toBe('007')
+    expect(formatCatalogueNumber(123)).toBe('123')
+  })
+
+  it('test_format_month_year_returns_short_month_and_year_in_utc', () => {
+    expect(formatMonthYear(utc(2026, 2, 6))).toBe('Feb 2026')
+  })
+
+  it.each([
+    [{ liveUrl: 'https://example.com', githubUrl: 'https://github.com/x/y' }, 'LIVE'],
+    [{ liveUrl: ' ', githubUrl: 'https://github.com/x/y' }, 'OSS'],
+    [{ liveUrl: '', githubUrl: '' }, 'ARCHIVED'],
+    [{ packageUrl: 'https://www.npmjs.com/package/x', githubUrl: 'https://github.com/x/y' }, 'OSS'],
+  ])('test_derive_status_from_links_%#_returns_stamp', (links, expected) => {
+    const frontmatter = { title: 't', description: 'd', date: '2026-01-01', tags: [], ...links } as ProjectFrontmatter
+    expect(projectStatus(frontmatter)).toBe(expected)
   })
 })
 
 describe('projectLinks', () => {
   const base: ProjectFrontmatter = { title: 't', description: 'd', date: '2025-01-01', tags: [] }
 
-  it('test_build_links_with_article_url_appends_article_after_code_and_live', () => {
+  it('test_build_links_with_every_url_returns_live_code_package_then_article', () => {
     expect(
       projectLinks({
         ...base,
         githubUrl: 'https://github.com/x',
         liveUrl: 'https://x.dev',
+        packageUrl: 'https://www.npmjs.com/package/x',
         articleUrl: 'https://qiita.com/x/items/1',
         articleLabel: 'Article on Qiita (Japanese)',
       }),
     ).toEqual([
-      { label: 'Code', href: 'https://github.com/x' },
-      { label: 'Live', href: 'https://x.dev' },
-      { label: 'Article on Qiita (Japanese)', href: 'https://qiita.com/x/items/1' },
+      { kind: 'live', label: 'Try the live demo', href: 'https://x.dev' },
+      { kind: 'code', label: 'Source code', href: 'https://github.com/x' },
+      { kind: 'package', label: 'Package on npm', href: 'https://www.npmjs.com/package/x' },
+      { kind: 'article', label: 'Article on Qiita (Japanese)', href: 'https://qiita.com/x/items/1' },
     ])
   })
 
   it('test_build_links_with_article_url_but_no_label_uses_article', () => {
     expect(projectLinks({ ...base, articleUrl: 'https://example.com/post' })).toEqual([
-      { label: 'Article', href: 'https://example.com/post' },
+      { kind: 'article', label: 'Article', href: 'https://example.com/post' },
     ])
   })
 
-  it('omits_empty_and_missing_urls', () => {
+  it('test_build_links_with_empty_or_missing_urls_returns_nothing', () => {
     expect(projectLinks({ ...base, githubUrl: '', liveUrl: '  ' })).toEqual([])
     expect(projectLinks(base)).toEqual([])
-  })
-
-  it('returns_code_then_live', () => {
-    expect(projectLinks({ ...base, githubUrl: 'https://github.com/x', liveUrl: 'https://x.dev' })).toEqual([
-      { label: 'Code', href: 'https://github.com/x' },
-      { label: 'Live', href: 'https://x.dev' },
-    ])
   })
 })
 

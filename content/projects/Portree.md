@@ -1,67 +1,39 @@
 ---
-title: "portree - Git Worktree Server Manager"
-description: "A CLI tool that automatically manages multiple dev servers per git worktree with automatic port allocation, environment variable injection, and subdomain routing."
+title: "portree"
+description: "A CLI that runs a separate set of dev servers for each git worktree, with stable ports and branch-name URLs."
 date: "6 Feb, 2026"
 coverImage: "/projects/portree/portree_main.mp4"
 tags: ["CLI Tool", "Go", "Git Worktree", "TUI", "Developer Tools"]
-featured: true
-order: 2
-liveUrl: ""
+stack: "Terminal · Go"
+highlight: "Each branch gets the same ports every time, from a hash of its name"
 githubUrl: "https://github.com/fairy-pitta/portree"
 gallery: [
   "/projects/portree/portree_tui.mp4",
   "/projects/portree/portree_init.mp4"
 ]
-name: "portree"
-technicalPoint: "Each worktree's ports come from a hash of its branch name (FNV-32), so a branch gets the same ports every time without a shared registry. A built-in reverse proxy routes branch-name.localhost to the right server."
 articleUrl: "https://qiita.com/Pitta/items/4a6537a3450aa6f8f050"
 articleLabel: "Article on Qiita (Japanese)"
 ---
 
-## Overview
+## Background
 
-When working on multiple feature branches simultaneously using git worktrees, managing separate dev servers for each branch becomes tedious. You need to manually track ports, configure environment variables, and remember which server is running where.
+With git worktrees I can have several branches checked out at once. Each one needs its own frontend and backend running, and I kept running into the same problems: two branches trying to use the same port, environment variables to set for each copy, and forgetting which branch was on which port.
 
-**portree** solves this by automatically managing multiple dev servers per git worktree—with hash-based port allocation, environment variable injection, and `*.localhost` subdomain routing via a built-in reverse proxy.
+portree starts and stops the services for each worktree, gives them ports that do not clash, and lets me open a branch at `branch-name.localhost`.
 
 ![portree workflow demo](/projects/portree/portree_main.mp4)
 
----
+## Design
 
-## The Problem
+Ports are calculated as `FNV32(branch:service) % range`. A branch always gets the same ports, so its URLs can be bookmarked, and there is no shared list of ports to keep in sync.
 
-In a typical monorepo setup with frontend and backend services:
+Browsers resolve `*.localhost` to `127.0.0.1` (RFC 6761). A small reverse proxy in portree reads the `Host` header and forwards the request to the right worktree, so `/etc/hosts` never needs editing.
 
-- Each worktree needs its own set of running services
-- Port conflicts are common when running multiple branches
-- Environment variables need to be configured for each instance
-- Switching between branches means remembering which ports are allocated where
+Each service receives `$PORT`, `$PT_BRANCH` and `$PT_BACKEND_URL` as environment variables, so the frontend can find its backend without a hard-coded port.
 
----
+The state file is locked while it is written, so several portree processes can run at once. Leftover PIDs from crashed processes are cleaned up.
 
-## Features
-
-- **Multi-service support** — Define frontend, backend, and any number of services per worktree
-- **Automatic port allocation** — Hash-based port assignment (FNV32) ensures consistent, conflict-free ports across worktrees
-- **Subdomain reverse proxy** — Access any worktree via `branch-name.localhost:<port>` without editing `/etc/hosts`
-- **Environment variable injection** — `$PORT`, `$PT_BRANCH`, `$PT_BACKEND_URL`, etc. are injected automatically
-- **TUI dashboard** — Interactive terminal UI to start, stop, restart, and monitor all services
-- **Process lifecycle management** — Graceful shutdown, log files, and stale PID cleanup
-- **Per-worktree overrides** — Customise commands, ports, and env vars per branch
-
----
-
-## Tech Stack
-
-- **Language:** Go
-- **CLI Framework:** Cobra
-- **TUI Framework:** Bubble Tea + Lip Gloss
-- **Configuration:** TOML
-- **Distribution:** Homebrew, Go install, GitHub Releases (via GoReleaser)
-
----
-
-## How It Works
+## How it works
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -87,55 +59,25 @@ In a typical monorepo setup with frontend and backend services:
   main.localhost:8000    feature-auth.localhost:8000
 ```
 
-1. **Port allocation** — Each service gets a port via `FNV32(branch:service) % range`. Stable across restarts.
-2. **Process management** — Services run as child processes with process groups. Logs go to `.portree/logs/`.
-3. **Reverse proxy** — One HTTP listener per `proxy_port`. Routes based on `Host` header subdomain.
-4. **`*.localhost`** — Modern browsers resolve `*.localhost` to `127.0.0.1` automatically per RFC 6761.
-
----
-
-## Usage
+Services run as child processes in their own process groups. Logs go to `.portree/logs/`.
 
 ![portree init demo](/projects/portree/portree_init.mp4)
 
 ```bash
-# Initialize in your project
-portree init
-
-# Start services for current worktree
-portree up
-
-# Start services for ALL worktrees
-portree up --all
-
-# Start the reverse proxy
-portree proxy start
-
-# Open the TUI dashboard
-portree dash
-
-# Check status
-portree ls
+portree init          # set up the project
+portree up --all      # start services for every worktree
+portree proxy start   # start the reverse proxy
+portree dash          # open the dashboard
 ```
 
-### TUI Dashboard
-
-Manage all your services from an interactive terminal UI:
+The dashboard runs in the terminal and can start, stop and restart each service.
 
 ![portree TUI dashboard](/projects/portree/portree_tui.mp4)
 
----
+## Stack
 
-## Development Highlights
+Go, Cobra, Bubble Tea and Lip Gloss, with TOML for configuration. Released with GoReleaser to Homebrew and GitHub Releases. Works on macOS and Linux; Windows support is experimental.
 
-- **Hash-based port allocation** ensures the same branch always gets the same port, making URLs predictable and bookmarkable
-- **Automatic service discovery** via environment variables (`PT_BACKEND_URL`, etc.) allows services to find each other without hardcoded ports
-- **File-level locking** on the state file allows multiple portree instances to run safely
-- **Cross-platform support** for macOS, Linux, and experimental Windows support
-
----
-
-## Links
-
-* GitHub: https://github.com/fairy-pitta/portree
-* Install: `brew install fairy-pitta/tap/portree`
+```bash
+brew install fairy-pitta/tap/portree
+```

@@ -14,7 +14,7 @@ import {
   type SiteEntry,
 } from "../lib/site-map"
 
-const CONTENTS = "Holds the CV, write-ups of personal projects, and notes on software engineering."
+const CONTENTS = "Holds write-ups of personal projects, an About page with the CV, and notes on software engineering."
 
 function link(entry: SiteEntry, site: URL | string): string {
   const url = absoluteUrl(entry.path, site)

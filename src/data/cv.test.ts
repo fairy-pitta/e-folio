@@ -123,7 +123,7 @@ describe('cv', () => {
   })
 
   it('test_read_summary_without_employer_opens_with_role_and_place', () => {
-    expect(cv.summary.startsWith('Solutions architect and software engineer in Singapore.')).toBe(true)
+    expect(cv.summary.startsWith('Software engineer and project manager in Singapore.')).toBe(true)
   })
 
   it('test_serialise_cv_contains_no_contractions', () => {
@@ -176,9 +176,9 @@ describe('cv', () => {
     expect(text).not.toMatch(/% of (the )?code/i)
   })
 
-  it('test_read_llm_agent_project_says_launch_is_planned_not_shipped', () => {
+  it('test_read_finance_saas_project_says_launch_is_planned_not_shipped', () => {
     const agent = projects[0]
-    expect(agent.title).toBe('LLM agent for a financial management SaaS')
+    expect(agent.title).toBe('Financial reporting SaaS with an LLM agent')
     expect(agent.outcome).toContain('planned for April 2027')
     expect(JSON.stringify(agent)).not.toMatch(/\bshipped\b|\blaunched\b|\bin production\b/i)
   })
@@ -190,8 +190,8 @@ describe('cv', () => {
     expect(platform.outcome).toContain('roughly 10% to near zero')
   })
 
-  it('test_read_frameworks_returns_django_react_hono_only', () => {
-    expect(cv.skills.find((group) => group.label === 'Frameworks')?.items).toEqual(['Django', 'React', 'Hono'])
+  it('test_read_frameworks_returns_only_the_ones_used', () => {
+    expect(cv.skills.find((group) => group.label === 'Frameworks')?.items).toEqual(['Django', 'React', 'Next.js', 'Hono'])
   })
 
   it('test_read_certifications_returns_the_six_on_the_cv_in_order', () => {
@@ -205,13 +205,31 @@ describe('cv', () => {
     ])
   })
 
-  it('test_read_skills_keeps_driving_licence_outside_certifications', () => {
-    expect(cv.skills.find((group) => group.label === 'Licence')?.items).toEqual([
-      'Singapore Class 3CA driving licence (2024)',
-    ])
+  it('test_read_skills_without_licence_group_returns_engineering_skills_only', () => {
+    expect(cv.skills.map((group) => group.label)).not.toContain('Licence')
+  })
+
+  it('test_read_current_job_title_returns_lead_engineer', () => {
+    expect(cv.experience[0].role).toBe('Lead Engineer & Project Manager')
+    expect(JSON.stringify(cv)).not.toMatch(/principal engineer/i)
   })
 
   it('test_read_first_degree_returns_cv_wording', () => {
     expect(cv.education[0].degree).toBe('BSc (Honours), First Class')
+  })
+
+  it('test_read_pitch_returns_one_sentence', () => {
+    expect(cv.pitch.trim()).toMatch(/^[^.]+\.$/)
+  })
+
+  it('test_read_client_projects_returns_unique_ids_and_short_card_lines', () => {
+    const all = cv.experience.flatMap((job) => job.projects ?? [])
+    expect(all).toHaveLength(3)
+    expect(new Set(all.map((project) => project.id)).size).toBe(all.length)
+    for (const project of all) {
+      expect(project.id, project.title).toMatch(/^[a-z0-9-]+$/)
+      expect(project.roleLabel.trim(), project.title).toBeTruthy()
+      expect(project.highlight.length, project.title).toBeLessThanOrEqual(80)
+    }
   })
 })
