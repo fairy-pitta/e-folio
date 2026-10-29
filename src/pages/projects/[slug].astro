@@ -1,8 +1,17 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getAllProjects, formatDate, projectLinks, type Project } from '../../lib/content';
+import {
+  getAllProjects,
+  formatCatalogueNumber,
+  formatMonthYear,
+  projectLinks,
+  projectStatus,
+  type Project,
+} from '../../lib/content';
 import { markdownToHtml } from '../../lib/markdown';
 import Figure from '../../components/Figure.astro';
+import Stamp from '../../components/Stamp.astro';
+import { projectStars } from '../../lib/github';
 
 export function getStaticPaths() {
   return getAllProjects().map((project) => ({
@@ -19,23 +28,32 @@ const { project } = Astro.props;
 const { frontmatter } = project;
 const html = await markdownToHtml(project.content);
 const links = projectLinks(frontmatter);
-const meta = [formatDate(project.date), frontmatter.tags.join(', ')].filter(Boolean).join(' · ');
+const stars = await projectStars(frontmatter.githubUrl);
 const gallery = (frontmatter.gallery ?? []).filter((src) => src.trim() !== '');
 ---
 
 <Layout
-  title={`${frontmatter.title} — Shuna Maekawa`}
+  title={frontmatter.title}
   description={frontmatter.description}
   ogImage={`/og/project-${project.slug}.png`}
 >
-  <p class="crumb"><a href="/">Shuna Maekawa</a> / <a href="/projects">Projects</a></p>
-  <h1>{frontmatter.title}</h1>
-  <p class="meta">{meta}</p>
+  <p class="crumb"><a href="/">Work</a> / No. {formatCatalogueNumber(project.number)}</p>
+  <h1 class="display">{frontmatter.title}</h1>
   <p class="summary">{frontmatter.description}</p>
+  <dl class="specimen-label specimen-label-page">
+    <dt>No.</dt><dd>{formatCatalogueNumber(project.number)} <Stamp label={projectStatus(frontmatter)} /></dd>
+    <dt>Built</dt><dd>{formatMonthYear(project.date)}</dd>
+    {frontmatter.stack && <><dt>Stack</dt><dd>{frontmatter.stack}</dd></>}
+    {frontmatter.highlight && <><dt>Highlight</dt><dd>{frontmatter.highlight}</dd></>}
+    {stars && <><dt>Stars</dt><dd>{stars}</dd></>}
+    {frontmatter.tags.length > 0 && <><dt>Tags</dt><dd>{frontmatter.tags.join(', ')}</dd></>}
+  </dl>
   {links.length > 0 && (
-    <p class="links">
-      {links.map((link, i) => (
-        <>{i > 0 && ' · '}<a href={link.href} target="_blank" rel="noopener noreferrer">{link.label}</a></>
+    <p class="actions">
+      {links.map((link) => (
+        <a class:list={['action', { 'action-primary': link.kind === 'live' }]} href={link.href} target="_blank" rel="noopener noreferrer">
+          {link.label} <span aria-hidden="true">↗</span>
+        </a>
       ))}
     </p>
   )}
@@ -50,5 +68,5 @@ const gallery = (frontmatter.gallery ?? []).filter((src) => src.trim() !== '');
     <Figure src={src} alt={`${frontmatter.title} screenshot`} />
   ))}
 
-  <p class="footer-nav">← <a href="/projects">All projects</a></p>
+  <p class="footer-nav">← <a href="/">All work</a></p>
 </Layout>

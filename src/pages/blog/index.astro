@@ -4,14 +4,15 @@ import WritingRow from '../../components/WritingRow.astro';
 import { getAllBlogPosts } from '../../lib/content';
 import { fetchQiitaItems } from '../../lib/qiita';
 import { toWritingItems } from '../../lib/writing';
+import { cv } from '../../data/cv';
 
 const posts = getAllBlogPosts();
 const items = toWritingItems(posts, await fetchQiitaItems());
 ---
 
-<Layout title="Writing — Shuna Maekawa" description="Notes on software engineering by Shuna Maekawa.">
-  <p class="crumb"><a href="/">Shuna Maekawa</a> / Writing</p>
-  <h1>Writing</h1>
+<Layout title="Writing" description={`Notes on software engineering by ${cv.name}.`}>
+  <h1 class="display">Writing</h1>
+  <p class="lede">Notes on software engineering. Most are on Qiita, in Japanese.</p>
   {posts.length > 0 && <p class="meta"><a href="/rss.xml">RSS</a></p>}
   {items.length > 0 ? (
     <div class="list section">

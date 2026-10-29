@@ -1,98 +1,60 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import Section from '../components/Section.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import JobCard from '../components/JobCard.astro';
 import Row from '../components/Row.astro';
-import Contact from '../components/Contact.astro';
-import ExperienceProject from '../components/ExperienceProject.astro';
 import { cv } from '../data/cv';
-import SideProject from '../components/SideProject.astro';
-import { getFeaturedProjects } from '../lib/content';
+import { formatCatalogueNumber, getAllProjects } from '../lib/content';
 
-const projects = getFeaturedProjects();
+const projects = getAllProjects();
+const current = projects.filter((project) => !project.frontmatter.earlier);
+const earlier = projects.filter((project) => project.frontmatter.earlier);
+const jobProjects = cv.experience.flatMap((job) => job.projects ?? []);
 ---
 
-<Layout>
-  <header>
-    <h1>{cv.name} <span class="muted" style="font-weight:400">({cv.handle})</span></h1>
-    <p class="muted">{cv.headline} · {cv.location}</p>
-    <p class="links">
-      {cv.links.map((link, i) => (
-        <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
-      ))}
+<Layout wide>
+  <section class="intro">
+    <h1 class="display">{cv.name} <span class="handle">{cv.handle}</span></h1>
+    <p class="intro-pitch">{cv.pitch}</p>
+    <p class="intro-meta">
+      <span class="availability-badge">{cv.availability}</span>
+      <span>{cv.headline} · {cv.location}</span>
     </p>
-    <ul class="bullets strengths">
-      {cv.strengths.map((line) => <li>{line}</li>)}
-    </ul>
-    <p class="availability">{cv.availability}</p>
-    <p class="summary">{cv.summary}</p>
-  </header>
+    <p class="actions">
+      <a class="action action-primary" href="/about">About &amp; history</a>
+      <a class="action" href="/contact">Contact</a>
+    </p>
+  </section>
 
-  <Section title="Experience">
-    {cv.experience.map((job, i) => (
-      <details class="job" open={i === 0}>
-        <summary class="row">
-          <span class="row-main"><span class="role">{job.role}</span> — {job.org}</span>
-          <span class="row-meta">{job.period}</span>
-        </summary>
-        <ul class="bullets">
-          {job.bullets.map((bullet) => <li>{bullet}</li>)}
-        </ul>
-        {job.projects && (
-          <div class="projects">
-            {job.projects.map((project) => <ExperienceProject project={project} />)}
-          </div>
-        )}
-      </details>
-    ))}
-  </Section>
+  <section class="section" aria-labelledby="job-projects">
+    <h2 class="section-title" id="job-projects">At work</h2>
+    <p class="section-note">Projects from my job, for clients and for the company. Client names and screenshots are left out.</p>
+    <div class="specimens">
+      {jobProjects.map((project) => <JobCard project={project} />)}
+    </div>
+  </section>
 
-  <Section title="Side projects">
-    {projects.map((project) => <SideProject project={project} />)}
-    <p class="more"><a href="/projects">All projects →</a></p>
-  </Section>
+  <section class="section" aria-labelledby="personal-projects">
+    <h2 class="section-title" id="personal-projects">Personal projects</h2>
+    <p class="section-note">
+      Newest first. The bird projects grew out of my ecology degree at Yale-NUS, where I studied bird calls.
+    </p>
+    <div class="specimens">
+      {current.map((project, i) => <ProjectCard project={project} priority={i < 3} />)}
+    </div>
+  </section>
 
-  <Section title="Education">
-    {cv.education.map((edu) => (
-      <>
-        <Row meta={`${edu.country} · ${edu.period}`}>{edu.school} — {edu.degree}</Row>
-        {edu.bullets && (
-          <ul class="bullets">
-            {edu.bullets.map((bullet) => <li>{bullet}</li>)}
-          </ul>
-        )}
-      </>
-    ))}
-  </Section>
-
-  <Section title="Certifications">
-    <ul class="bullets">
-      {cv.certifications.map((certification) => (
-        <li>
-          <a href={certification.href} target="_blank" rel="noopener noreferrer">{certification.name}</a>
-          <span class="muted"> ({certification.year})</span>
-        </li>
-      ))}
-    </ul>
-  </Section>
-
-  <Section title="Awards">
-    {cv.awards.map((award) => (
-      <Row meta={award.period}>{award.title}</Row>
-    ))}
-  </Section>
-
-  <Section title="Skills">
-    <dl class="skills">
-      {cv.skills.map((group) => (
-        <>
-          <dt>{group.label}</dt>
-          <dd>{group.items.join(', ')}</dd>
-        </>
-      ))}
-    </dl>
-  </Section>
-
-  <Section title="Contact">
-    <Contact />
-  </Section>
+  {earlier.length > 0 && (
+    <section class="section" aria-labelledby="earlier">
+      <h2 class="section-title" id="earlier">Earlier</h2>
+      <div class="list">
+        {earlier.map((project) => (
+          <Row meta={`No. ${formatCatalogueNumber(project.number)} · ${project.date.getUTCFullYear()}`}>
+            <a href={`/projects/${project.slug}`}>{project.frontmatter.title}</a>
+            <span class="muted"> — {project.frontmatter.description}</span>
+          </Row>
+        ))}
+      </div>
+    </section>
+  )}
 </Layout>

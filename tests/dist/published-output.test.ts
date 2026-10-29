@@ -43,69 +43,155 @@ describe('built site', () => {
 
   // Page-structure checks are added by later tasks below this line.
 
-  it('test_render_contact_section_offers_cv_on_request_and_linkedin_fallback', () => {
-    const home = page('index.html')
-    expect(home).toContain('CV available on request.')
-    expect(home).toContain('data-fallback="https://www.linkedin.com/in/shunamaekawa"')
-    expect(home).not.toContain('data-email')
+  it('test_render_contact_page_offers_cv_on_request_and_linkedin_fallback', () => {
+    const contact = page('contact/index.html')
+    expect(contact).toContain('CV available on request.')
+    expect(contact).toContain('data-fallback="https://www.linkedin.com/in/shunamaekawa"')
+    expect(contact).not.toContain('data-email')
   })
 
-  it('test_render_home_header_orders_strengths_availability_then_summary', () => {
+  it('test_render_every_page_header_links_nav_and_social_profiles', () => {
+    for (const file of ['index.html', 'about/index.html', 'contact/index.html', 'blog/index.html', '404.html']) {
+      const html = page(file)
+      for (const href of [
+        'href="/"',
+        'href="/about"',
+        'href="/blog"',
+        'href="/contact"',
+        'href="https://www.linkedin.com/in/shunamaekawa"',
+        'href="https://github.com/fairy-pitta"',
+      ]) {
+        expect(html, `${file} ${href}`).toContain(href)
+      }
+    }
+    expect(page('about/index.html')).toMatch(/href="\/about" aria-current="page"/)
+  })
+
+  it('test_render_home_opens_with_name_pitch_and_availability', () => {
     const home = page('index.html')
-    const strengths = home.indexOf('Designs LLM agents and the evaluation that keeps them reliable')
+    const name = home.indexOf('Shuna Maekawa <span class="handle">')
+    const pitch = home.indexOf('I design LLM agents and AWS systems')
     const availability = home.indexOf('Available from April 2027')
-    const summary = home.indexOf('Solutions architect and software engineer in Singapore.')
-    expect(strengths).toBeGreaterThan(-1)
+    const firstCard = home.indexOf('class="specimen')
+    expect(name).toBeGreaterThan(-1)
+    expect(pitch).toBeGreaterThan(name)
+    expect(availability).toBeGreaterThan(pitch)
+    expect(firstCard).toBeGreaterThan(availability)
+  })
+
+  it('test_render_home_lists_job_projects_before_personal_projects', () => {
+    const home = page('index.html')
+    const jobCards = home.match(/<a class="specimen specimen-job" href="\/about#[a-z0-9-]+"/g) ?? []
+    expect(jobCards).toHaveLength(3)
+    expect(home).toContain('>INTERNAL</span>')
+    const personalCards = home.match(/<a class="specimen" href="\/projects\/[^"]+"/g) ?? []
+    expect(personalCards).toHaveLength(6)
+    expect(home.indexOf('>At work</h2>')).toBeLessThan(home.indexOf('>Personal projects</h2>'))
+    expect(home).toContain('<dt>Stack</dt>')
+    expect(home).toContain('class="specimen-note"')
+  })
+
+  it('test_render_home_lists_earlier_projects_as_rows_not_cards', () => {
+    const home = page('index.html')
+    const earlier = home.slice(home.indexOf('>Earlier</h2>'))
+    expect(earlier).toContain('href="/projects/GameOfLife"')
+    expect(earlier).toContain('href="/projects/SGBirdCall"')
+    expect(earlier).toContain('href="/projects/HotspotMap"')
+    expect(earlier).not.toContain('class="specimen')
+  })
+
+  it('test_render_about_gives_each_client_project_the_anchor_its_card_links_to', () => {
+    const about = page('about/index.html')
+    for (const id of ['finance-saas', 'document-ai', 'tuition-ops']) {
+      expect(about).toMatch(new RegExp(`<details class="job experience-project" id="${id}"`))
+    }
+  })
+
+  it('test_render_home_cover_videos_autoplay_muted_and_looping', () => {
+    const videos = page('index.html').match(/<video[^>]*>/g) ?? []
+    expect(videos.length).toBeGreaterThan(0)
+    for (const video of videos) {
+      for (const attr of ['autoplay', 'muted', 'loop', 'playsinline', 'poster=']) expect(video).toContain(attr)
+    }
+  })
+
+  it('test_render_about_header_orders_summary_strengths_then_availability', () => {
+    const about = page('about/index.html')
+    const summary = about.indexOf('Software engineer and project manager in Singapore.')
+    const strengths = about.indexOf('Designs LLM agents and the evaluation that keeps them reliable')
+    const availability = about.indexOf('Available from April 2027')
+    expect(summary).toBeGreaterThan(-1)
+    expect(strengths).toBeGreaterThan(summary)
     expect(availability).toBeGreaterThan(strengths)
-    expect(summary).toBeGreaterThan(availability)
   })
 
   it('test_render_current_job_returns_three_closed_project_accordions_with_four_parts', () => {
-    const home = page('index.html')
-    const openings = home.match(/<details class="job experience-project"[^>]*>/g) ?? []
+    const about = page('about/index.html')
+    const openings = about.match(/<details class="job experience-project"[^>]*>/g) ?? []
     expect(openings).toHaveLength(3)
     for (const opening of openings) expect(opening).not.toMatch(/\sopen\b/)
     for (const heading of ['Problem', 'My role', 'Key decisions', 'Outcome']) {
-      const count = (home.match(new RegExp(`<dt[^>]*>${heading}</dt>`, 'g')) ?? []).length
+      const count = (about.match(new RegExp(`<dt[^>]*>${heading}</dt>`, 'g')) ?? []).length
       expect(count, heading).toBe(3)
     }
   })
 
-  it('test_render_projects_nests_them_inside_current_job_in_experience', () => {
-    const home = page('index.html')
-    const experience = home.indexOf('>Experience</h2>')
-    const currentJob = home.indexOf('A software company in Singapore, part of a Japanese group')
-    const firstProject = home.indexOf('<details class="job experience-project"')
-    const nextJob = home.indexOf('Mandai Wildlife Group')
-    expect(experience).toBeGreaterThan(-1)
-    expect(currentJob).toBeGreaterThan(experience)
+  it('test_render_history_nests_client_projects_inside_current_job', () => {
+    const about = page('about/index.html')
+    const history = about.indexOf('>History</h2>')
+    const currentJob = about.indexOf('A software company in Singapore, part of a Japanese group')
+    const firstProject = about.indexOf('<details class="job experience-project"')
+    const nextEntry = about.indexOf('Mandai Wildlife Group')
+    expect(history).toBeGreaterThan(-1)
+    expect(currentJob).toBeGreaterThan(history)
     expect(firstProject).toBeGreaterThan(currentJob)
-    expect(nextJob).toBeGreaterThan(firstProject)
+    expect(nextEntry).toBeGreaterThan(firstProject)
+    expect(about).toContain('Yale-NUS College')
   })
 
-  it('test_render_home_without_case_studies_section_returns_no_mention', () => {
-    for (const file of ['index.html', 'llms.txt']) {
+  it('test_render_pages_without_case_studies_section_returns_no_mention', () => {
+    for (const file of ['index.html', 'about/index.html', 'llms.txt']) {
       expect(page(file).toLowerCase(), file).not.toMatch(/case[ -]stud/)
     }
   })
 
-  it('test_render_side_projects_returns_five_closed_accordions_with_links', () => {
-    const home = page('index.html')
-    const openings = home.match(/<details class="job side-project"[^>]*>/g) ?? []
-    expect(openings).toHaveLength(5)
-    for (const opening of openings) expect(opening).not.toMatch(/\sopen\b/)
-    expect(home).toContain('href="https://sgbirdsmap.fairy-pitta.net"')
-    expect(home).toContain('href="https://github.com/fairy-pitta/SGBirdMap"')
-    expect(home).toContain('href="https://qiita.com/Pitta/items/4a6537a3450aa6f8f050"')
-    expect(home).toContain('href="https://github.com/fairy-pitta/code-annotator"')
-    expect(home).toContain('>Side projects</h2>')
+  it('test_render_project_page_shows_links_and_specimen_label', () => {
+    const map = page('projects/SBBirdMap/index.html')
+    expect(map).toContain('href="https://sgbirdsmap.fairy-pitta.net"')
+    expect(map).toContain('href="https://github.com/fairy-pitta/SGBirdMap"')
+    expect(map).toContain('<dt>Built</dt>')
+    expect(page('projects/Portree/index.html')).toContain('href="https://qiita.com/Pitta/items/4a6537a3450aa6f8f050"')
   })
 
-  it('test_render_home_and_404_without_blog_link_keeps_blog_page_built', () => {
-    for (const file of ['index.html', '404.html']) {
-      expect(page(file), file).not.toMatch(/href="\/blog/)
+  it('test_request_old_projects_index_redirects_to_home', () => {
+    expect(page('projects/index.html')).toMatch(/url=\//)
+  })
+
+  it('test_render_writing_page_lists_qiita_articles_and_no_drafts', () => {
+    const writing = page('blog/index.html')
+    expect(writing).toContain('Qiita ↗')
+    expect(existsSync(join(DIST, 'blog', 'why-i-built-portree'))).toBe(false)
+  })
+
+  it('test_render_every_page_uses_the_same_frame_width', () => {
+    for (const file of ['index.html', 'about/index.html', 'contact/index.html', 'projects/Portree/index.html']) {
+      expect(page(file), file).toContain('<div class="page">')
     }
-    expect(page('index.html')).not.toContain('>Writing</h2>')
-    expect(existsSync(join(DIST, 'blog', 'index.html'))).toBe(true)
+    expect(page('index.html')).toContain('<main class="content">')
+    expect(page('about/index.html')).toContain('<main class="content content-reading">')
+  })
+
+  it('test_render_tab_titles_use_the_handle', () => {
+    expect(page('index.html')).toContain('<title>fairy-pitta</title>')
+    expect(page('about/index.html')).toContain('<title>About — fairy-pitta</title>')
+    expect(page('projects/Portree/index.html')).toContain('<title>portree — fairy-pitta</title>')
+    for (const file of ['index.html', 'about/index.html', 'contact/index.html', 'blog/index.html', '404.html']) {
+      expect(page(file).match(/<title>([^<]*)<\/title>/)?.[1], file).not.toContain('Shuna Maekawa')
+    }
+  })
+
+  it('test_render_contact_page_points_to_linkedin_first', () => {
+    const contact = page('contact/index.html')
+    expect(contact.indexOf('You can message me on')).toBeLessThan(contact.indexOf('id="contact-form"'))
   })
 })

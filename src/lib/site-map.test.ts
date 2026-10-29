@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { HOME, absoluteUrl, blogEntries, indexablePages, projectEntries } from './site-map'
+import { HOME, INDEX_PAGES, absoluteUrl, blogEntries, indexablePages, projectEntries } from './site-map'
 
 const SITE = 'https://fairy-pitta.net'
 
@@ -38,7 +38,9 @@ describe('indexablePages', () => {
   it('test_read_pages_returns_home_and_index_pages', () => {
     const paths = indexablePages().map((entry) => entry.path)
     expect(paths).toContain('/')
-    expect(paths).toContain('/projects/')
+    expect(paths).toContain('/about/')
+    expect(paths).toContain('/contact/')
+    expect(paths).not.toContain('/projects/')
     expect(paths).toContain('/blog/')
   })
 
@@ -55,9 +57,16 @@ describe('indexablePages', () => {
 })
 
 describe('HOME', () => {
-  it('test_read_home_description_names_project_details_and_side_projects', () => {
-    expect(HOME.description).toContain('project details')
+  it('test_read_home_description_names_the_project_list', () => {
+    expect(HOME.description).toContain('personal project')
     expect(HOME.description.toLowerCase()).not.toContain('case stud')
-    expect(HOME.description).toContain('side projects')
+  })
+})
+
+describe('INDEX_PAGES', () => {
+  it('test_read_about_description_names_history_and_job_project_details', () => {
+    const about = INDEX_PAGES.find((entry) => entry.path === '/about/')
+    expect(about?.description).toContain('history')
+    expect(about?.description).toContain('details of projects from my job')
   })
 })

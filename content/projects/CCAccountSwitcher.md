@@ -1,38 +1,41 @@
 ---
-title: "CC Account Switcher — Multi-Account Switcher for Claude Code"
-description: "A shell CLI that manages and switches between multiple Claude Code accounts on macOS, Linux and WSL, distributed via Homebrew and npm."
+title: "CC Account Switcher"
+description: "A shell CLI that keeps several Claude Code accounts on one machine and switches between them."
 date: "20 Jun, 2026"
 coverImage: "/projects/cc-account-switcher/demo.mp4"
 tags: ["CLI Tool", "Bash", "Claude Code", "Homebrew", "npm"]
-featured: true
-order: 5
-liveUrl: "https://www.npmjs.com/package/@fairy-pitta/cc-account-switcher"
+stack: "Terminal · Bash"
+highlight: "A single Bash script, released on Homebrew and npm"
 githubUrl: "https://github.com/fairy-pitta/cc-account-switcher"
+packageUrl: "https://www.npmjs.com/package/@fairy-pitta/cc-account-switcher"
 gallery: [
   "/projects/cc-account-switcher/install.mp4"
 ]
-name: "CC Account Switcher"
-technicalPoint: "A single Bash 3.2 script, so it runs on the stock macOS shell with no extra dependencies. A switch that fails halfway rolls back automatically, and credentials are kept in the macOS keychain or in protected files on Linux and WSL."
 ---
 
-## Overview
+## Background
 
-CC Account Switcher manages several Claude Code accounts on one machine and switches between them without touching themes, settings or history. It started as a fork of [ming86/cc-account-switcher](https://github.com/ming86/cc-account-switcher); I now maintain it and wrote most of the current code.
+Claude Code keeps one signed-in account per machine. I use a work account and a personal account on the same laptop, and switching meant signing out and back in each time.
+
+CC Account Switcher stores several accounts and switches between them. Themes, settings and history stay as they are. It started as a fork of [ming86/cc-account-switcher](https://github.com/ming86/cc-account-switcher). I now maintain it and wrote most of the current code.
 
 ## What it does
 
-- Add, remove and list accounts; switch by number, email or a named profile such as `work` or `personal`
-- Map directories to accounts and switch automatically on `cd`
-- Switch accounts automatically when a usage limit is hit, using a Claude Code hook
-- Preview a switch with `--dry-run`, and roll back automatically if a switch fails halfway
-- Store credentials in the macOS keychain, or in protected files on Linux and WSL
+- Add, remove and list accounts, and switch by number, email or a profile name such as `work`
+- Switch automatically when you `cd` into a directory mapped to an account
+- Switch automatically when a usage limit is hit, using a Claude Code hook
+- Show what a switch would change with `--dry-run`
+- The CLI and docs are also available in Japanese
 
-## Engineering
+## Design
 
-- A single Bash 3.2+ script, so it runs on the stock macOS shell without extra dependencies
-- A [bats](https://github.com/bats-core/bats-core) test suite covering concurrency, isolation and platform differences, run in GitHub Actions
-- Release pipeline that publishes to GitHub Releases, a Homebrew tap and npm
-- Japanese localisation of the CLI and docs
+It is one script that runs on Bash 3.2, the version that ships with macOS, so it needs nothing else installed.
+
+If a switch fails partway through, it restores the previous account.
+
+Credentials are kept in the macOS keychain. On Linux and WSL they are kept in files that only the user can read.
+
+Tests are written with [bats](https://github.com/bats-core/bats-core) and run in GitHub Actions. They cover concurrent runs, keeping accounts separate, and differences between platforms.
 
 ## Install
 

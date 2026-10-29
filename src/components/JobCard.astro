@@ -1,0 +1,21 @@
+---
+import type { CvProject } from '../data/cv';
+import Stamp from './Stamp.astro';
+
+interface Props {
+  project: CvProject;
+}
+
+const { project } = Astro.props;
+---
+
+<a class="specimen specimen-job" href={`/about#${project.id}`}>
+  <Stamp label={project.internal ? 'INTERNAL' : 'CLIENT'} />
+  <span class="specimen-name">{project.title}</span>
+  <span class="specimen-desc">{project.summary}</span>
+  <span class="specimen-note">{project.highlight}</span>
+  <dl class="specimen-label">
+    <dt>Role</dt><dd>{project.roleLabel}</dd>
+    <dt>Stack</dt><dd>{project.tags.join(' · ')}</dd>
+  </dl>
+</a>

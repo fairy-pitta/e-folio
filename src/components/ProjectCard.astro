@@ -1,0 +1,56 @@
+---
+import {
+  formatCatalogueNumber,
+  formatMonthYear,
+  projectStatus,
+  type Project,
+} from '../lib/content';
+import { resolveMedia } from '../lib/media';
+import { projectStars } from '../lib/github';
+import Stamp from './Stamp.astro';
+import MediaElement from './MediaElement.astro';
+
+interface Props {
+  project: Project;
+  // The first row of cards is above the fold, so its media loads eagerly.
+  priority?: boolean;
+}
+
+const { project, priority = false } = Astro.props;
+const { frontmatter } = project;
+const cover = frontmatter.coverImage?.trim();
+const media = cover ? await resolveMedia(cover) : undefined;
+const stars = await projectStars(frontmatter.githubUrl);
+---
+
+<a class="specimen" href={`/projects/${project.slug}`}>
+  {media && (
+    <span class="specimen-media">
+      <MediaElement media={media} alt="" priority={priority} />
+    </span>
+  )}
+  <Stamp label={projectStatus(frontmatter)} />
+  <span class="specimen-name">{frontmatter.title}</span>
+  <span class="specimen-desc">{frontmatter.description}</span>
+  {frontmatter.highlight && <span class="specimen-note">{frontmatter.highlight}</span>}
+  <dl class="specimen-label">
+    <dt>No.</dt><dd>{formatCatalogueNumber(project.number)}</dd>
+    <dt>Built</dt><dd>{formatMonthYear(project.date)}</dd>
+    {frontmatter.stack && <><dt>Stack</dt><dd>{frontmatter.stack}</dd></>}
+    {stars && <><dt>Stars</dt><dd>{stars}</dd></>}
+  </dl>
+</a>
+
+<script>
+  // Looping covers stand still for readers who ask for less motion.
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  function apply() {
+    for (const video of document.querySelectorAll<HTMLVideoElement>('.specimen video')) {
+      if (reduce.matches) video.pause();
+      else void video.play().catch(() => {});
+    }
+  }
+  // The router swaps pages without reloading, so re-apply on every arrival.
+  document.addEventListener('astro:page-load', apply);
+  reduce.addEventListener('change', apply);
+</script>

@@ -1,5 +1,6 @@
 ---
 import { resolveMedia } from '../lib/media';
+import MediaElement from './MediaElement.astro';
 
 interface Props {
   src: string;
@@ -14,28 +15,5 @@ const media = await resolveMedia(src);
 ---
 
 <figure class="figure">
-  {media.kind === 'video' ? (
-    <video
-      src={media.src}
-      poster={media.poster}
-      width={media.width}
-      height={media.height}
-      autoplay
-      muted
-      loop
-      playsinline
-      preload={priority ? 'auto' : 'metadata'}
-      aria-label={alt}
-    />
-  ) : (
-    <img
-      src={media.src}
-      alt={alt}
-      width={media.width}
-      height={media.height}
-      loading={priority ? 'eager' : 'lazy'}
-      fetchpriority={priority ? 'high' : 'low'}
-      decoding="async"
-    />
-  )}
+  <MediaElement media={media} alt={alt} priority={priority} />
 </figure>

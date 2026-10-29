@@ -1,0 +1,39 @@
+---
+import type { Media } from '../lib/media';
+
+interface Props {
+  media: Media;
+  // Empty for decorative media, such as a card cover next to its own title.
+  alt: string;
+  // Above the fold: load eagerly and ahead of other images.
+  priority?: boolean;
+}
+
+const { media, alt, priority = false } = Astro.props;
+---
+
+{media.kind === 'video' ? (
+  <video
+    src={media.src}
+    poster={media.poster}
+    width={media.width}
+    height={media.height}
+    autoplay
+    muted
+    loop
+    playsinline
+    preload={priority ? 'auto' : 'metadata'}
+    aria-label={alt || undefined}
+    aria-hidden={alt ? undefined : 'true'}
+  />
+) : (
+  <img
+    src={media.src}
+    alt={alt}
+    width={media.width}
+    height={media.height}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : 'low'}
+    decoding="async"
+  />
+)}

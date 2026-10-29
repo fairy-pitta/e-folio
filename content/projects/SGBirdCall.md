@@ -1,9 +1,12 @@
 ---
-title: "Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz"
-description: "An interactive quiz web app to test out your bird call knowledge"
+title: "SingBirds Call Quiz"
+description: "A quiz that plays a real recording and its spectrogram, and asks which Singapore bird it is."
 date: "Oct 15, 2024"
 coverImage: "/projects/callquiz/CallQuiz_main.webp"
 tags: ["React", "Django", "Birds"]
+stack: "Browser · React, Django"
+highlight: "Recordings from Xeno-canto, with spectrograms made by librosa"
+earlier: true
 gallery: [
   "/projects/callquiz/CallQuiz_correct.webp",
   "/projects/callquiz/CallQuiz_home.webp",
@@ -12,73 +15,20 @@ gallery: [
 ]
 ---
 
-# Learning Singapore’s Birds by Ear: A Look at the SingBirds Call Quiz
+## About
 
-## Overview
+A quiz for learning Singapore's birds by their calls. Each question plays a recording and shows its spectrogram, and you pick the species from a list. After answering you see a description and a photo of the bird, and at the end a summary of your score.
 
-SingBirds Call Quiz is an interactive web application that challenges players to identify bird species by their songs. The game is centered around birds found in **Singapore**, making it both a fun and educational experience.
+You can choose a birding hotspot and the number of questions.
 
-Players view a **spectrogram** of a bird call and listen to the audio recording before choosing the correct bird species from multiple-choice options. After submitting an answer, they can view detailed information and a photo of the bird.
+## Data
 
----
+- eBird API: the hotspots in Singapore, and the species seen at each one in the previous 30 days. The species list is a snapshot from October 2024.
+- Xeno-canto API: the recordings, limited to quality A and 30 seconds or less.
+- Wikipedia API: the descriptions and photos.
 
-## Features
+## Stack
 
-- 🎧 **Bird Call Audio**: Listen to real bird recordings.
-- 📈 **Spectrogram Display**: Visualize bird calls using spectrograms.
-- ❓ **Multiple-Choice Questions**: Pick the correct species from a list of options.
-- 📝 **Detailed Feedback**:
-  - See which birds you identified correctly or incorrectly.
-  - Access bird information via Wikipedia API after answering.
-  - View bird images dynamically pulled from Wikipedia.
-- 🌎 **Hotspot and Country Selection**: Select specific countries (currently only Singapore) and birding hotspots.
-- 🎚️ **Adjustable Quiz Settings**: Set the number of questions.
-- 📊 **Quiz Result Summary**: Review your score, accuracy, and species performance.
+React and Tailwind CSS on the front end, Django REST Framework on the back end. Spectrograms are made with librosa and Matplotlib.
 
----
-
-## Tech Stack
-
-### Frontend
-- [React](https://react.dev/)
-- [Tailwind CSS](https://tailwindcss.com/) for styling
-
-### Backend
-- [Django](https://www.djangoproject.com/) with Django REST Framework
-- Custom APIs serving species lists, hotspot data, and bird observation records
-
-### Audio Processing
-- [Librosa](https://librosa.org/) for audio analysis
-- [Matplotlib](https://matplotlib.org/) for spectrogram generation
-
----
-
-## Data Sources
-
-- **eBird API**:
-  - Retrieves Singapore hotspots
-  - Gets bird species observed at hotspots over the past 30 days (snapshot taken in October)
-
-- **Xeno-Canto API**:
-  - Provides bird song recordings
-  - Filters recordings with **Quality A** and durations between **0–30 seconds**
-
-- **Wikipedia API**:
-  - Fetches species descriptions and images dynamically
-
----
-
-## App Flow
-
-1. Player selects a country (currently only Singapore) and a hotspot.
-2. App retrieves a list of birds based on recent observations (snapshot taken in Oct 2024).
-3. Spectrogram and audio are displayed.
-4. Player submits an answer.
-5. App shows feedback, Wikipedia information, and bird photo.
-6. After the quiz, a final score and breakdown are shown.
-
-
-
-Made with ❤️ for bird lovers around the world.
-
-
+The quiz is no longer online.
