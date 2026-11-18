@@ -107,19 +107,26 @@ const DEMOS = {
     url: 'https://spectrogram.fairy-pitta.net/',
     out: 'projects/printable-spectrogram/spectrogram-demo.mp4',
     async play(page, { audio }) {
+      // Hold on the empty state for a moment, so the upload is visible.
+      await page.waitForTimeout(1000)
       const upload = page.getByText('Upload Audio File').first()
       const box = await upload.boundingBox()
       await glide(page, box.x + box.width / 2, box.y + box.height / 2)
       await page.waitForTimeout(400)
       await page.locator('input[type=file]').setInputFiles(audio)
-      await page.waitForTimeout(3500)
-      // Change the colour map, so the figure visibly redraws.
-      const colours = page.locator('select').filter({ has: page.locator('option[value=magma]') }).first()
-      await colours.scrollIntoViewIfNeeded({ timeout: 5000 })
-      await colours.selectOption('magma', { timeout: 5000 })
-      await page.waitForTimeout(2500)
-      await colours.selectOption('grayscale', { timeout: 5000 })
-      await page.waitForTimeout(2500)
+      await page.waitForTimeout(3000)
+      // Change the colour map, so the figure visibly redraws. It is a segmented
+      // control: radio inputs inside labels, so click the visible label.
+      const pick = async (name) => {
+        const item = page.locator('label.segmented-item').filter({ has: page.locator(`input[type=radio][value=${name.toLowerCase()}]`) }).first()
+        await item.scrollIntoViewIfNeeded({ timeout: 5000 })
+        const b = await item.boundingBox()
+        await glide(page, b.x + b.width / 2, b.y + b.height / 2, 20)
+        await item.click({ timeout: 5000 })
+        await page.waitForTimeout(2200)
+      }
+      await pick('Magma')
+      await pick('Grayscale')
     },
   },
 }
