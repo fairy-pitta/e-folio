@@ -1,0 +1,30 @@
+---
+// A plain, drawn desktop monitor with one window on it: a terminal for command
+// line tools, a browser for everything else. It is not modelled on any real
+// product: a dark bezel, a soft wallpaper and a stand.
+
+interface Props {
+  variant: 'terminal' | 'browser';
+  // The terminal's title ("zsh — portree") or the browser's address.
+  title: string;
+  // Smaller bezel and stand, and a fixed window shape, for the home page's cards.
+  compact?: boolean;
+}
+
+const { variant, title, compact = false } = Astro.props;
+---
+
+<div class:list={['screen', `screen-${variant}`, { 'screen-compact': compact }]}>
+  <div class="screen-bezel">
+    <div class="screen-display">
+      <div class="screen-window">
+        <div class="screen-bar" aria-hidden="true">
+          <span class="screen-dots"><i></i><i></i><i></i></span>
+          <span class="screen-title">{title}</span>
+        </div>
+        <div class="screen-content"><slot /></div>
+      </div>
+    </div>
+  </div>
+  <div class="screen-stand" aria-hidden="true"></div>
+</div>

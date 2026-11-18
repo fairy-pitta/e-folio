@@ -1,0 +1,92 @@
+/* Home page only. Shared colours and type live in site.css. */
+
+/* Hero: the name, one statement, and a bird call drawn as a spectrogram. */
+.hero {
+  display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); gap: var(--space-6) 48px; align-items: center;
+  padding: var(--space-6) 0 var(--space-2);
+}
+.hero-name { margin: 0 0 var(--space-5); font-size: var(--text-base); font-weight: var(--weight-heading); letter-spacing: var(--tracking-body); }
+.hero-statement {
+  margin: 0; font-size: var(--text-display); font-weight: var(--weight-display); text-wrap: balance;
+  line-height: var(--leading-tight); letter-spacing: var(--tracking-display);
+}
+.hero-statement > span { display: block; }
+.hero-statement em { font-style: normal; color: var(--accent); }
+.intro-pitch {
+  margin: var(--space-5) 0 0; max-width: 30em; color: var(--muted);
+  font-size: var(--text-lg); line-height: var(--leading-snug); letter-spacing: var(--tracking-body);
+}
+
+.call { margin: 0; }
+.call-plot { display: block; width: 100%; height: auto; }
+.call-cell { fill: var(--fg); opacity: calc(.06 + var(--a) * .9); }
+.call-peak { fill: var(--accent); }
+.call-caption {
+  display: flex; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-3); padding-top: var(--space-2);
+  border-top: var(--rule); font-family: var(--mono); font-size: var(--text-xs); color: var(--faint);
+}
+
+.hero-label { grid-column: 1 / -1; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.availability-badge { display: inline-flex; align-items: center; gap: var(--space-2); }
+.pulse { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2.4s ease-out infinite; }
+
+/* About, with the site laid out as a folder tree beside it. */
+.about {
+  display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: var(--space-6) var(--space-7); align-items: start;
+  margin-top: var(--space-7);
+}
+.about-text { margin: 0; max-width: 36em; font-size: var(--text-lg); line-height: var(--leading-snug); letter-spacing: var(--tracking-body); }
+.about-text [data-scramble] { font-variant-ligatures: none; }
+.about .actions { margin-top: var(--space-5); }
+
+.tree { font-family: var(--mono); font-size: var(--text-sm); line-height: 1; }
+.tree a { display: inline-block; padding: 6px 0; color: var(--muted); text-decoration: none; transition: color var(--dur-fast) ease; }
+.tree a:hover { color: var(--fg); }
+.tree-root { color: var(--fg) !important; }
+.tree-root::before {
+  content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 10px; border-radius: 50%;
+  background: var(--accent); vertical-align: middle;
+}
+.tree ul { list-style: none; margin: 0; padding: 0 0 0 3px; }
+.tree ul ul { padding-left: 22px; }
+/* Each entry gets a short branch off the vertical line on its left. */
+.tree li { position: relative; padding-left: 22px; }
+.tree li::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; border-left: var(--rule); }
+.tree li:last-child::before { bottom: auto; height: 14px; }
+.tree li::after { content: ""; position: absolute; left: 0; top: 14px; width: 14px; border-top: var(--rule); }
+.tree ul ul a { color: var(--faint); }
+.tree a[aria-current] { color: var(--accent); }
+.tree a[aria-current]::after { content: " ←"; }
+
+@media (max-width: 860px) {
+  .hero { grid-template-columns: 1fr; }
+  .call { max-width: 520px; }
+  .hero-label { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 760px) {
+  .about { grid-template-columns: 1fr; }
+}
+/* The home page's sections are further apart than a reading page's. */
+.section { margin-top: var(--space-8); }
+@media (max-width: 520px) {
+  .hero { padding-top: var(--space-2); }
+  .section { margin-top: var(--space-7); }
+}
+
+/* Motion. Everything here is decoration, so readers who ask for less get none. */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-statement > span.rise { display: block; }
+  /* The call plays left to right, one column of the spectrogram at a time. */
+  .call-cell { animation: cell .5s ease-out both; animation-delay: calc(400ms + var(--c) * 28ms); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pulse { animation: none; }
+  .call-cell { animation: none; }
+}
+@keyframes cell {
+  from { opacity: 0; }
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 8px transparent; }
+}

@@ -1,7 +1,6 @@
 ---
-import '@fontsource/newsreader/latin-400.css';
-import '@fontsource/ibm-plex-mono/latin-400.css';
-import '@fontsource/ibm-plex-mono/latin-500.css';
+import '@fontsource-variable/geist';
+import '@fontsource-variable/geist-mono';
 import '../styles/site.css';
 import { ClientRouter } from 'astro:transitions';
 import { getAllBlogPosts } from '../lib/content';
@@ -97,7 +96,7 @@ const SOCIAL_ICONS: Record<string, string> = {
   <body>
     <div class="page">
       <header class="site-header" transition:animate="none">
-        <a class="site-name" href="/"><PittaMark />fairy pitta</a>
+        <a class="site-name" href="/"><PittaMark /><span>fairy pitta</span></a>
         <nav class="site-nav" aria-label="Main">
           {NAV.map((item) => (
             <a href={item.href} aria-current={item.matches(currentPath) ? 'page' : undefined}>{item.label}</a>
@@ -125,7 +124,6 @@ const SOCIAL_ICONS: Record<string, string> = {
               <path d="M20.8 13.4A8.5 8.5 0 1 1 10.6 3.2a7 7 0 0 0 10.2 10.2z"></path>
             </svg>
           </span>
-          <span id="theme-label"></span>
         </button>
       </header>
       <main class:list={['content', { 'content-reading': !wide }]}>
@@ -137,10 +135,10 @@ const SOCIAL_ICONS: Record<string, string> = {
     </div>
 
     <script>
+      import { setupMotion } from '../lib/motion';
       import { nextTheme, readStoredTheme, resolveTheme, storeTheme, toggleView, type Theme } from '../lib/theme';
 
       const button = document.getElementById('theme-toggle') as HTMLButtonElement | null;
-      const label = document.getElementById('theme-label');
       const icons = document.querySelectorAll<HTMLElement>('.theme-icon');
       const root = document.documentElement;
       const system = window.matchMedia('(prefers-color-scheme: dark)');
@@ -162,13 +160,16 @@ const SOCIAL_ICONS: Record<string, string> = {
       function render(theme: Theme) {
         if (!button) return;
         const view = toggleView(theme);
-        if (label) label.textContent = view.label;
         for (const icon of icons) icon.hidden = icon.dataset.icon !== view.target;
+        // An icon-only button: the name is announced, and shown on hover.
         button.setAttribute('aria-label', view.ariaLabel);
+        button.title = view.ariaLabel;
       }
 
       // The router builds each new page in a detached document, where videos fail
       // to load and never retry once inserted. Start any such video over.
+      document.addEventListener('astro:page-load', setupMotion);
+
       document.addEventListener('astro:page-load', () => {
         for (const video of document.querySelectorAll('video')) {
           if (video.error) video.load();

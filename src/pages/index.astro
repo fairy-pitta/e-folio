@@ -2,59 +2,210 @@
 import Layout from '../layouts/Layout.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import JobCard from '../components/JobCard.astro';
-import Row from '../components/Row.astro';
+import PittaMark from '../components/PittaMark.astro';
 import { cv } from '../data/cv';
-import { formatCatalogueNumber, getAllProjects } from '../lib/content';
+import { folderName, formatCatalogueNumber, getAllProjects } from '../lib/content';
+import '../styles/home.css';
 
 const projects = getAllProjects();
 const current = projects.filter((project) => !project.frontmatter.earlier);
 const earlier = projects.filter((project) => project.frontmatter.earlier);
 const jobProjects = cv.experience.flatMap((job) => job.projects ?? []);
+
+// The folders in the tree point at the sections below; the script marks the
+// one on screen. Files point at other pages.
+const tree = [
+  { label: 'about.md', href: '/about' },
+  {
+    label: 'work/',
+    href: '#job-projects',
+    section: 'job-projects',
+    children: jobProjects.map((project) => ({ label: project.id, href: `/about#${project.id}` })),
+  },
+  {
+    label: 'projects/',
+    href: '#personal-projects',
+    section: 'personal-projects',
+    children: current.map((project) => ({ label: folderName(project.slug), href: `/projects/${project.slug}` })),
+  },
+  ...(earlier.length > 0 ? [{ label: 'earlier/', href: '#earlier', section: 'earlier' }] : []),
+  { label: 'writing/', href: '/blog' },
+  { label: 'contact.ts', href: '/contact' },
+];
+
+const education = cv.education[0];
+
+// A sketch of a two-note bird call, drawn as a spectrogram: time runs left to
+// right, pitch bottom to top, and each cell's strength is how close it sits to
+// the call's pitch at that moment. Computed here so the page ships plain SVG.
+const COLS = 56;
+const ROWS = 14;
+function pitchAt(t: number): number | null {
+  // First note rises, a short gap, then a longer note that rises and falls.
+  if (t < 0.08 || (t > 0.36 && t < 0.46) || t > 0.94) return null;
+  if (t <= 0.36) return 3 + ((t - 0.08) / 0.28) * 7;
+  const u = (t - 0.46) / 0.48;
+  return 5 + Math.sin(u * Math.PI) * 6.5;
+}
+const cells = [] as { x: number; y: number; strength: number }[];
+for (let col = 0; col < COLS; col++) {
+  const pitch = pitchAt(col / (COLS - 1));
+  for (let row = 0; row < ROWS; row++) {
+    const distance = pitch === null ? 99 : Math.abs(row - pitch);
+    // A faint floor of noise everywhere, like a real recording.
+    const noise = ((col * 7 + row * 13) % 11) / 110;
+    const strength = Math.min(1, Math.max(noise, Math.exp(-(distance * distance) / 1.6)));
+    cells.push({ x: col, y: ROWS - 1 - row, strength });
+  }
+}
 ---
 
 <Layout wide>
-  <section class="intro">
-    <h1 class="display">{cv.name} <span class="handle">{cv.handle}</span></h1>
-    <p class="intro-pitch">{cv.pitch}</p>
-    <p class="intro-meta">
-      <span class="availability-badge">{cv.availability}</span>
-      <span>{cv.headline} · {cv.location}</span>
-    </p>
-    <p class="actions">
-      <a class="action action-primary" href="/about">About &amp; history</a>
-      <a class="action" href="/contact">Contact</a>
-    </p>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="hero-text">
+      <h1 class="hero-name rise" style="--i:0" id="hero-title">{cv.name} <span class="handle">{cv.handle}</span></h1>
+      <p class="hero-statement">
+        <span class="rise" style="--i:1">Agents and systems,</span>
+        <span class="rise" style="--i:2">from the <em>data model</em></span>
+        <span class="rise" style="--i:3">to delivery.</span>
+      </p>
+      <p class="intro-pitch rise" style="--i:4">{cv.pitch}</p>
+    </div>
+
+    <figure class="call">
+      <svg class="call-plot" viewBox={`0 0 ${COLS * 10} ${ROWS * 10}`} role="img" aria-label="A spectrogram sketch of a two-note bird call">
+        {cells.map((cell) => (
+          <rect
+            x={cell.x * 10 + 1}
+            y={cell.y * 10 + 1}
+            width="8"
+            height="8"
+            rx="2"
+            class:list={['call-cell', { 'call-peak': cell.strength > 0.8 }]}
+            style={`--a:${cell.strength.toFixed(2)};--c:${cell.x}`}
+          />
+        ))}
+      </svg>
+      <figcaption class="call-caption">
+        <span>Fairy pitta · call</span><span>0–2 s · 1–8 kHz</span>
+      </figcaption>
+    </figure>
+
+    <dl class="label-grid hero-label rise" style="--i:6">
+      <div><dt>Role</dt><dd>{cv.headline}</dd></div>
+      <div><dt>Based</dt><dd>{cv.location}</dd></div>
+      {education && <div><dt>Studied</dt><dd>Ecology · {education.school}</dd></div>}
+      <div><dt>Status</dt><dd><span class="availability-badge"><span class="pulse" aria-hidden="true"></span>{cv.availability}</span></dd></div>
+    </dl>
   </section>
 
-  <section class="section" aria-labelledby="job-projects">
-    <h2 class="section-title" id="job-projects">At work</h2>
-    <p class="section-note">Projects from my job, for clients and for the company. Client names and screenshots are left out.</p>
+  <section class="about" aria-labelledby="about-title">
+    <div class="about-main reveal">
+      <h2 class="eyebrow" id="about-title">About <PittaMark /></h2>
+      <p class="about-text">
+        <span class="sr-only">{cv.summary}</span>
+        <span aria-hidden="true" data-scramble>{cv.summary}</span>
+      </p>
+      <p class="actions">
+        <a class="action action-primary" href="/about">About &amp; history<span class="action-arrow" aria-hidden="true">→</span></a>
+        <a class="action" href="/contact">Contact<span class="action-arrow" aria-hidden="true">→</span></a>
+      </p>
+    </div>
+
+    <nav class="tree reveal" aria-label="On this site">
+      <a class="tree-root" href="/">{cv.handle}/</a>
+      <ul>
+        {tree.map((node) => (
+          <li>
+            <a href={node.href} data-section={node.section}>{node.label}</a>
+            {node.children && node.children.length > 0 && (
+              <ul>
+                {node.children.map((child) => (
+                  <li><a href={child.href}>{child.label}</a></li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </section>
+
+  <section class="section" aria-labelledby="job-projects" data-tree-section="job-projects">
+    <header class="section-head reveal">
+      <p class="eyebrow">01 · Work</p>
+      <h2 class="section-heading" id="job-projects">At work</h2>
+      <p class="section-note">Projects from my job, for clients and for the company. Client names and screenshots are left out.</p>
+    </header>
     <div class="specimens">
       {jobProjects.map((project) => <JobCard project={project} />)}
     </div>
   </section>
 
-  <section class="section" aria-labelledby="personal-projects">
-    <h2 class="section-title" id="personal-projects">Personal projects</h2>
-    <p class="section-note">
-      Newest first. The bird projects grew out of my ecology degree at Yale-NUS, where I studied bird calls.
-    </p>
+  <section class="section" aria-labelledby="personal-projects" data-tree-section="personal-projects">
+    <header class="section-head reveal">
+      <p class="eyebrow">02 · Projects</p>
+      <h2 class="section-heading" id="personal-projects">Personal projects</h2>
+      <p class="section-note">
+        Newest first. The bird projects grew out of my ecology degree at Yale-NUS, where I studied bird calls.
+      </p>
+    </header>
     <div class="specimens">
       {current.map((project, i) => <ProjectCard project={project} priority={i < 3} />)}
     </div>
   </section>
 
   {earlier.length > 0 && (
-    <section class="section" aria-labelledby="earlier">
-      <h2 class="section-title" id="earlier">Earlier</h2>
-      <div class="list">
+    <section class="section" aria-labelledby="earlier" data-tree-section="earlier">
+      <header class="section-head reveal">
+        <p class="eyebrow">03 · Archive</p>
+        <h2 class="section-heading" id="earlier">Earlier</h2>
+      </header>
+      <ul class="big-rows">
         {earlier.map((project) => (
-          <Row meta={`No. ${formatCatalogueNumber(project.number)} · ${project.date.getUTCFullYear()}`}>
-            <a href={`/projects/${project.slug}`}>{project.frontmatter.title}</a>
-            <span class="muted"> — {project.frontmatter.description}</span>
-          </Row>
+          <li class="reveal">
+            <a class="big-row" href={`/projects/${project.slug}`}>
+              <span class="big-row-title">{project.frontmatter.title}</span>
+              <span class="big-row-meta">
+                No. {formatCatalogueNumber(project.number)} · {project.date.getUTCFullYear()}
+                <span class="big-row-desc">{project.frontmatter.description}</span>
+              </span>
+              <span class="big-row-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 19 19 5M8 5h11v11"></path></svg>
+              </span>
+            </a>
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   )}
 </Layout>
+
+<script>
+  let active: IntersectionObserver | undefined;
+
+  // Mark the folder in the tree whose section is on screen.
+  function markTree() {
+    active?.disconnect();
+    const links = new Map<string, HTMLElement>();
+    for (const link of document.querySelectorAll<HTMLElement>('.tree [data-section]')) {
+      links.set(link.dataset.section!, link);
+    }
+    if (links.size === 0) return;
+    active = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const link = links.get((entry.target as HTMLElement).dataset.treeSection!);
+          if (!link) continue;
+          if (entry.isIntersecting) link.setAttribute('aria-current', 'location');
+          else link.removeAttribute('aria-current');
+        }
+      },
+      { rootMargin: '-45% 0px -45% 0px' },
+    );
+    for (const section of document.querySelectorAll('[data-tree-section]')) active.observe(section);
+  }
+
+  // The router swaps pages without reloading, so set up again on every arrival.
+  document.addEventListener('astro:page-load', markTree);
+</script>

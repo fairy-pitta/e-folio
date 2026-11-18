@@ -6,4 +6,4 @@ interface Props {
 const { label } = Astro.props;
 ---
 
-<span class:list={['stamp', `stamp-${label.toLowerCase()}`]}>{label}</span>
+<span class:list={['stamp', `stamp-${label.toLowerCase()}`]}><span class="stamp-dot" aria-hidden="true"></span>{label}</span>

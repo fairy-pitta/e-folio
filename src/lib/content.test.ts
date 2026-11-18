@@ -9,6 +9,9 @@ import {
   formatMonthYear,
   projectStatus,
   projectLinks,
+  folderName,
+  runsInTerminal,
+  screenTitle,
   type ProjectFrontmatter,
 } from './content'
 import { findForbidden } from './public-safety'
@@ -177,5 +180,33 @@ describe('project content', () => {
     for (const project of getAllProjects()) {
       expect(project.content, project.slug).not.toMatch(/\b\d+\s+(\[[^\]]+\]\([^)]+\)\s+)?tests\b/i)
     }
+  })
+})
+
+describe('folderName', () => {
+  it('splits_camel_case_and_acronyms_into_lowercase_words', () => {
+    expect(folderName('CCAccountSwitcher')).toBe('cc-account-switcher')
+    expect(folderName('SBBirdMap')).toBe('sb-bird-map')
+    expect(folderName('PseudocodeConverter')).toBe('pseudocode-converter')
+    expect(folderName('Portree')).toBe('portree')
+  })
+})
+
+describe('runsInTerminal', () => {
+  it('is_true_only_for_stacks_that_start_with_terminal', () => {
+    expect(runsInTerminal({ stack: 'Terminal · Go' })).toBe(true)
+    expect(runsInTerminal({ stack: 'Browser · Next.js' })).toBe(false)
+    expect(runsInTerminal({ stack: 'Browser · runs a terminal emulator' })).toBe(false)
+    expect(runsInTerminal({})).toBe(false)
+  })
+})
+
+describe('screenTitle', () => {
+  it('names_the_shell_for_terminal_tools_and_the_address_for_web_apps', () => {
+    expect(screenTitle('Portree', { stack: 'Terminal · Go' })).toBe('zsh — portree')
+    expect(screenTitle('GameOfLife', { stack: 'Browser', liveUrl: 'https://fairy-pitta.github.io/Game-Of-Life/' })).toBe(
+      'fairy-pitta.github.io/Game-Of-Life',
+    )
+    expect(screenTitle('HotspotMap', { stack: 'Browser' })).toBe('hotspot-map')
   })
 })

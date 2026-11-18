@@ -5,9 +5,13 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Page not found" description="This page does not exist.">
-  <h1 class="display">Page not found</h1>
-  <p class="summary">That page does not exist. It may have been renamed or removed.</p>
-  <p class="links">
-    <a href="/">Work</a> · <a href="/about">About</a>
-  </p>
+  <header class="page-head">
+    <p class="eyebrow eyebrow-path rise" style="--i:0"><a href="/">fairy-pitta</a>/404</p>
+    <h1 class="page-title rise" style="--i:1">Page not found</h1>
+    <p class="lead rise" style="--i:2">That page does not exist. It may have been renamed or removed.</p>
+    <p class="actions rise" style="--i:3">
+      <a class="action action-primary" href="/">Work<span class="action-arrow" aria-hidden="true">→</span></a>
+      <a class="action" href="/about">About<span class="action-arrow" aria-hidden="true">→</span></a>
+    </p>
+  </header>
 </Layout>

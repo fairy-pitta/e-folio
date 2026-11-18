@@ -3,12 +3,15 @@ import {
   formatCatalogueNumber,
   formatMonthYear,
   projectStatus,
+  runsInTerminal,
+  screenTitle,
   type Project,
 } from '../lib/content';
 import { resolveMedia } from '../lib/media';
 import { projectStars } from '../lib/github';
 import Stamp from './Stamp.astro';
 import MediaElement from './MediaElement.astro';
+import Screen from './Screen.astro';
 
 interface Props {
   project: Project;
@@ -21,12 +24,15 @@ const { frontmatter } = project;
 const cover = frontmatter.coverImage?.trim();
 const media = cover ? await resolveMedia(cover) : undefined;
 const stars = await projectStars(frontmatter.githubUrl);
+const variant = runsInTerminal(frontmatter) ? 'terminal' : 'browser';
 ---
 
 <a class="specimen" href={`/projects/${project.slug}`}>
   {media && (
     <span class="specimen-media">
-      <MediaElement media={media} alt="" priority={priority} />
+      <Screen variant={variant} title={screenTitle(project.slug, frontmatter)} compact>
+        <MediaElement media={media} alt="" priority={priority} />
+      </Screen>
     </span>
   )}
   <Stamp label={projectStatus(frontmatter)} />

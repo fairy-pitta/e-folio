@@ -1,7 +1,13 @@
 import satori from 'satori'
 import sharp from 'sharp'
 
-// Fonts are fetched only at build time; the site itself uses system fonts.
+// Fonts are fetched only at build time. They are the site's own typefaces,
+// Geist and Geist Mono, as TrueType files: satori cannot read the woff2 files
+// the site ships. The colours are the light theme's tokens from site.css.
+const BG = '#f5f5f7'
+const FG = '#1d1d1f'
+const FAINT = '#6e6e73'
+const ACCENT = '#1d6b52'
 const fontCache = new Map<string, ArrayBuffer>()
 
 async function loadGoogleFont(family: string, weight: number): Promise<ArrayBuffer> {
@@ -19,10 +25,7 @@ async function loadGoogleFont(family: string, weight: number): Promise<ArrayBuff
 }
 
 export async function generateOgImage(title: string): Promise<Buffer> {
-  const [regular, semibold] = await Promise.all([
-    loadGoogleFont('Inter', 400),
-    loadGoogleFont('Inter', 600),
-  ])
+  const [bold, mono] = await Promise.all([loadGoogleFont('Geist', 700), loadGoogleFont('Geist Mono', 400)])
 
   const svg = await satori(
     {
@@ -35,23 +38,41 @@ export async function generateOgImage(title: string): Promise<Buffer> {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '72px',
-          backgroundColor: '#ffffff',
-          color: '#1a1a1a',
-          fontFamily: 'Inter',
+          backgroundColor: BG,
+          color: FG,
+          fontFamily: 'Geist',
         },
         children: [
           {
             type: 'div',
             props: {
-              style: { fontSize: title.length > 60 ? '48px' : '60px', fontWeight: 600, lineHeight: 1.25 },
+              style: {
+                fontSize: title.length > 60 ? '52px' : '68px',
+                fontWeight: 700,
+                lineHeight: 1.1,
+                letterSpacing: '-0.04em',
+              },
               children: title,
             },
           },
           {
             type: 'div',
             props: {
-              style: { fontSize: '26px', fontWeight: 400, color: '#666666' },
-              children: 'Shuna Maekawa · fairy-pitta.net',
+              style: {
+                display: 'flex',
+                alignItems: 'center',
+                gap: '16px',
+                fontFamily: 'Geist Mono',
+                fontSize: '24px',
+                color: FAINT,
+              },
+              children: [
+                {
+                  type: 'div',
+                  props: { style: { width: '12px', height: '12px', borderRadius: '6px', backgroundColor: ACCENT } },
+                },
+                'Shuna Maekawa · fairy-pitta.net',
+              ],
             },
           },
         ],
@@ -62,8 +83,8 @@ export async function generateOgImage(title: string): Promise<Buffer> {
       width: 1200,
       height: 630,
       fonts: [
-        { name: 'Inter', data: regular, weight: 400, style: 'normal' },
-        { name: 'Inter', data: semibold, weight: 600, style: 'normal' },
+        { name: 'Geist', data: bold, weight: 700, style: 'normal' },
+        { name: 'Geist Mono', data: mono, weight: 400, style: 'normal' },
       ],
     },
   )

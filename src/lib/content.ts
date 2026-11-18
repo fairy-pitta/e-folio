@@ -161,3 +161,34 @@ export function projectLinks(frontmatter: ProjectFrontmatter): ProjectLink[] {
     .filter(([, , href]) => href?.trim())
     .map(([kind, label, href]) => ({ kind, label, href: href!.trim() }))
 }
+
+// A project's slug as a folder name, for the home page's tree and the path
+// above each project: "CCAccountSwitcher" → "cc-account-switcher".
+export function folderName(slug: string): string {
+  return slug
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1-$2')
+    .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
+    .toLowerCase()
+}
+
+// Terminal tools are shown in a drawn monitor, so a recording of a shell reads
+// as a screen rather than a black box.
+export function runsInTerminal(frontmatter: Pick<ProjectFrontmatter, 'stack'>): boolean {
+  return /^terminal\b/i.test(frontmatter.stack?.trim() ?? '')
+}
+
+// What a project's window shows in its title bar: the shell for a terminal
+// tool, otherwise the address it is served from, or its name if it has none.
+export function screenTitle(slug: string, frontmatter: Pick<ProjectFrontmatter, 'stack' | 'liveUrl'>): string {
+  if (runsInTerminal(frontmatter)) return `zsh — ${folderName(slug)}`
+  const live = frontmatter.liveUrl?.trim()
+  if (live) {
+    try {
+      const url = new URL(live)
+      return (url.host + url.pathname).replace(/\/$/, '')
+    } catch {
+      // Not a URL: fall through to the name.
+    }
+  }
+  return folderName(slug)
+}

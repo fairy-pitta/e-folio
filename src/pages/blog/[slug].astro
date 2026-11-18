@@ -17,9 +17,7 @@ interface Props {
 const { post } = Astro.props;
 const { frontmatter } = post;
 const html = await markdownToHtml(post.content);
-const meta = [formatDate(post.date), frontmatter.readTime, frontmatter.tags.join(', ')]
-  .filter(Boolean)
-  .join(' · ');
+const date = formatDate(post.date);
 ---
 
 <Layout
@@ -27,9 +25,18 @@ const meta = [formatDate(post.date), frontmatter.readTime, frontmatter.tags.join
   description={frontmatter.excerpt}
   ogImage={`/og/blog-${post.slug}.png`}
 >
-  <p class="crumb"><a href="/blog">Writing</a></p>
-  <h1>{frontmatter.title}</h1>
-  <p class="meta">{meta}</p>
+  <header class="page-head">
+    <p class="eyebrow eyebrow-path rise" style="--i:0">
+      <a href="/">fairy-pitta</a>/<a href="/blog">writing</a>/{post.slug}
+    </p>
+    <h1 class="page-title rise" style="--i:1">{frontmatter.title}</h1>
+    {frontmatter.excerpt && <p class="lead rise" style="--i:2">{frontmatter.excerpt}</p>}
+    <dl class="label-list rise" style="--i:3">
+      {date && <div><dt>Published</dt><dd>{date}</dd></div>}
+      {frontmatter.readTime && <div><dt>Reading time</dt><dd>{frontmatter.readTime}</dd></div>}
+      {frontmatter.tags.length > 0 && <div><dt>Tags</dt><dd>{frontmatter.tags.join(', ')}</dd></div>}
+    </dl>
+  </header>
   <article class="prose" set:html={html} />
   <p class="footer-nav">← <a href="/blog">All writing</a></p>
 </Layout>

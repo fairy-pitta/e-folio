@@ -1,35 +1,57 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import {
+  folderName,
   getAllProjects,
   formatCatalogueNumber,
   formatMonthYear,
   projectLinks,
   projectStatus,
+  runsInTerminal,
+  screenTitle,
   type Project,
 } from '../../lib/content';
 import { markdownToHtml } from '../../lib/markdown';
-import Figure from '../../components/Figure.astro';
+import Screen from '../../components/Screen.astro';
+import MediaElement from '../../components/MediaElement.astro';
+import { resolveMedia } from '../../lib/media';
 import Stamp from '../../components/Stamp.astro';
 import { projectStars } from '../../lib/github';
 
 export function getStaticPaths() {
-  return getAllProjects().map((project) => ({
+  // Newest first, as on the home page: "next" is the one made before this.
+  const projects = getAllProjects();
+  return projects.map((project, i) => ({
     params: { slug: project.slug },
-    props: { project },
+    props: { project, newer: projects[i - 1], older: projects[i + 1] },
   }));
 }
 
 interface Props {
   project: Project;
+  newer?: Project;
+  older?: Project;
 }
 
-const { project } = Astro.props;
+const { project, newer, older } = Astro.props;
+const pager = [
+  older && { label: 'Next', project: older },
+  newer && { label: 'Previous', project: newer },
+].filter((item): item is { label: string; project: Project } => Boolean(item));
 const { frontmatter } = project;
 const html = await markdownToHtml(project.content);
 const links = projectLinks(frontmatter);
 const stars = await projectStars(frontmatter.githubUrl);
 const gallery = (frontmatter.gallery ?? []).filter((src) => src.trim() !== '');
+const variant = runsInTerminal(frontmatter) ? 'terminal' : 'browser';
+const title = screenTitle(project.slug, frontmatter);
+const cover = frontmatter.coverImage?.trim();
+// Every screenshot and recording is shown on the drawn monitor.
+const shots = await Promise.all(
+  [cover, ...gallery]
+    .filter((src): src is string => Boolean(src))
+    .map(async (src, i) => ({ media: await resolveMedia(src), cover: Boolean(cover) && i === 0 })),
+);
 ---
 
 <Layout
@@ -37,36 +59,62 @@ const gallery = (frontmatter.gallery ?? []).filter((src) => src.trim() !== '');
   description={frontmatter.description}
   ogImage={`/og/project-${project.slug}.png`}
 >
-  <p class="crumb"><a href="/">Work</a> / No. {formatCatalogueNumber(project.number)}</p>
-  <h1 class="display">{frontmatter.title}</h1>
-  <p class="summary">{frontmatter.description}</p>
-  <dl class="specimen-label specimen-label-page">
-    <dt>No.</dt><dd>{formatCatalogueNumber(project.number)} <Stamp label={projectStatus(frontmatter)} /></dd>
-    <dt>Built</dt><dd>{formatMonthYear(project.date)}</dd>
-    {frontmatter.stack && <><dt>Stack</dt><dd>{frontmatter.stack}</dd></>}
-    {frontmatter.highlight && <><dt>Highlight</dt><dd>{frontmatter.highlight}</dd></>}
-    {stars && <><dt>Stars</dt><dd>{stars}</dd></>}
-    {frontmatter.tags.length > 0 && <><dt>Tags</dt><dd>{frontmatter.tags.join(', ')}</dd></>}
-  </dl>
-  {links.length > 0 && (
-    <p class="actions">
-      {links.map((link) => (
-        <a class:list={['action', { 'action-primary': link.kind === 'live' }]} href={link.href} target="_blank" rel="noopener noreferrer">
-          {link.label} <span aria-hidden="true">↗</span>
-        </a>
-      ))}
+  <header class="page-head">
+    <p class="eyebrow eyebrow-path rise" style="--i:0">
+      <a href="/">fairy-pitta</a>/<a href="/#personal-projects">projects</a>/{folderName(project.slug)}
     </p>
-  )}
+    <h1 class="page-title rise" style="--i:1">{frontmatter.title}</h1>
+    <p class="lead rise" style="--i:2">{frontmatter.description}</p>
+    {frontmatter.highlight && <p class="page-highlight rise" style="--i:3">{frontmatter.highlight}</p>}
+    <dl class="label-list rise" style="--i:4">
+      <div><dt>No.</dt><dd>{formatCatalogueNumber(project.number)} <Stamp label={projectStatus(frontmatter)} /></dd></div>
+      <div><dt>Built</dt><dd>{formatMonthYear(project.date)}</dd></div>
+      {frontmatter.stack && <div><dt>Stack</dt><dd>{frontmatter.stack}</dd></div>}
+      {stars && <div><dt>Stars</dt><dd>{stars}</dd></div>}
+      {frontmatter.tags.length > 0 && <div><dt>Tags</dt><dd>{frontmatter.tags.join(', ')}</dd></div>}
+    </dl>
+    {links.length > 0 && (
+      <p class="actions rise" style="--i:5">
+        {links.map((link) => (
+          <a class:list={['action', { 'action-primary': link.kind === 'live' }]} href={link.href} target="_blank" rel="noopener noreferrer">
+            {link.label}<span class="action-arrow" aria-hidden="true">↗</span>
+          </a>
+        ))}
+      </p>
+    )}
+  </header>
 
-  {frontmatter.coverImage?.trim() && (
-    <Figure src={frontmatter.coverImage} alt={frontmatter.title} priority />
-  )}
-
-  <article class="prose" set:html={html} />
-
-  {gallery.map((src) => (
-    <Figure src={src} alt={`${frontmatter.title} screenshot`} />
+  {shots.filter((shot) => shot.cover).map((shot) => (
+    <figure class="figure figure-screen">
+      <Screen variant={variant} title={title}><MediaElement media={shot.media} alt={frontmatter.title} priority /></Screen>
+    </figure>
   ))}
 
-  <p class="footer-nav">← <a href="/">All work</a></p>
+  <article class="prose reveal" set:html={html} />
+
+  {shots.filter((shot) => !shot.cover).map((shot) => (
+    <figure class="figure figure-screen reveal">
+      <Screen variant={variant} title={title}><MediaElement media={shot.media} alt={`${frontmatter.title} screenshot`} /></Screen>
+    </figure>
+  ))}
+
+  <nav class="pager" aria-label="More projects">
+    <ul class="big-rows big-rows-compact">
+      {pager.map((item) => (
+        <li class="reveal">
+          <a class="big-row" href={`/projects/${item.project.slug}`}>
+            <span class="big-row-title">{item.project.frontmatter.title}</span>
+            <span class="big-row-meta">
+              {item.label} · No. {formatCatalogueNumber(item.project.number)}
+              <span class="big-row-desc">{item.project.frontmatter.description}</span>
+            </span>
+            <span class="big-row-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 19 19 5M8 5h11v11"></path></svg>
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+    <p class="footer-nav">← <a href="/#personal-projects">All work</a></p>
+  </nav>
 </Layout>

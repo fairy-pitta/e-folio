@@ -5,10 +5,13 @@ import { cv, linkHref } from '../data/cv';
 ---
 
 <Layout title="Contact" description={`Send a message to ${cv.name}.`}>
-  <h1 class="display">Contact</h1>
-  <p class="lede">
-    You can message me on <a href={linkHref('LinkedIn')}>LinkedIn</a> or use the form below.
-  </p>
+  <header class="page-head">
+    <p class="eyebrow eyebrow-path rise" style="--i:0"><a href="/">fairy-pitta</a>/contact.ts</p>
+    <h1 class="page-title rise" style="--i:1">Contact</h1>
+    <p class="lead rise" style="--i:2">
+      You can message me on <a href={linkHref('LinkedIn')}>LinkedIn</a> or use the form below.
+    </p>
+  </header>
   <div class="contact-area">
     <ContactForm />
   </div>

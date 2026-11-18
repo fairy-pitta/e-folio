@@ -10,18 +10,27 @@ const history = buildHistory(cv.experience, cv.education);
 ---
 
 <Layout title="About">
-  <h1 class="display">{cv.name} <span class="handle">{cv.handle}</span></h1>
-  <p class="meta">{cv.headline} · {cv.location}</p>
-  <p class="links">
-    {cv.links.map((link, i) => (
-      <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
-    ))}
-  </p>
-  <p class="summary">{cv.summary}</p>
-  <ul class="bullets strengths">
-    {cv.strengths.map((line) => <li>{line}</li>)}
-  </ul>
-  <p class="availability">{cv.availability}</p>
+  <header class="page-head">
+    <p class="eyebrow eyebrow-path rise" style="--i:0"><a href="/">fairy-pitta</a>/about.md</p>
+    <h1 class="page-title rise" style="--i:1">{cv.name} <span class="handle">{cv.handle}</span></h1>
+    <p class="lead rise" style="--i:2">{cv.summary}</p>
+    <ul class="bullets strengths rise" style="--i:3">
+      {cv.strengths.map((line) => <li>{line}</li>)}
+    </ul>
+    <dl class="label-list rise" style="--i:4">
+      <div><dt>Role</dt><dd>{cv.headline}</dd></div>
+      <div><dt>Based</dt><dd>{cv.location}</dd></div>
+      <div>
+        <dt>Links</dt>
+        <dd>
+          {cv.links.map((link, i) => (
+            <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
+          ))}
+        </dd>
+      </div>
+      <div><dt>Status</dt><dd>{cv.availability}</dd></div>
+    </dl>
+  </header>
 
   <section class="section" id="history">
     <h2 class="section-title">History</h2>
@@ -60,29 +69,30 @@ const history = buildHistory(cv.experience, cv.education);
   </section>
 
   <Section title="Certifications">
-    <ul class="bullets">
+    <div class="list">
       {cv.certifications.map((certification) => (
-        <li>
+        <Row meta={certification.year}>
           <a href={certification.href} target="_blank" rel="noopener noreferrer">{certification.name}</a>
-          <span class="muted"> ({certification.year})</span>
-        </li>
+        </Row>
       ))}
-    </ul>
+    </div>
   </Section>
 
   <Section title="Awards">
-    {cv.awards.map((award) => (
-      <Row meta={award.period}>{award.title}</Row>
-    ))}
+    <div class="list">
+      {cv.awards.map((award) => (
+        <Row meta={award.period}>{award.title}</Row>
+      ))}
+    </div>
   </Section>
 
   <Section title="Skills">
     <dl class="skills">
       {cv.skills.map((group) => (
-        <>
+        <div>
           <dt>{group.label}</dt>
           <dd>{group.items.join(', ')}</dd>
-        </>
+        </div>
       ))}
     </dl>
   </Section>

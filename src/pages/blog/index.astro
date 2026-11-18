@@ -11,12 +11,19 @@ const items = toWritingItems(posts, await fetchQiitaItems());
 ---
 
 <Layout title="Writing" description={`Notes on software engineering by ${cv.name}.`}>
-  <h1 class="display">Writing</h1>
-  <p class="lede">Notes on software engineering. Most are on Qiita, in Japanese.</p>
-  {posts.length > 0 && <p class="meta"><a href="/rss.xml">RSS</a></p>}
+  <header class="page-head">
+    <p class="eyebrow eyebrow-path rise" style="--i:0"><a href="/">fairy-pitta</a>/writing/</p>
+    <h1 class="page-title rise" style="--i:1">Writing</h1>
+    <p class="lead rise" style="--i:2">Notes on software engineering. Most are on Qiita, in Japanese.</p>
+    {posts.length > 0 && (
+      <p class="actions rise" style="--i:3"><a class="action" href="/rss.xml">RSS feed<span class="action-arrow" aria-hidden="true">→</span></a></p>
+    )}
+  </header>
   {items.length > 0 ? (
-    <div class="list section">
-      {items.map((item) => <WritingRow item={item} />)}
+    <div class="section">
+      <div class="list">
+        {items.map((item) => <WritingRow item={item} />)}
+      </div>
     </div>
   ) : (
     <p class="section muted">Nothing published yet.</p>
