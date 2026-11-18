@@ -1,0 +1,16 @@
+/* ---- A case study: Problem, My role, Key decisions, Outcome ---- */
+/* Large readable blocks on a white band: a sentence-case heading over each. */
+.case-section { margin-top: var(--space-8); padding-block: var(--space-8); }
+.case-section .section-title { margin-bottom: var(--space-6); font-size: var(--text-2xl); font-weight: var(--weight-display); letter-spacing: var(--tracking-display); text-align: center; }
+.case { margin: 0; }
+.case > div + div { margin-top: var(--space-7); }
+.case dt {
+  margin-bottom: var(--space-3); font-size: var(--text-xl); font-weight: var(--weight-heading);
+  line-height: var(--leading-heading); letter-spacing: var(--tracking-heading);
+}
+.case dd { margin: 0; font-size: var(--text-md); line-height: var(--leading-snug); color: var(--muted); text-wrap: pretty; }
+.case .bullets { margin: 0; color: inherit; }
+.case .bullets li { margin: var(--space-3) 0; }
+.case .bullets li::before { top: calc((var(--leading-snug) * 1em - .3em) / 2); }
+.case .bullets li:first-child { margin-top: 0; }
+.case .bullets li:last-child { margin-bottom: 0; }

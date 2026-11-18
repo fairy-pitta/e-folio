@@ -1,18 +1,21 @@
 ---
+kind: personal
 title: "Code Annotator"
-description: "Paste code, attach notes to any part of it, arrange them on a canvas and export a PNG."
+summary: "Paste code, attach notes to any part of it, arrange them on a canvas and export a PNG."
 date: "22 Mar, 2026"
-coverImage: "/projects/code-annotator/annotator-demo.mp4"
-tags: ["Web App", "JavaScript", "Cloudflare Workers", "Prism.js", "Canvas"]
-stack: "Browser · Cloudflare Workers"
 highlight: "Runs entirely in the browser, including the PNG export"
-liveUrl: "https://annotator.fairy-pitta.net/"
-githubUrl: "https://github.com/fairy-pitta/code-annotator"
-gallery: [
-  "/projects/code-annotator/screenshot.webp",
-  "/projects/code-annotator/demo.mp4",
-  "/projects/code-annotator/example-output.webp"
-]
+stack: "Browser · Cloudflare Workers"
+earlier: true
+tags: ["Web App", "JavaScript", "Cloudflare Workers", "Prism.js", "Canvas"]
+media:
+  cover: "/projects/code-annotator/annotator-demo.mp4"
+  gallery:
+    - "/projects/code-annotator/screenshot.webp"
+    - "/projects/code-annotator/demo.mp4"
+    - "/projects/code-annotator/example-output.webp"
+links:
+  live: "https://annotator.fairy-pitta.net/"
+  code: "https://github.com/fairy-pitta/code-annotator"
 ---
 
 ## Background

@@ -1,21 +1,23 @@
 ---
-import type { CvProject } from '../data/cv';
-import Stamp from './Stamp.astro';
+import type { JobWork } from '../lib/content';
+import Tile, { type TileSize } from './Tile.astro';
 
 interface Props {
-  project: CvProject;
+  project: JobWork;
+  size: TileSize;
 }
 
-const { project } = Astro.props;
+const { project, size } = Astro.props;
+const { data } = project;
 ---
 
-<a class="specimen specimen-job" href={`/about#${project.id}`}>
-  <Stamp label={project.internal ? 'INTERNAL' : 'CLIENT'} />
-  <span class="specimen-name">{project.title}</span>
-  <span class="specimen-desc">{project.summary}</span>
-  <span class="specimen-note">{project.highlight}</span>
-  <dl class="specimen-label">
-    <dt>Role</dt><dd>{project.roleLabel}</dd>
-    <dt>Stack</dt><dd>{project.tags.join(' · ')}</dd>
-  </dl>
-</a>
+<Tile
+  href={`/work/${project.id}`}
+  kind="work"
+  size={size}
+  kicker={data.kind === 'internal' ? 'Internal project' : 'Client project'}
+  title={data.title}
+  text={data.summary}
+  note={data.highlight}
+  cta="Read the case study"
+/>

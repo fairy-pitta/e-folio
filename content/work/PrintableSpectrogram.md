@@ -1,16 +1,18 @@
 ---
+kind: personal
 title: "Printable Spectrogram"
-description: "Turns a recording into a configurable, annotated spectrogram you can export for a paper, without installing Python."
+summary: "Turns a recording into a configurable, annotated spectrogram you can export for a paper, without installing Python."
 date: "31 Jan, 2026"
-coverImage: "/projects/printable-spectrogram/spectrogram-demo.mp4"
-tags: ["Web App", "TypeScript", "React", "Rust", "WASM", "Audio Processing", "DSP"]
+highlight: "Paper-ready spectrograms in the browser, with no Python to install"
 stack: "Browser · Rust/WASM"
-highlight: "The STFT is written in Rust and compiled to WebAssembly"
-liveUrl: "https://spectrogram.fairy-pitta.net/"
-githubUrl: "https://github.com/fairy-pitta/printable_spectrogram"
-gallery: [
-  "/projects/printable-spectrogram/spectrogram_main.webp"
-]
+tags: ["Web App", "TypeScript", "React", "Rust", "WASM", "Audio Processing", "DSP"]
+media:
+  cover: "/projects/printable-spectrogram/spectrogram-demo.mp4"
+  gallery:
+    - "/projects/printable-spectrogram/spectrogram_main.webp"
+links:
+  live: "https://spectrogram.fairy-pitta.net/"
+  code: "https://github.com/fairy-pitta/printable_spectrogram"
 ---
 
 ## Background

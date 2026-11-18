@@ -1,10 +1,13 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import { getAllBlogPosts, formatDate, type BlogPost } from '../../lib/content';
+import PageHead from '../../components/PageHead.astro';
+import LabelList from '../../components/LabelList.astro';
+import { formatDate, type BlogPost } from '../../lib/content';
+import { getAllBlogPosts } from '../../lib/collections';
 import { markdownToHtml } from '../../lib/markdown';
 
-export function getStaticPaths() {
-  return getAllBlogPosts().map((post) => ({
+export async function getStaticPaths() {
+  return (await getAllBlogPosts()).map((post) => ({
     params: { slug: post.slug },
     props: { post },
   }));
@@ -15,28 +18,26 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { frontmatter } = post;
+const { data } = post;
 const html = await markdownToHtml(post.content);
 const date = formatDate(post.date);
 ---
 
 <Layout
-  title={frontmatter.title}
-  description={frontmatter.excerpt}
+  title={data.title}
+  description={data.excerpt}
   ogImage={`/og/blog-${post.slug}.png`}
 >
-  <header class="page-head">
-    <p class="eyebrow eyebrow-path rise" style="--i:0">
-      <a href="/">fairy-pitta</a>/<a href="/blog">writing</a>/{post.slug}
-    </p>
-    <h1 class="page-title rise" style="--i:1">{frontmatter.title}</h1>
-    {frontmatter.excerpt && <p class="lead rise" style="--i:2">{frontmatter.excerpt}</p>}
-    <dl class="label-list rise" style="--i:3">
-      {date && <div><dt>Published</dt><dd>{date}</dd></div>}
-      {frontmatter.readTime && <div><dt>Reading time</dt><dd>{frontmatter.readTime}</dd></div>}
-      {frontmatter.tags.length > 0 && <div><dt>Tags</dt><dd>{frontmatter.tags.join(', ')}</dd></div>}
-    </dl>
-  </header>
+  <PageHead title={data.title} lead={data.excerpt}>
+    <LabelList
+      rise={3}
+      items={[
+        date && { label: 'Published', value: date },
+        data.readTime && { label: 'Reading time', value: data.readTime },
+        data.tags.length > 0 && { label: 'Tags', value: data.tags.join(', ') },
+      ]}
+    />
+  </PageHead>
   <article class="prose" set:html={html} />
-  <p class="footer-nav">← <a href="/blog">All writing</a></p>
+  <p class="footer-nav"><a class="link-more" href="/blog">All writing</a></p>
 </Layout>

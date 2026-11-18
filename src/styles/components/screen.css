@@ -1,0 +1,103 @@
+/* ---- Figures and the drawn monitor ---- */
+.figure { margin: var(--space-6) 0; }
+.figure img, .figure video { display: block; width: 100%; height: auto; border-radius: var(--radius-card); }
+/* A project's monitor is its product shot: wider than the text column, centred on the window. */
+.figure-screen {
+  position: relative; left: 50%; width: min(var(--width-wide), calc(100vw - 2 * var(--gutter)));
+  margin-block: var(--space-8) 0; transform: translateX(-50%);
+}
+.figure-screen + .figure-screen { margin-top: var(--space-7); }
+
+/* A drawn monitor for screenshots and recordings (components/Screen.astro).
+   It is hardware, not page chrome: the bezel stays dark and the windows keep
+   their own colours in both themes, so these are its only fixed colours. */
+.screen {
+  --screen-bezel: #1c1c1e;
+  --screen-camera: #3a3a3c;
+  --screen-wallpaper-a: #d6e2f0;
+  --screen-wallpaper-b: #e6e6ea;
+  --screen-shadow: rgb(0 0 0 / .55);
+  --screen-window-edge: rgb(0 0 0 / .35);
+  --screen-window-shadow: rgb(0 0 0 / .5);
+  /* A terminal window by default. */
+  --screen-window: #1a1a1d;
+  --screen-bar: #2a2a2e;
+  --screen-bar-fg: #9e9ea4;
+  --screen-bar-line: transparent;
+  --screen-dot: #4a4a4f;
+  width: 100%;
+}
+/* A browser window: light chrome, and the address in a rounded field. */
+.screen-browser {
+  --screen-window: #fff;
+  --screen-bar: #ececf0;
+  --screen-bar-fg: #6e6e73;
+  --screen-bar-line: #dcdce0;
+  --screen-dot: #c7c7cc;
+}
+:root[data-theme="dark"] .screen { --screen-wallpaper-a: #1e3047; --screen-wallpaper-b: #2a2a2e; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .screen { --screen-wallpaper-a: #1e3047; --screen-wallpaper-b: #2a2a2e; }
+}
+.screen-bezel {
+  position: relative; padding: 14px; border-radius: var(--radius-card); background: var(--screen-bezel);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--fg) 14%, transparent), 0 24px 48px -28px var(--screen-shadow);
+}
+/* The camera, a dot in the top bezel. */
+.screen-bezel::before {
+  content: ""; position: absolute; top: 5px; left: 50%; width: 4px; height: 4px; margin-left: -2px;
+  border-radius: 50%; background: var(--screen-camera);
+}
+.screen-display {
+  display: grid; place-items: center; padding: 6% 7%; border-radius: 6px; overflow: hidden;
+  background: radial-gradient(120% 90% at 20% 10%, var(--screen-wallpaper-a), transparent 60%),
+    radial-gradient(100% 80% at 90% 100%, var(--screen-wallpaper-b), transparent 60%), var(--screen-wallpaper-b);
+}
+.screen-window {
+  width: 100%; border-radius: 9px; overflow: hidden; background: var(--screen-window);
+  box-shadow: 0 0 0 1px var(--screen-window-edge), 0 14px 30px -12px var(--screen-window-shadow);
+}
+.screen-bar {
+  display: flex; align-items: center; gap: 10px; height: 26px; padding: 0 10px;
+  background: var(--screen-bar); color: var(--screen-bar-fg); border-bottom: 1px solid var(--screen-bar-line);
+}
+.screen-dots { display: flex; gap: 6px; }
+.screen-dots i { width: 9px; height: 9px; border-radius: 50%; background: var(--screen-dot); }
+.screen-title {
+  flex: 1; margin-right: 37px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  font-family: var(--mono); font-size: .68rem; letter-spacing: 0;
+}
+.screen-browser .screen-title {
+  flex: 0 1 60%; margin: 0 auto; transform: translateX(-18px); padding: 2px 10px;
+  border-radius: var(--radius-pill); background: var(--screen-window);
+}
+.screen-content { display: block; }
+.screen-window video, .screen-window img {
+  display: block; width: 100%; height: auto; border: 0; border-radius: 0; object-fit: contain; background: var(--screen-window);
+}
+/* Neck and foot, drawn as two rounded shapes under the bezel. */
+.screen-stand { position: relative; width: 18%; height: 32px; margin: 0 auto; }
+.screen-stand::before {
+  content: ""; position: absolute; inset: 0 0 6px;
+  background: linear-gradient(var(--field), color-mix(in srgb, var(--field) 70%, var(--bg)));
+  clip-path: polygon(18% 0, 82% 0, 92% 100%, 8% 100%);
+}
+.screen-stand::after { content: ""; position: absolute; left: -40%; right: -40%; bottom: 0; height: 7px; border-radius: 6px; background: var(--field); }
+
+/* The home page's cards: a smaller monitor, and every window the same shape
+   so the row lines up. Screenshots fill it from the top; recordings are shown whole. */
+.screen-compact .screen-bezel { padding: 7px; border-radius: 10px; }
+.screen-compact .screen-bezel::before { top: 2px; width: 3px; height: 3px; }
+.screen-compact .screen-display { padding: 5% 6%; border-radius: 4px; }
+.screen-compact .screen-window { border-radius: 6px; }
+.screen-compact .screen-bar { height: 16px; gap: 6px; padding: 0 6px; }
+.screen-compact .screen-dots { gap: 4px; }
+.screen-compact .screen-dots i { width: 5px; height: 5px; }
+.screen-compact .screen-title { font-size: .55rem; margin-right: 23px; }
+.screen-browser.screen-compact .screen-title { margin-right: auto; padding: 0 6px; transform: translateX(-12px); }
+.screen-compact .screen-stand { height: 15px; }
+.screen-compact .screen-stand::before { bottom: 4px; }
+.screen-compact .screen-stand::after { height: 4px; border-radius: 3px; }
+.screen-compact .screen-content { aspect-ratio: 16 / 10; overflow: hidden; }
+.screen-compact .screen-content img { width: 100%; height: 100%; object-fit: cover; object-position: top center; }
+.screen-compact .screen-content video { width: 100%; height: 100%; object-fit: contain; }

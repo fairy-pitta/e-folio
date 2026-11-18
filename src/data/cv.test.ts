@@ -1,9 +1,14 @@
 import { describe, it, expect } from 'vitest'
-import { cv, linkHref } from './cv'
+import { certification, currentJob, cv, jobIds, linkHref } from './cv'
 import { findForbidden } from '../lib/public-safety'
+import { readJobWork } from '../lib/content-files'
 
-// The three projects of the current job, shown as nested accordions under it.
-const projects = cv.experience[0].projects ?? []
+// The three projects of the current job (content/work, kind client or
+// internal), shown as nested accordions under it on the About page.
+const work = readJobWork()
+const projects = work.map((project) => ({ id: project.id, ...project.data, ...project.data.case }))
+// House-style checks cover the CV and the projects from the job alike.
+const cvText = JSON.stringify(cv) + JSON.stringify(work.map((project) => project.data))
 
 describe('cv', () => {
   it('has_required_top_level_fields', () => {
@@ -28,7 +33,7 @@ describe('cv', () => {
   it.each(['automated tests', 'largest contributor', 'commits', 'lines of code'])(
     'test_serialise_cv_without_volume_metric_%s_returns_no_match',
     (metric) => {
-      expect(JSON.stringify(cv).toLowerCase()).not.toContain(metric)
+      expect(cvText.toLowerCase()).not.toContain(metric)
     },
   )
 
@@ -129,13 +134,13 @@ describe('cv', () => {
   it('test_serialise_cv_contains_no_contractions', () => {
     // Possessive 's is fine; contractions are not (house style).
     const contraction = /\b\w+(n['’]t|['’](ll|re|ve|m|d))\b|\b(it|that|there|here|what|who|he|she)['’]s\b/i
-    expect(JSON.stringify(cv)).not.toMatch(contraction)
+    expect(cvText).not.toMatch(contraction)
   })
 
   it.each(['passionate', 'leverage', 'seamless', 'the part I enjoy most', 'cutting-edge'])(
     'test_serialise_cv_without_stock_phrase_%s_returns_no_match',
     (phrase) => {
-      expect(JSON.stringify(cv).toLowerCase()).not.toContain(phrase.toLowerCase())
+      expect(cvText.toLowerCase()).not.toContain(phrase.toLowerCase())
     },
   )
 
@@ -152,7 +157,9 @@ describe('cv', () => {
   })
 
   it('test_read_projects_only_under_current_job_returns_one_owner', () => {
-    expect(cv.experience.slice(1).every((job) => !job.projects)).toBe(true)
+    expect(jobIds()).toEqual(['lead-engineer'])
+    expect(cv.experience[0].id).toBe('lead-engineer')
+    expect(work.every((project) => project.data.job === 'lead-engineer')).toBe(true)
   })
 
   it('test_read_current_job_bullets_without_project_roles_returns_no_repeat', () => {
@@ -174,6 +181,14 @@ describe('cv', () => {
     const text = JSON.stringify(projects)
     expect(text).not.toMatch(/\b\d[\d,]*\s+(tests?|commits?|tables?|lines)\b/i)
     expect(text).not.toMatch(/% of (the )?code/i)
+  })
+
+  it('test_read_job_projects_returns_cv_order_with_kinds', () => {
+    expect(projects.map((project) => [project.id, project.kind])).toEqual([
+      ['finance-saas', 'client'],
+      ['document-ai', 'client'],
+      ['tuition-ops', 'internal'],
+    ])
   })
 
   it('test_read_finance_saas_project_says_launch_is_planned_not_shipped', () => {
@@ -222,8 +237,28 @@ describe('cv', () => {
     expect(cv.pitch.trim()).toMatch(/^[^.]+\.$/)
   })
 
+  it('test_read_statement_returns_the_home_heading_chosen_by_the_owner', () => {
+    expect(cv.statement).toBe('Lead engineer and project manager. From the data model to delivery.')
+    expect(cv.pitch).toBe("I turn client requirements into features, design the system, and review the team's code.")
+  })
+
+  it('test_read_current_job_returns_the_present_role', () => {
+    expect(currentJob().role).toBe('Lead Engineer & Project Manager')
+    expect(currentJob().period).toMatch(/present/i)
+  })
+
+  it('test_look_up_certification_by_name_returns_it_or_throws', () => {
+    expect(certification('AWS Certified Solutions Architect – Professional').year).toBe('2026')
+    expect(() => certification('AWS Certified Nothing')).toThrow(/Nothing/)
+  })
+
+  it('test_read_contact_topics_returns_three_non_empty_lines', () => {
+    expect(cv.contactTopics).toHaveLength(3)
+    cv.contactTopics.forEach((line) => expect(line.trim()).not.toBe(''))
+  })
+
   it('test_read_client_projects_returns_unique_ids_and_short_card_lines', () => {
-    const all = cv.experience.flatMap((job) => job.projects ?? [])
+    const all = projects
     expect(all).toHaveLength(3)
     expect(new Set(all.map((project) => project.id)).size).toBe(all.length)
     for (const project of all) {

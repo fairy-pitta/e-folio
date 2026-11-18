@@ -1,17 +1,37 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PageHead from '../components/PageHead.astro';
+import LabelList from '../components/LabelList.astro';
 import ContactForm from '../components/Contact.astro';
-import { cv, linkHref } from '../data/cv';
+import { currentJob, cv, linkHref } from '../data/cv';
+
+const role = currentJob().role.toLowerCase();
+// "Available from April 2027" → "from April 2027".
+const from = cv.availability.replace(/^available\s+/i, '');
 ---
 
 <Layout title="Contact" description={`Send a message to ${cv.name}.`}>
-  <header class="page-head">
-    <p class="eyebrow eyebrow-path rise" style="--i:0"><a href="/">fairy-pitta</a>/contact.ts</p>
-    <h1 class="page-title rise" style="--i:1">Contact</h1>
-    <p class="lead rise" style="--i:2">
+  <PageHead title="Contact">
+    <Fragment slot="lead">
       You can message me on <a href={linkHref('LinkedIn')}>LinkedIn</a> or use the form below.
-    </p>
-  </header>
+    </Fragment>
+    <LabelList
+      rise={3}
+      class="contact-details"
+      items={[
+        { label: 'Status', value: cv.availability },
+        { label: 'Role', value: currentJob().role },
+        { label: 'Based', value: cv.location },
+      ]}
+    />
+    <div class="contact-topics rise" style="--i:4">
+      <h2 class="section-title">Get in touch about</h2>
+      <ul class="bullets">
+        <li>A {role} role, {from}</li>
+        {cv.contactTopics.map((line) => <li>{line}</li>)}
+      </ul>
+    </div>
+  </PageHead>
   <div class="contact-area">
     <ContactForm />
   </div>

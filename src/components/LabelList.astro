@@ -1,0 +1,32 @@
+---
+// A page's facts as key/value rows: the key on the left in grey, the value
+// on the right. A value is plain text, or, when the item names a slot,
+// whatever the page puts in that slot.
+export interface LabelItem {
+  label: string;
+  value?: string | number;
+  // The name of a slot holding a rich value (links, a tag, a <time>).
+  slot?: string;
+}
+
+interface Props {
+  // Write optional items as `cond && item`: falsy entries are left out.
+  items: (LabelItem | false | '' | 0 | null | undefined)[];
+  class?: string;
+  // The step in the page's opening animation (see .rise).
+  rise?: number;
+}
+
+const { items, class: className, rise } = Astro.props;
+const shown = items.filter((item): item is LabelItem => Boolean(item));
+const rich = await Promise.all(shown.map((item) => (item.slot ? Astro.slots.render(item.slot) : undefined)));
+---
+
+<dl
+  class:list={['label-list', className, { rise: rise !== undefined }]}
+  style={rise !== undefined ? `--i:${rise}` : undefined}
+>
+  {shown.map((item, i) => (
+    <div><dt>{item.label}</dt><dd>{item.slot ? <Fragment set:html={rich[i]} /> : item.value}</dd></div>
+  ))}
+</dl>

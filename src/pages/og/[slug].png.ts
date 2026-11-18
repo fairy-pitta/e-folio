@@ -1,15 +1,19 @@
 import type { APIContext, GetStaticPaths } from 'astro'
-import { getAllBlogPosts, getAllProjects } from '../../lib/content'
+import { getAllBlogPosts, getAllProjects, getJobWork } from '../../lib/collections'
 import { generateOgImage } from '../../lib/og-image'
 
-export const getStaticPaths: GetStaticPaths = () => [
-  ...getAllBlogPosts().map((post) => ({
+export const getStaticPaths: GetStaticPaths = async () => [
+  ...(await getAllBlogPosts()).map((post) => ({
     params: { slug: `blog-${post.slug}` },
-    props: { title: post.frontmatter.title },
+    props: { title: post.data.title },
   })),
-  ...getAllProjects().map((project) => ({
+  ...(await getJobWork()).map((project) => ({
+    params: { slug: `work-${project.id}` },
+    props: { title: project.data.title },
+  })),
+  ...(await getAllProjects()).map((project) => ({
     params: { slug: `project-${project.slug}` },
-    props: { title: project.frontmatter.title },
+    props: { title: project.data.title },
   })),
 ]
 

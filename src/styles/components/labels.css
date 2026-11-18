@@ -1,0 +1,60 @@
+/* ---- Labels, rows and lists ---- */
+
+/* Labels everywhere are plain sentence case, a little smaller and grey. */
+.label-list dt, .skills dt, .history-kind, .field-label {
+  font-size: var(--text-label); font-weight: var(--weight-regular); color: var(--muted);
+}
+
+.row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--space-4); }
+.row-main { min-width: 0; }
+.row-meta { font-size: var(--text-sm); color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* Grouped lists: one flat rounded card, rows at least 44px tall, hairlines
+   inset from the left between them. Writing, certifications, awards, skills
+   and the contact form use it. */
+.list, .skills, .field-group {
+  margin: 0; padding: 0; background: var(--card); border-radius: var(--radius-card);
+}
+.list > *, .skills > *, .field-group > * {
+  position: relative; display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4);
+  min-height: 44px; margin: 0; padding: 14px 20px;
+}
+.list > * + *::before, .skills > * + *::before, .field-group > * + *::before {
+  content: ""; position: absolute; top: 0; left: 20px; right: 0; border-top: var(--rule);
+}
+.skills dt { flex: none; width: 9.5em; }
+.skills dd { flex: 1; margin: 0; min-width: 0; }
+
+/* A page's facts: a key on the left, its value on the right, a hairline between. */
+.label-list { margin: var(--space-7) 0 0; padding: 0; border-top: var(--rule); }
+.label-list > div {
+  display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-5);
+  min-height: 44px; padding: 14px 0; border-bottom: var(--rule);
+}
+.label-list dt { flex: none; }
+.label-list dd { margin: 0; min-width: 0; text-align: right; }
+
+@media (max-width: 520px) {
+  .row { flex-direction: column; gap: 0; }
+  .list > .row { align-items: flex-start; }
+  .label-list > div { flex-direction: column; gap: 2px; }
+  .label-list dd { text-align: left; }
+}
+@media (max-width: 460px) {
+  .skills > div { flex-direction: column; gap: 2px; }
+  .skills dt { width: auto; }
+}
+
+.bullets, .prose ul { list-style: none; padding-left: 1em; }
+.bullets { margin: var(--space-2) 0 0; color: var(--muted); }
+.bullets li { margin: 6px 0; }
+.bullets li, .prose ul > li { position: relative; }
+.bullets li::before, .prose ul > li::before {
+  content: ""; position: absolute; left: -.9em;
+  /* Centres the dot on the first line box, not on the text box. */
+  top: calc((var(--leading-body) * 1em - .3em) / 2);
+  width: .3em; height: .3em; border-radius: 50%; background: var(--faint);
+}
+.strengths { margin: var(--space-6) auto 0; max-width: 34em; font-size: var(--text-md); line-height: var(--leading-snug); color: var(--fg); }
+.strengths li { margin: var(--space-3) 0; }
+.strengths li::before { top: calc((var(--leading-snug) * 1em - .3em) / 2); }

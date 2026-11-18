@@ -1,90 +1,49 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import PageHead from '../components/PageHead.astro';
+import LabelList from '../components/LabelList.astro';
 import Section from '../components/Section.astro';
 import Row from '../components/Row.astro';
-import ExperienceProject from '../components/ExperienceProject.astro';
-import { cv } from '../data/cv';
-import { buildHistory } from '../lib/history';
+import Timeline from '../components/Timeline.astro';
+import { currentJob, cv } from '../data/cv';
+import { jobHistory, studyHistory } from '../lib/history';
+import { getJobWork } from '../lib/collections';
 
-const history = buildHistory(cv.experience, cv.education);
+const jobs = jobHistory(cv.experience, await getJobWork());
+const schools = studyHistory(cv.education);
 ---
 
 <Layout title="About">
-  <header class="page-head">
-    <p class="eyebrow eyebrow-path rise" style="--i:0"><a href="/">fairy-pitta</a>/about.md</p>
-    <h1 class="page-title rise" style="--i:1">{cv.name} <span class="handle">{cv.handle}</span></h1>
-    <p class="lead rise" style="--i:2">{cv.summary}</p>
+  <PageHead lead={cv.summary}>
+    <Fragment slot="title">{cv.name}<span class="handle">{cv.handle}</span></Fragment>
     <ul class="bullets strengths rise" style="--i:3">
       {cv.strengths.map((line) => <li>{line}</li>)}
     </ul>
-    <dl class="label-list rise" style="--i:4">
-      <div><dt>Role</dt><dd>{cv.headline}</dd></div>
-      <div><dt>Based</dt><dd>{cv.location}</dd></div>
-      <div>
-        <dt>Links</dt>
-        <dd>
-          {cv.links.map((link, i) => (
-            <>{i > 0 && ' · '}<a href={link.href}>{link.label}</a></>
-          ))}
-        </dd>
-      </div>
-      <div><dt>Status</dt><dd>{cv.availability}</dd></div>
-    </dl>
-  </header>
+    <LabelList
+      rise={4}
+      items={[
+        { label: 'Role', value: currentJob().role },
+        { label: 'Based', value: cv.location },
+        { label: 'Links', slot: 'links' },
+        { label: 'Status', value: cv.availability },
+      ]}
+    >
+      <span slot="links" class="label-links">
+        {cv.links.map((link) => <a href={link.href}>{link.label}</a>)}
+      </span>
+    </LabelList>
+  </PageHead>
 
-  <section class="section" id="history">
-    <h2 class="section-title">History</h2>
-    <ol class="history">
-      {history.map((entry, i) => {
-        const sameYear = i > 0 && history[i - 1].year === entry.year;
-        return (
-          <li class:list={['history-entry', `history-${entry.kind.toLowerCase()}`, { 'history-current': entry.current }]}>
-            <div class="history-when">
-              <span class:list={['history-year', { 'history-year-repeat': sameYear }]}>{entry.year}</span>
-              <span class="history-period">{entry.period}</span>
-            </div>
-            <div class="history-body">
-              <span class="history-kind">{entry.current ? 'Now · ' : ''}{entry.kind}</span>
-              <details class="job" open={i === 0}>
-                <summary>
-                  <span class="role">{entry.title}</span>
-                  <span class="history-org">{entry.org}</span>
-                </summary>
-                {entry.bullets.length > 0 && (
-                  <ul class="bullets">
-                    {entry.bullets.map((bullet) => <li>{bullet}</li>)}
-                  </ul>
-                )}
-                {entry.projects && (
-                  <div class="projects">
-                    {entry.projects.map((project) => <ExperienceProject project={project} />)}
-                  </div>
-                )}
-              </details>
-            </div>
-          </li>
-        );
-      })}
-    </ol>
-  </section>
-
-  <Section title="Certifications">
+  <section class="section" id="certifications">
+    <h2 class="section-title">Certifications</h2>
     <div class="list">
-      {cv.certifications.map((certification) => (
-        <Row meta={certification.year}>
-          <a href={certification.href} target="_blank" rel="noopener noreferrer">{certification.name}</a>
+      {cv.certifications.map((cert) => (
+        <Row meta={cert.year}>
+          <a href={cert.href} target="_blank" rel="noopener noreferrer">{cert.name}</a>
         </Row>
       ))}
     </div>
-  </Section>
-
-  <Section title="Awards">
-    <div class="list">
-      {cv.awards.map((award) => (
-        <Row meta={award.period}>{award.title}</Row>
-      ))}
-    </div>
-  </Section>
+  </section>
 
   <Section title="Skills">
     <dl class="skills">
@@ -96,20 +55,29 @@ const history = buildHistory(cv.experience, cv.education);
       ))}
     </dl>
   </Section>
-</Layout>
 
-<script>
-  // A client card on the Work page links to /about#<id>: open that write-up,
-  // and the job around it, so the reader lands on the text rather than a closed row.
-  function openTarget() {
-    const id = decodeURIComponent(location.hash.slice(1));
-    const target = id ? document.getElementById(id) : null;
-    if (!(target instanceof HTMLDetailsElement)) return;
-    for (let node: Element | null = target; node; node = node.parentElement?.closest('details') ?? null) {
-      (node as HTMLDetailsElement).open = true;
-    }
-    target.scrollIntoView({ block: 'start' });
-  }
-  document.addEventListener('astro:page-load', openTarget);
-  window.addEventListener('hashchange', openTarget);
-</script>
+  <section class="section" id="history">
+    <h2 class="section-title">History</h2>
+    <Timeline entries={jobs} open="first" />
+  </section>
+
+  <section class="section" id="education">
+    <h2 class="section-title">Education</h2>
+    <Timeline entries={schools} open="all" />
+  </section>
+
+  <Section title="Awards">
+    <div class="list">
+      {cv.awards.map((award) => (
+        <Row meta={award.period}>{award.title}</Row>
+      ))}
+    </div>
+  </Section>
+
+  <section class="section about-close" aria-label="Get in touch">
+    <p class="about-close-note">CV available on request.</p>
+    <p class="actions">
+      <a class="action action-primary" href="/contact">Contact</a>
+    </p>
+  </section>
+</Layout>

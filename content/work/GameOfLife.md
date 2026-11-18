@@ -1,18 +1,20 @@
 ---
+kind: personal
 title: "Game of Life"
-description: "An interactive Game of Life: draw cells, then start, pause and speed up the simulation."
+summary: "An interactive Game of Life: draw cells, then start, pause and speed up the simulation."
 date: "19 May, 2025"
-coverImage: "/projects/gameoflife/gameoflife-demo.mp4"
-tags: ["Web App", "Next.js"]
-stack: "Browser · Next.js"
 highlight: "A small React project, hosted on GitHub Pages"
+stack: "Browser · Next.js"
+tags: ["Web App", "Next.js"]
 earlier: true
-liveUrl: "https://fairy-pitta.github.io/Game-Of-Life/"
-githubUrl: "https://github.com/fairy-pitta/Game-Of-Life"
-gallery: [
-  "/projects/gameoflife/gameoflife-top.webp",
-  "/projects/gameoflife/gameoflife-gif.mp4",
-]
+media:
+  cover: "/projects/gameoflife/gameoflife-demo.mp4"
+  gallery:
+    - "/projects/gameoflife/gameoflife-top.webp"
+    - "/projects/gameoflife/gameoflife-gif.mp4"
+links:
+  live: "https://fairy-pitta.github.io/Game-Of-Life/"
+  code: "https://github.com/fairy-pitta/Game-Of-Life"
 ---
 
 ## About

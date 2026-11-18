@@ -1,16 +1,18 @@
 ---
+kind: personal
 title: "Pseudocode Converter"
-description: "Converts Python or Java into IB, AP CSP, Cambridge IGCSE or A Level pseudocode as you type."
+summary: "Converts Python or Java into IB, AP CSP, Cambridge IGCSE or A Level pseudocode as you type."
 date: "Oct 13, 2025"
-coverImage: "/projects/Pseudocode/converter-demo.mp4"
-tags: ["Web App", "TypeScript", "Python", "Java", "Compilers", "Computer Science"]
-stack: "Browser · TypeScript, Lezer"
 highlight: "Supports four exam boards through one intermediate representation"
-liveUrl: "https://pseudocode-converter.fairy-pitta.net/"
-githubUrl: "https://github.com/fairy-pitta/pseudocode-converter"
-gallery: [
-  "/projects/Pseudocode/fizzbuzz.webp"
-]
+stack: "Browser · TypeScript, Lezer"
+tags: ["Web App", "TypeScript", "Python", "Java", "Compilers", "Computer Science"]
+media:
+  cover: "/projects/Pseudocode/converter-demo.mp4"
+  gallery:
+    - "/projects/Pseudocode/fizzbuzz.webp"
+links:
+  live: "https://pseudocode-converter.fairy-pitta.net/"
+  code: "https://github.com/fairy-pitta/pseudocode-converter"
 ---
 
 ## Background

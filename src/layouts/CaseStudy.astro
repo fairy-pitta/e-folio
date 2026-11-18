@@ -1,0 +1,132 @@
+---
+// One page for one piece of work, from the job (/work/<id>) or personal
+// (/projects/<slug>). Both read the same way, like an article: a centred
+// title and lead, what to open, the facts, the screen (personal work only),
+// the case study on a white band, the write-up, more screens, then the
+// neighbouring pages as two tiles.
+import Layout from './Layout.astro';
+import PageHead from '../components/PageHead.astro';
+import LabelList, { type LabelItem } from '../components/LabelList.astro';
+import Stamp from '../components/Stamp.astro';
+import Screen from '../components/Screen.astro';
+import MediaElement from '../components/MediaElement.astro';
+import type { Media } from '../lib/media';
+import type { ProjectStatus } from '../lib/content';
+import type { CaseStudy } from '../lib/schema';
+
+export interface CaseAction {
+  label: string;
+  href: string;
+  primary?: boolean;
+  // Opens another site, in a new tab.
+  external?: boolean;
+}
+
+export interface CaseScreen {
+  variant: 'terminal' | 'browser';
+  title: string;
+  shots: { media: Media; cover: boolean }[];
+}
+
+export interface CasePagerItem {
+  // Previous sits on the left and Next on the right, even when it is alone.
+  rel: 'prev' | 'next';
+  href: string;
+  title: string;
+  // A small grey label over the title, such as "Next · No. 004".
+  meta: string;
+}
+
+interface Props {
+  title: string;
+  description: string;
+  ogImage: string;
+  // What kind of work it is, over the title: "Client project", "Personal project".
+  kicker: string;
+  // A personal project's status, shown beside the kicker.
+  status?: ProjectStatus;
+  lead: string;
+  highlight?: string;
+  labels: (LabelItem | false | '' | 0 | null | undefined)[];
+  actions: CaseAction[];
+  screen?: CaseScreen;
+  study?: CaseStudy;
+  // The Markdown body, rendered.
+  html?: string;
+  pager: CasePagerItem[];
+  pagerLabel: string;
+  back: { href: string; label: string };
+}
+
+const { title, description, ogImage, kicker, status, lead, highlight, labels, actions, screen, study, html, pager, pagerLabel, back } =
+  Astro.props;
+const cover = screen?.shots.find((shot) => shot.cover);
+const gallery = screen?.shots.filter((shot) => !shot.cover) ?? [];
+---
+
+<Layout title={title} description={description} ogImage={ogImage}>
+  <PageHead title={title} lead={lead} highlight={highlight}>
+    <Fragment slot="kicker">{kicker}{status && <Stamp status={status} />}</Fragment>
+    <LabelList rise={4} items={labels} />
+    {actions.length > 0 && (
+      <p class="actions rise" style="--i:5">
+        {actions.map((action) => (
+          <a
+            class:list={['action', { 'action-primary': action.primary }]}
+            href={action.href}
+            target={action.external ? '_blank' : undefined}
+            rel={action.external ? 'noopener noreferrer' : undefined}
+          >
+            {action.label}{action.external && <span class="action-external" aria-hidden="true">↗</span>}
+          </a>
+        ))}
+      </p>
+    )}
+  </PageHead>
+
+  {screen && cover && (
+    <figure class="figure figure-screen">
+      <Screen variant={screen.variant} title={screen.title}><MediaElement media={cover.media} alt={title} priority /></Screen>
+    </figure>
+  )}
+
+  {study && (
+    <section class="section case-section bleed reveal" aria-labelledby="case-title">
+      <h2 class="section-title" id="case-title">Case study</h2>
+      <dl class="case">
+        <div><dt>Problem</dt><dd>{study.problem}</dd></div>
+        <div><dt>My role</dt><dd>{study.role}</dd></div>
+        <div>
+          <dt>Key decisions</dt>
+          <dd><ul class="bullets">{study.decisions.map((decision) => <li>{decision}</li>)}</ul></dd>
+        </div>
+        <div><dt>Outcome</dt><dd>{study.outcome}</dd></div>
+      </dl>
+    </section>
+  )}
+
+  {html && <article class="prose reveal" set:html={html} />}
+
+  {screen && gallery.map((shot) => (
+    <figure class="figure figure-screen reveal">
+      <Screen variant={screen.variant} title={screen.title}><MediaElement media={shot.media} alt={`${title} screenshot`} /></Screen>
+    </figure>
+  ))}
+
+  <nav class="pager" aria-label={pagerLabel}>
+    {pager.length > 0 && (
+      <ul class="pager-links">
+        {[...pager].sort((a, b) => (a.rel === b.rel ? 0 : a.rel === 'prev' ? -1 : 1)).map((item) => (
+          <li class={`pager-${item.rel}`}>
+            <a class="pager-link" href={item.href} rel={item.rel}>
+              <span class="pager-label">{item.meta}</span>
+              <span class="pager-title">{item.title}</span>
+              <span class="pager-arrow" aria-hidden="true">{item.rel === 'prev' ? '‹' : '›'}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+    <p class="footer-nav"><a class="link-more" href={back.href}>{back.label}</a></p>
+  </nav>
+</Layout>

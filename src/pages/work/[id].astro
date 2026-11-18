@@ -1,0 +1,65 @@
+---
+// Projects from the job, one page each. Industry only: no client names,
+// screenshots, code or links (the schema forbids them), so the page is the
+// case study and its labels.
+import CaseStudy from '../../layouts/CaseStudy.astro';
+import { cv, linkHref } from '../../data/cv';
+import { jobWhen, type JobWork } from '../../lib/content';
+import { getJobWork } from '../../lib/collections';
+import { markdownToHtml } from '../../lib/markdown';
+
+export async function getStaticPaths() {
+  const work = await getJobWork();
+  return work.map((project, i) => ({
+    params: { id: project.id },
+    props: { project, previous: work[i - 1], next: work[i + 1] },
+  }));
+}
+
+interface Props {
+  project: JobWork;
+  previous?: JobWork;
+  next?: JobWork;
+}
+
+const { project, previous, next } = Astro.props;
+const { data } = project;
+const job = cv.experience.find((entry) => entry.id === data.job)!;
+const pager = [
+  previous && { label: 'Previous', rel: 'prev', project: previous },
+  next && { label: 'Next', rel: 'next', project: next },
+]
+  .filter((item): item is { label: string; rel: 'prev' | 'next'; project: JobWork } => Boolean(item))
+  .map((item) => ({
+    rel: item.rel,
+    href: `/work/${item.project.id}`,
+    title: item.project.data.title,
+    meta: `${item.label} · ${item.project.data.roleLabel}`,
+  }));
+const html = project.content.trim() ? await markdownToHtml(project.content) : undefined;
+---
+
+<CaseStudy
+  title={data.title}
+  description={data.summary}
+  ogImage={`/og/work-${project.id}.png`}
+  kicker={data.kind === 'internal' ? 'Internal project' : 'Client project'}
+  lead={data.summary}
+  highlight={data.highlight}
+  labels={[
+    { label: 'Role', value: data.roleLabel },
+    data.team && { label: 'Team', value: data.team },
+    data.tags.length > 0 && { label: 'Stack', value: data.tags.join(', ') },
+    { label: 'When', value: jobWhen(job.period) },
+    data.status && { label: 'Status', value: data.status },
+  ]}
+  actions={[
+    { label: 'Talk to me about this work', href: '/contact', primary: true },
+    { label: 'LinkedIn', href: linkHref('LinkedIn'), external: true },
+  ]}
+  study={data.case}
+  html={html}
+  pager={pager}
+  pagerLabel="More work from my job"
+  back={{ href: '/#selected-work', label: 'All selected work' }}
+/>

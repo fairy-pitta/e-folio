@@ -1,59 +1,36 @@
-import fs from "fs"
-import path from "path"
-import matter from "gray-matter"
 import { SHORT_MONTHS, monthIndex } from "./months"
+import type { BlogData, JobWorkData, PersonalWorkData, WorkData } from "./schema"
 
-const blogDirectory = path.join(process.cwd(), "content", "blog")
-const projectsDirectory = path.join(process.cwd(), "content", "projects")
-
-export interface BlogFrontmatter {
-  title: string
-  date: string
-  excerpt: string
-  coverImage?: string
-  readTime?: string
-  tags: string[]
-  // Drafts stay in the repo but are not built into any page, feed or image.
-  draft?: boolean
-}
-
-export interface ProjectFrontmatter {
-  title: string
-  description: string
-  date: string
-  coverImage?: string
-  tags: string[]
-  liveUrl?: string
-  githubUrl?: string
-  gallery?: string[]
-  // Where the project is distributed, such as npm. Not a demo, so it never earns a LIVE stamp.
-  packageUrl?: string
-  // One line on the card: an outcome where there is one, otherwise the engineering choice.
-  highlight?: string
-  // Older or retired work, listed briefly below the main grid.
-  earlier?: boolean
-  // A write-up hosted elsewhere, such as a Qiita article.
-  articleUrl?: string
-  articleLabel?: string
-  // What it runs on, for the specimen label: "Browser · Rust/WASM".
-  stack?: string
+// One content file as the collections hand it over: the file name without
+// ".md" as its id, the parsed front matter and the Markdown body.
+export interface ContentEntry<T> {
+  id: string
+  data: T
+  body?: string
 }
 
 export interface BlogPost {
   slug: string
-  frontmatter: BlogFrontmatter
+  data: BlogData
   content: string
   date: Date
 }
 
 export interface Project {
   slug: string
-  frontmatter: ProjectFrontmatter
+  data: PersonalWorkData
   content: string
   date: Date
   // Catalogue number in the order the projects were made, oldest first, so
   // adding a project never renumbers the ones already listed.
   number: number
+}
+
+// A project from the job, told as a case study on its own page, /work/<id>.
+export interface JobWork {
+  id: string
+  data: JobWorkData
+  content: string
 }
 
 function buildUtcDate(year: number, month: number | undefined, day: number): Date | null {
@@ -99,29 +76,59 @@ export function formatDate(date: Date): string {
   return `${formatYearMonth(date)}-${pad(date.getUTCDate())}`
 }
 
-function readMarkdownFiles<T extends { date: string; tags: string[] }>(directory: string) {
-  if (!fs.existsSync(directory)) return []
-
-  return fs.readdirSync(directory)
-    .filter((fileName) => fileName.endsWith(".md"))
-    .map((fileName) => {
-      const slug = fileName.replace(/\.md$/, "")
-      const { data, content } = matter(fs.readFileSync(path.join(directory, fileName), "utf8"))
-      const date = parseContentDate(data.date, fileName)
-      const frontmatter = { ...data, tags: Array.isArray(data.tags) ? data.tags : [] } as T
-      return { slug, frontmatter, content, date }
-    })
-    .sort((a, b) => b.date.getTime() - a.date.getTime())
+// Newest first; files with the same date keep the order of their names, as
+// the directory listing gave them before the collections existed.
+function newestFirst<T extends { id: string; date: Date }>(a: T, b: T): number {
+  return b.date.getTime() - a.date.getTime() || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0)
 }
 
-export function getAllBlogPosts({ includeDrafts = false }: { includeDrafts?: boolean } = {}): BlogPost[] {
-  const posts = readMarkdownFiles<BlogFrontmatter>(blogDirectory)
-  return includeDrafts ? posts : posts.filter((post) => post.frontmatter.draft !== true)
+export function toBlogPosts(
+  entries: ContentEntry<BlogData>[],
+  { includeDrafts = false }: { includeDrafts?: boolean } = {},
+): BlogPost[] {
+  return entries
+    .filter((entry) => includeDrafts || entry.data.draft !== true)
+    .map((entry) => ({ id: entry.id, date: entry.data.date, entry }))
+    .sort(newestFirst)
+    .map(({ entry, date }) => ({ slug: entry.id, data: entry.data, content: entry.body ?? "", date }))
 }
 
-export function getAllProjects(): Project[] {
-  const projects = readMarkdownFiles<ProjectFrontmatter>(projectsDirectory)
-  return projects.map((project, i) => ({ ...project, number: projects.length - i }))
+function isPersonal(entry: ContentEntry<WorkData>): entry is ContentEntry<PersonalWorkData> {
+  return entry.data.kind === "personal"
+}
+
+function isJobWork(entry: ContentEntry<WorkData>): entry is ContentEntry<JobWorkData> {
+  return entry.data.kind === "client" || entry.data.kind === "internal"
+}
+
+export function toProjects(entries: ContentEntry<WorkData>[]): Project[] {
+  const projects = entries
+    .filter(isPersonal)
+    .map((entry) => ({ id: entry.id, date: entry.data.date, entry }))
+    .sort(newestFirst)
+  return projects.map(({ entry, date }, i) => ({
+    slug: entry.id,
+    data: entry.data,
+    content: entry.body ?? "",
+    date,
+    number: projects.length - i,
+  }))
+}
+
+// In the order of the jobs in the CV, then each job's own order.
+export function toJobWork(entries: ContentEntry<WorkData>[], jobIds: string[]): JobWork[] {
+  const rank = (job: string) => jobIds.indexOf(job)
+  return entries
+    .filter(isJobWork)
+    .sort((a, b) => rank(a.data.job) - rank(b.data.job) || a.data.order - b.data.order)
+    .map((entry) => ({ id: entry.id, data: entry.data, content: entry.body ?? "" }))
+}
+
+// The When row of a project from the job. Projects carry no dates of their
+// own, so this is the period of the job they were done in.
+export function jobWhen(period: string): string {
+  const current = period.match(/^(.+?)\s*[–-]\s*present$/i)
+  return current ? `Current job, since ${current[1]}` : `During the job, ${period}`
 }
 
 export function formatCatalogueNumber(number: number): string {
@@ -134,11 +141,24 @@ export function formatMonthYear(date: Date): string {
 
 export type ProjectStatus = "LIVE" | "OSS" | "ARCHIVED"
 
-// The stamp on a specimen card: something to try, only code to read, or neither.
-export function projectStatus(frontmatter: ProjectFrontmatter): ProjectStatus {
-  if (frontmatter.liveUrl?.trim()) return "LIVE"
-  if (frontmatter.githubUrl?.trim()) return "OSS"
+type ProjectLinks = PersonalWorkData["links"]
+
+// A personal project's status: something to try, only code to read, or neither.
+export function projectStatus(links: ProjectLinks): ProjectStatus {
+  if (links.live) return "LIVE"
+  if (links.code) return "OSS"
   return "ARCHIVED"
+}
+
+const STATUS_LABELS: Record<ProjectStatus, string> = {
+  LIVE: "Live",
+  OSS: "Open source",
+  ARCHIVED: "Archived",
+}
+
+// The status as it is shown: sentence case, spelled out.
+export function statusLabel(status: ProjectStatus): string {
+  return STATUS_LABELS[status]
 }
 
 export type ProjectLinkKind = "live" | "code" | "package" | "article"
@@ -150,16 +170,16 @@ export interface ProjectLink {
 }
 
 // In display order: the demo first, since trying it is what most readers came for.
-export function projectLinks(frontmatter: ProjectFrontmatter): ProjectLink[] {
+export function projectLinks(links: ProjectLinks): ProjectLink[] {
   const candidates: [ProjectLinkKind, string, string | undefined][] = [
-    ["live", "Try the live demo", frontmatter.liveUrl],
-    ["code", "Source code", frontmatter.githubUrl],
-    ["package", "Package on npm", frontmatter.packageUrl],
-    ["article", frontmatter.articleLabel?.trim() || "Article", frontmatter.articleUrl],
+    ["live", "Try the live demo", links.live],
+    ["code", "Source code", links.code],
+    ["package", "Package on npm", links.package],
+    ["article", links.article?.label ?? "", links.article?.url],
   ]
   return candidates
-    .filter(([, , href]) => href?.trim())
-    .map(([kind, label, href]) => ({ kind, label, href: href!.trim() }))
+    .filter((candidate): candidate is [ProjectLinkKind, string, string] => Boolean(candidate[2]))
+    .map(([kind, label, href]) => ({ kind, label, href }))
 }
 
 // A project's slug as a folder name, for the home page's tree and the path
@@ -173,15 +193,15 @@ export function folderName(slug: string): string {
 
 // Terminal tools are shown in a drawn monitor, so a recording of a shell reads
 // as a screen rather than a black box.
-export function runsInTerminal(frontmatter: Pick<ProjectFrontmatter, 'stack'>): boolean {
-  return /^terminal\b/i.test(frontmatter.stack?.trim() ?? '')
+export function runsInTerminal(data: { stack?: string }): boolean {
+  return /^terminal\b/i.test(data.stack ?? '')
 }
 
 // What a project's window shows in its title bar: the shell for a terminal
 // tool, otherwise the address it is served from, or its name if it has none.
-export function screenTitle(slug: string, frontmatter: Pick<ProjectFrontmatter, 'stack' | 'liveUrl'>): string {
-  if (runsInTerminal(frontmatter)) return `zsh — ${folderName(slug)}`
-  const live = frontmatter.liveUrl?.trim()
+export function screenTitle(slug: string, data: { stack?: string; links?: { live?: string } }): string {
+  if (runsInTerminal(data)) return `zsh — ${folderName(slug)}`
+  const live = data.links?.live
   if (live) {
     try {
       const url = new URL(live)

@@ -1,0 +1,22 @@
+---
+// One row of a grouped .link-list: the whole row is the link. The title, a
+// one-line description beside it, then a small grey meta such as
+// "No. 004 · 2025" and a chevron. The home page's earlier work.
+interface Props {
+  href: string;
+  title: string;
+  desc: string;
+  meta: string;
+}
+
+const { href, title, desc, meta } = Astro.props;
+---
+
+<li>
+  <a class="link-row" href={href}>
+    <span class="link-row-title">{title}</span>
+    <span class="link-row-desc">{desc}</span>
+    <span class="link-row-meta">{meta}</span>
+    <span class="link-row-arrow" aria-hidden="true">›</span>
+  </a>
+</li>

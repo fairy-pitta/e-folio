@@ -1,31 +1,34 @@
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import satori from 'satori'
 import sharp from 'sharp'
 
-// Fonts are fetched only at build time. They are the site's own typefaces,
-// Geist and Geist Mono, as TrueType files: satori cannot read the woff2 files
-// the site ships. The colours are the light theme's tokens from site.css.
-const BG = '#f5f5f7'
-const FG = '#1d1d1f'
-const FAINT = '#6e6e73'
-const ACCENT = '#1d6b52'
-const fontCache = new Map<string, ArrayBuffer>()
+// The site's own typefaces, Geist and Geist Mono, as TrueType files: satori
+// cannot read the woff2 files the site ships. They are committed under
+// assets/fonts (see SOURCE.txt there), so a build needs no network for them.
+const FONT_DIR = resolve(process.cwd(), 'assets/fonts')
 
-async function loadGoogleFont(family: string, weight: number): Promise<ArrayBuffer> {
-  const cacheKey = `${family}:${weight}`
-  const cached = fontCache.get(cacheKey)
+// The light theme's tokens from styles/tokens.css (a test keeps them in step).
+export const OG_COLOURS = {
+  bg: '#f5f5f7',
+  fg: '#1d1d1f',
+  faint: '#6e6e73',
+  accent: '#0066cc',
+} as const
+
+const fontCache = new Map<string, Buffer>()
+
+function loadFont(file: string): Buffer {
+  const cached = fontCache.get(file)
   if (cached) return cached
-
-  const url = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family)}:wght@${weight}&display=swap`
-  const css = await (await fetch(url)).text()
-  const match = css.match(/src:\s*url\(([^)]+)\)/)
-  if (!match) throw new Error(`Failed to load font: ${family}`)
-  const buffer = await (await fetch(match[1])).arrayBuffer()
-  fontCache.set(cacheKey, buffer)
+  const buffer = readFileSync(resolve(FONT_DIR, file))
+  fontCache.set(file, buffer)
   return buffer
 }
 
 export async function generateOgImage(title: string): Promise<Buffer> {
-  const [bold, mono] = await Promise.all([loadGoogleFont('Geist', 700), loadGoogleFont('Geist Mono', 400)])
+  const bold = loadFont('Geist-Bold.ttf')
+  const mono = loadFont('GeistMono-Regular.ttf')
 
   const svg = await satori(
     {
@@ -38,8 +41,8 @@ export async function generateOgImage(title: string): Promise<Buffer> {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: '72px',
-          backgroundColor: BG,
-          color: FG,
+          backgroundColor: OG_COLOURS.bg,
+          color: OG_COLOURS.fg,
           fontFamily: 'Geist',
         },
         children: [
@@ -64,12 +67,12 @@ export async function generateOgImage(title: string): Promise<Buffer> {
                 gap: '16px',
                 fontFamily: 'Geist Mono',
                 fontSize: '24px',
-                color: FAINT,
+                color: OG_COLOURS.faint,
               },
               children: [
                 {
                   type: 'div',
-                  props: { style: { width: '12px', height: '12px', borderRadius: '6px', backgroundColor: ACCENT } },
+                  props: { style: { width: '12px', height: '12px', borderRadius: '6px', backgroundColor: OG_COLOURS.accent } },
                 },
                 'Shuna Maekawa · fairy-pitta.net',
               ],

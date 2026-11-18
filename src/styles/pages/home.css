@@ -1,0 +1,75 @@
+/* Home page only. Shared colours and type live in ../tokens.css. */
+
+/* Hero: centred. Who, a two-tone headline, what the job involves, one proof
+   point, a quiet line of facts, then the ways to get in touch. */
+.hero { padding-top: var(--space-9); padding-bottom: var(--space-9); text-align: center; }
+.hero .band-inner { max-width: var(--width-grid); }
+.hero-kicker { margin: 0 0 var(--space-4); font-size: var(--text-md); font-weight: var(--weight-heading); letter-spacing: var(--tracking-body); }
+.hero-title {
+  margin: 0 auto; font-size: clamp(2.5rem, 5.3vw, 4.25rem); font-weight: var(--weight-display); text-wrap: balance;
+  line-height: var(--leading-display); letter-spacing: var(--tracking-display);
+}
+.hero-title-rest { display: block; color: var(--fg-tertiary); }
+.hero-sub {
+  margin: var(--space-5) auto 0; max-width: 30em; color: var(--muted); text-wrap: balance;
+  font-size: var(--text-lg); line-height: var(--leading-snug); letter-spacing: var(--tracking-body);
+}
+.hero-cert { margin: var(--space-4) 0 0; font-size: var(--text-label); }
+.hero-cert-year { margin-left: .35em; color: var(--faint); }
+.hero .actions { justify-content: center; margin-top: var(--space-6); }
+/* Role, place and availability: one quiet line, separated by dots. */
+.hero-facts {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-1) 0; margin: var(--space-5) 0 0; padding: 0;
+  list-style: none; font-size: var(--text-label); color: var(--muted);
+}
+.hero-facts li { display: inline-flex; align-items: center; gap: var(--space-2); }
+.hero-facts li + li::before { content: "·"; margin: 0 var(--space-3); color: var(--faint); }
+.pulse { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2.4s ease-out infinite; }
+
+/* Three facts as tiles: a label, a big figure, a line, and where to read more. */
+.proof-tile { min-height: 280px; }
+.proof-figure {
+  margin: var(--space-2) 0 0; font-size: var(--text-figure); font-weight: var(--weight-display);
+  line-height: var(--leading-display); letter-spacing: var(--tracking-display); text-wrap: balance;
+}
+.proof-tile .tile-text { margin-top: var(--space-4); }
+.proof-tile .link-more { margin-top: auto; padding-top: var(--space-4); }
+
+/* The bird call, drawn small under the personal projects' heading. */
+.call { width: 260px; max-width: 100%; margin: var(--space-6) auto 0; }
+.call-plot { display: block; width: 100%; height: auto; }
+.call-cell { fill: var(--fg); opacity: calc(.06 + var(--a) * .9); }
+.call-peak { fill: var(--accent); }
+.call-caption {
+  display: flex; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-2);
+  font-size: var(--text-xs); color: var(--faint); white-space: nowrap;
+}
+
+/* Earlier work: a small heading and a note, then one row per project. */
+.earlier-inner { max-width: var(--width-wide); }
+.section-head-quiet { margin-bottom: var(--space-5); text-align: left; }
+.section-head-quiet .quiet-title { margin: 0; font-size: var(--text-xl); font-weight: var(--weight-heading); letter-spacing: var(--tracking-heading); }
+.section-head-quiet .section-note { margin: var(--space-1) 0 0; font-size: var(--text-base); }
+.band-alt .list { background: var(--tile-alt); }
+
+/* The closing about: centred, a headline-sized summary. */
+.about { text-align: center; }
+.about .section-heading { display: inline-flex; align-items: center; gap: var(--space-3); }
+.about .section-heading .pitta-mark { width: .6em; height: .66em; }
+.about-text { margin: var(--space-5) auto 0; max-width: 32em; font-size: var(--text-md); line-height: var(--leading-snug); color: var(--muted); text-wrap: pretty; }
+.about .actions { justify-content: center; }
+
+@media (max-width: 640px) {
+  .hero { padding-top: var(--space-8); padding-bottom: var(--space-8); }
+  .hero-facts { flex-direction: column; }
+  .hero-facts li { justify-content: center; }
+  .hero-facts li + li::before { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse { animation: none; }
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 8px transparent; }
+}

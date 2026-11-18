@@ -1,0 +1,22 @@
+/* ---- Contact: a grouped form, a label and its field on each row ---- */
+.contact-area { margin-top: var(--space-6); }
+.contact-note { margin: 0 0 var(--space-4); color: var(--muted); }
+.contact { display: grid; gap: var(--space-5); }
+.field-group > .field-row { display: grid; grid-template-columns: 6.5em minmax(0, 1fr); align-items: center; gap: var(--space-3); padding-block: 0; }
+.field-group > .field-row-tall { align-items: start; }
+.field-row-tall .field-label { padding-top: 13px; }
+/* The row is the field, so the input itself has no box; focus still rings it. */
+.contact input, .contact textarea {
+  display: block; width: 100%; min-height: 48px; padding: 12px 0; margin: 0;
+  font: inherit; color: var(--fg); background: transparent; border: 0; border-radius: var(--radius-input);
+}
+.contact textarea { resize: vertical; }
+.contact ::placeholder { color: var(--faint); opacity: 1; }
+.contact input:focus-visible, .contact textarea:focus-visible, .contact input:focus, .contact textarea:focus {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}
+.contact .action { justify-self: start; }
+.status { margin: var(--space-2) 0 0; font-size: var(--text-label); }
+.contact-topics { margin-top: var(--space-7); }
+.contact-topics .section-title { margin-bottom: var(--space-3); }
+.contact-topics .bullets { color: var(--fg); }

@@ -1,0 +1,72 @@
+/* ---- Frame: the same global nav, column and footer on every page ---- */
+.page { min-height: 100vh; display: flex; flex-direction: column; }
+.content { flex: 1; }
+/* Reading pages keep their text to one centred column. */
+.content-reading {
+  width: 100%; max-width: calc(var(--width-text) + 2 * var(--gutter)); margin: 0 auto;
+  padding: var(--space-8) var(--gutter) var(--space-9);
+}
+
+/* The global nav: a thin translucent bar, its items small and spread across
+   a centred row. The page shows through, blurred. */
+.site-header {
+  position: sticky; top: 0; z-index: 10;
+  background: var(--material); border-bottom: 1px solid color-mix(in srgb, var(--line) 60%, transparent);
+  -webkit-backdrop-filter: var(--material-filter); backdrop-filter: var(--material-filter);
+}
+.site-header-inner {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--space-5);
+  max-width: calc(var(--width-wide) + 2 * var(--gutter)); height: 48px; margin: 0 auto; padding: 0 var(--gutter);
+  font-size: var(--text-nav); letter-spacing: 0;
+}
+.site-name {
+  display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px;
+  color: var(--fg); font-weight: var(--weight-heading); text-decoration: none;
+}
+.site-name:hover { text-decoration: none; }
+.pitta-mark { flex: none; }
+.site-name .pitta-mark { width: 15px; height: 17px; }
+.site-nav { display: flex; gap: var(--space-6); }
+.site-nav a {
+  display: inline-flex; align-items: center; min-height: 44px;
+  color: color-mix(in srgb, var(--fg) 80%, transparent); text-decoration: none; transition: color var(--dur-fast) ease;
+}
+.site-nav a:hover, .site-nav a[aria-current="page"] { color: var(--fg); text-decoration: none; }
+.site-tools { display: flex; align-items: center; }
+.site-social { display: flex; align-items: center; }
+/* Icon buttons: a 44px target around a small glyph, like the nav's icons. */
+.site-social a, .theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; padding: 0;
+  color: color-mix(in srgb, var(--fg) 80%, transparent); border: 0; border-radius: var(--radius-pill);
+  transition: color var(--dur-fast) ease;
+}
+.site-social a:hover, .theme-toggle:hover { color: var(--fg); }
+.theme-toggle { cursor: pointer; font: inherit; background: transparent; margin-right: -12px; }
+.theme-icon { display: inline-flex; flex: none; }
+
+/* On a phone: the name and icons on one line, the nav on a second. Too tall
+   to keep on screen, so it scrolls away. */
+@media (max-width: 640px) {
+  .site-header { position: static; }
+  .site-header-inner { flex-wrap: wrap; height: auto; gap: 0; padding-top: 2px; }
+  .site-nav { order: 3; width: 100%; justify-content: space-between; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+}
+
+.site-footer { background: var(--bg); border-top: var(--rule); font-size: var(--text-xs); color: var(--faint); }
+.site-footer-inner {
+  max-width: calc(var(--width-wide) + 2 * var(--gutter)); margin: 0 auto; padding: var(--space-5) var(--gutter) var(--space-6);
+  line-height: 1.6;
+}
+.site-footer a { color: var(--muted); }
+
+/* ---- Bands: full-width sections that alternate --bg and --band-alt ---- */
+.band { padding: var(--space-9) var(--gutter); background: var(--bg); scroll-margin-top: 48px; }
+.band-alt { background: var(--band-alt); }
+.band-inner { max-width: var(--width-grid); margin: 0 auto; }
+.band-inner-text { max-width: var(--width-wide); }
+@media (max-width: 640px) {
+  .band { padding-block: var(--space-8); }
+}
+
+/* A block inside a reading column whose background runs to both edges of the window. */
+.bleed { background: var(--band-alt); box-shadow: 0 0 0 100vmax var(--band-alt); clip-path: inset(0 -100vmax); }

@@ -1,18 +1,21 @@
 ---
+kind: personal
 title: "portree"
-description: "A CLI that runs a separate set of dev servers for each git worktree, with stable ports and branch-name URLs."
+summary: "A CLI that runs a separate set of dev servers for each git worktree, with stable ports and branch-name URLs."
 date: "6 Feb, 2026"
-coverImage: "/projects/portree/portree_main.mp4"
-tags: ["CLI Tool", "Go", "Git Worktree", "TUI", "Developer Tools"]
+highlight: "Worktrees never clash on ports, and each branch keeps the same ones"
 stack: "Terminal · Go"
-highlight: "Each branch gets the same ports every time, from a hash of its name"
-githubUrl: "https://github.com/fairy-pitta/portree"
-gallery: [
-  "/projects/portree/portree_tui.mp4",
-  "/projects/portree/portree_init.mp4"
-]
-articleUrl: "https://qiita.com/Pitta/items/4a6537a3450aa6f8f050"
-articleLabel: "Article on Qiita (Japanese)"
+tags: ["CLI Tool", "Go", "Git Worktree", "TUI", "Developer Tools"]
+media:
+  cover: "/projects/portree/portree_main.mp4"
+  gallery:
+    - "/projects/portree/portree_tui.mp4"
+    - "/projects/portree/portree_init.mp4"
+links:
+  code: "https://github.com/fairy-pitta/portree"
+  article:
+    url: "https://qiita.com/Pitta/items/4a6537a3450aa6f8f050"
+    label: "Article on Qiita (Japanese)"
 ---
 
 ## Background

@@ -16,22 +16,32 @@ function toQiitaItem(raw: unknown): QiitaItem | null {
   return { title, url, createdAt }
 }
 
+// What a build got from Qiita. `ok` is false when the request failed, so the
+// page can say so and the checks on the built site can tell an outage from a bug.
+export interface QiitaFetch {
+  items: QiitaItem[]
+  ok: boolean
+}
+
+// The value of the writing list's data-qiita attribute when the fetch failed.
+export const QIITA_UNAVAILABLE = "unavailable"
+
 // Never throws: a Qiita outage or rate limit must not break the site build.
-export async function fetchQiitaItems(fetchImpl: typeof fetch = fetch): Promise<QiitaItem[]> {
+export async function fetchQiita(fetchImpl: typeof fetch = fetch): Promise<QiitaFetch> {
   try {
     const response = await fetchImpl(QIITA_ITEMS_URL)
     if (!response.ok) {
       console.warn(`[qiita] skipped: HTTP ${response.status}`)
-      return []
+      return { items: [], ok: false }
     }
     const body: unknown = await response.json()
     if (!Array.isArray(body)) {
       console.warn("[qiita] skipped: unexpected response shape")
-      return []
+      return { items: [], ok: false }
     }
-    return body.map(toQiitaItem).filter((item): item is QiitaItem => item !== null)
+    return { items: body.map(toQiitaItem).filter((item): item is QiitaItem => item !== null), ok: true }
   } catch (error) {
     console.warn("[qiita] skipped:", error)
-    return []
+    return { items: [], ok: false }
   }
 }

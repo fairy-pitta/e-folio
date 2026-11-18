@@ -3,7 +3,7 @@ import '@fontsource-variable/geist';
 import '@fontsource-variable/geist-mono';
 import '../styles/site.css';
 import { ClientRouter } from 'astro:transitions';
-import { getAllBlogPosts } from '../lib/content';
+import { getAllBlogPosts } from '../lib/collections';
 import { cv } from '../data/cv';
 import PittaMark from '../components/PittaMark.astro';
 
@@ -12,8 +12,8 @@ interface Props {
   title?: string;
   description?: string;
   ogImage?: string;
-  // The Work grid uses the full width; reading pages keep their text to a
-  // comfortable column. The frame, header and footer are the same on every page.
+  // The home page's bands use the full width; reading pages keep their text
+  // to one centred column. The frame, header and footer are the same on every page.
   wide?: boolean;
 }
 
@@ -30,10 +30,10 @@ const fullUrl = new URL(Astro.url.pathname, base).href;
 const imageUrl = new URL(ogImage, base).href;
 const isGeneratedImage = ogImage.startsWith('/og/');
 const year = new Date().getFullYear();
-const hasFeed = getAllBlogPosts().length > 0;
+const hasFeed = (await getAllBlogPosts()).length > 0;
 
 const NAV = [
-  { label: 'Work', href: '/', matches: (path: string) => path === '/' || path.startsWith('/projects') },
+  { label: 'Work', href: '/', matches: (path: string) => path === '/' || path.startsWith('/projects') || path.startsWith('/work') },
   { label: 'About', href: '/about', matches: (path: string) => path.startsWith('/about') },
   { label: 'Writing', href: '/blog', matches: (path: string) => path.startsWith('/blog') },
   { label: 'Contact', href: '/contact', matches: (path: string) => path.startsWith('/contact') },
@@ -96,46 +96,52 @@ const SOCIAL_ICONS: Record<string, string> = {
   <body>
     <div class="page">
       <header class="site-header" transition:animate="none">
-        <a class="site-name" href="/"><PittaMark /><span>fairy pitta</span></a>
-        <nav class="site-nav" aria-label="Main">
-          {NAV.map((item) => (
-            <a href={item.href} aria-current={item.matches(currentPath) ? 'page' : undefined}>{item.label}</a>
-          ))}
-        </nav>
-        <span class="site-social">
-          {cv.links.map((link) => (
-            <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} title={link.label}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d={SOCIAL_ICONS[link.label]}></path>
-              </svg>
-            </a>
-          ))}
-        </span>
-        <!-- Persisted across navigations, so it keeps its listeners and never re-hides. -->
-        <button type="button" class="theme-toggle" id="theme-toggle" hidden transition:persist="theme-toggle">
-          <span class="theme-icon" data-icon="light" hidden>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-              <circle cx="12" cy="12" r="4.5"></circle>
-              <path d="M12 1.5v2.5M12 20v2.5M1.5 12h2.5M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M19.4 4.6l-1.8 1.8M6.4 17.6l-1.8 1.8"></path>
-            </svg>
+        <div class="site-header-inner">
+          <a class="site-name" href="/"><PittaMark /><span>fairy pitta</span></a>
+          <nav class="site-nav" aria-label="Main">
+            {NAV.map((item) => (
+              <a href={item.href} aria-current={item.matches(currentPath) ? 'page' : undefined}>{item.label}</a>
+            ))}
+          </nav>
+          <span class="site-tools">
+            <span class="site-social">
+              {cv.links.map((link) => (
+                <a href={link.href} target="_blank" rel="noopener noreferrer" aria-label={link.label} title={link.label}>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d={SOCIAL_ICONS[link.label]}></path>
+                  </svg>
+                </a>
+              ))}
+            </span>
+            <!-- Persisted across navigations, so it keeps its listeners and never re-hides. -->
+            <button type="button" class="theme-toggle" id="theme-toggle" hidden transition:persist="theme-toggle">
+              <span class="theme-icon" data-icon="light" hidden>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                  <circle cx="12" cy="12" r="4.5"></circle>
+                  <path d="M12 1.5v2.5M12 20v2.5M1.5 12h2.5M20 12h2.5M4.6 4.6l1.8 1.8M17.6 17.6l1.8 1.8M19.4 4.6l-1.8 1.8M6.4 17.6l-1.8 1.8"></path>
+                </svg>
+              </span>
+              <span class="theme-icon" data-icon="dark" hidden>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+                  <path d="M20.8 13.4A8.5 8.5 0 1 1 10.6 3.2a7 7 0 0 0 10.2 10.2z"></path>
+                </svg>
+              </span>
+            </button>
           </span>
-          <span class="theme-icon" data-icon="dark" hidden>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
-              <path d="M20.8 13.4A8.5 8.5 0 1 1 10.6 3.2a7 7 0 0 0 10.2 10.2z"></path>
-            </svg>
-          </span>
-        </button>
+        </div>
       </header>
       <main class:list={['content', { 'content-reading': !wide }]}>
         <slot />
       </main>
       <footer class="site-footer">
-        © {year} {cv.name} · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a>{hasFeed && <> · <a href="/rss.xml">RSS</a></>}
+        <div class="site-footer-inner">
+          © {year} {cv.name} · <a href="/privacy">Privacy</a> · <a href="/terms">Terms</a>{hasFeed && <> · <a href="/rss.xml">RSS</a></>}
+        </div>
       </footer>
     </div>
 
     <script>
-      import { setupMotion } from '../lib/motion';
+      import { setupMotion, watchCoverVideos } from '../lib/motion';
       import { nextTheme, readStoredTheme, resolveTheme, storeTheme, toggleView, type Theme } from '../lib/theme';
 
       const button = document.getElementById('theme-toggle') as HTMLButtonElement | null;
@@ -169,6 +175,7 @@ const SOCIAL_ICONS: Record<string, string> = {
       // The router builds each new page in a detached document, where videos fail
       // to load and never retry once inserted. Start any such video over.
       document.addEventListener('astro:page-load', setupMotion);
+      watchCoverVideos();
 
       document.addEventListener('astro:page-load', () => {
         for (const video of document.querySelectorAll('video')) {

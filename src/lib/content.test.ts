@@ -1,20 +1,28 @@
 import { describe, it, expect } from 'vitest'
 import {
   parseContentDate,
+  jobWhen,
   formatYearMonth,
   formatDate,
-  getAllBlogPosts,
-  getAllProjects,
   formatCatalogueNumber,
   formatMonthYear,
   projectStatus,
+  statusLabel,
   projectLinks,
   folderName,
   runsInTerminal,
   screenTitle,
-  type ProjectFrontmatter,
+  toBlogPosts,
+  toProjects,
+  type ContentEntry,
 } from './content'
 import { findForbidden } from './public-safety'
+import { readBlogPosts, readContentFiles, readProjects } from './content-files'
+import type { PersonalWorkData } from './schema'
+
+// The same files and the same builders the pages use, read from disk.
+const getAllBlogPosts = readBlogPosts
+const getAllProjects = readProjects
 
 const utc = (y: number, m: number, d: number) => new Date(Date.UTC(y, m - 1, d))
 
@@ -50,7 +58,7 @@ describe('formatters', () => {
 describe('getAllBlogPosts', () => {
   it('leaves_out_drafts_by_default', () => {
     for (const post of getAllBlogPosts()) {
-      expect(post.frontmatter.draft).not.toBe(true)
+      expect(post.data.draft).not.toBe(true)
     }
   })
 
@@ -67,8 +75,8 @@ describe('getAllBlogPosts', () => {
     }
     for (const post of posts) {
       expect(post.slug).toBeTruthy()
-      expect(post.frontmatter.title).toBeTruthy()
-      expect(Array.isArray(post.frontmatter.tags)).toBe(true)
+      expect(post.data.title).toBeTruthy()
+      expect(Array.isArray(post.data.tags)).toBe(true)
     }
   })
 })
@@ -92,9 +100,9 @@ describe('project catalogue', () => {
 
   it('test_read_projects_returns_stack_and_one_line_highlight_for_each', () => {
     for (const project of getAllProjects()) {
-      expect(project.frontmatter.stack?.trim(), project.slug).toBeTruthy()
-      expect(project.frontmatter.highlight?.trim(), project.slug).toBeTruthy()
-      expect(project.frontmatter.highlight!.length, project.slug).toBeLessThanOrEqual(80)
+      expect(project.data.stack?.trim(), project.slug).toBeTruthy()
+      expect(project.data.highlight.trim(), project.slug).toBeTruthy()
+      expect(project.data.highlight.length, project.slug).toBeLessThanOrEqual(80)
     }
   })
 
@@ -108,28 +116,31 @@ describe('project catalogue', () => {
   })
 
   it.each([
-    [{ liveUrl: 'https://example.com', githubUrl: 'https://github.com/x/y' }, 'LIVE'],
-    [{ liveUrl: ' ', githubUrl: 'https://github.com/x/y' }, 'OSS'],
-    [{ liveUrl: '', githubUrl: '' }, 'ARCHIVED'],
-    [{ packageUrl: 'https://www.npmjs.com/package/x', githubUrl: 'https://github.com/x/y' }, 'OSS'],
+    [{ live: 'https://example.com', code: 'https://github.com/x/y' }, 'LIVE'],
+    [{ code: 'https://github.com/x/y' }, 'OSS'],
+    [{}, 'ARCHIVED'],
+    [{ package: 'https://www.npmjs.com/package/x', code: 'https://github.com/x/y' }, 'OSS'],
   ])('test_derive_status_from_links_%#_returns_stamp', (links, expected) => {
-    const frontmatter = { title: 't', description: 'd', date: '2026-01-01', tags: [], ...links } as ProjectFrontmatter
-    expect(projectStatus(frontmatter)).toBe(expected)
+    expect(projectStatus(links)).toBe(expected)
+  })
+
+  it.each([
+    ['LIVE', 'Live'],
+    ['OSS', 'Open source'],
+    ['ARCHIVED', 'Archived'],
+  ] as const)('test_label_status_%s_returns_sentence_case_%s', (status, label) => {
+    expect(statusLabel(status)).toBe(label)
   })
 })
 
 describe('projectLinks', () => {
-  const base: ProjectFrontmatter = { title: 't', description: 'd', date: '2025-01-01', tags: [] }
-
   it('test_build_links_with_every_url_returns_live_code_package_then_article', () => {
     expect(
       projectLinks({
-        ...base,
-        githubUrl: 'https://github.com/x',
-        liveUrl: 'https://x.dev',
-        packageUrl: 'https://www.npmjs.com/package/x',
-        articleUrl: 'https://qiita.com/x/items/1',
-        articleLabel: 'Article on Qiita (Japanese)',
+        code: 'https://github.com/x',
+        live: 'https://x.dev',
+        package: 'https://www.npmjs.com/package/x',
+        article: { url: 'https://qiita.com/x/items/1', label: 'Article on Qiita (Japanese)' },
       }),
     ).toEqual([
       { kind: 'live', label: 'Try the live demo', href: 'https://x.dev' },
@@ -139,15 +150,8 @@ describe('projectLinks', () => {
     ])
   })
 
-  it('test_build_links_with_article_url_but_no_label_uses_article', () => {
-    expect(projectLinks({ ...base, articleUrl: 'https://example.com/post' })).toEqual([
-      { kind: 'article', label: 'Article', href: 'https://example.com/post' },
-    ])
-  })
-
-  it('test_build_links_with_empty_or_missing_urls_returns_nothing', () => {
-    expect(projectLinks({ ...base, githubUrl: '', liveUrl: '  ' })).toEqual([])
-    expect(projectLinks(base)).toEqual([])
+  it('test_build_links_with_no_urls_returns_nothing', () => {
+    expect(projectLinks({})).toEqual([])
   })
 })
 
@@ -156,24 +160,29 @@ describe('project content', () => {
     expect(getAllProjects().map((project) => project.slug)).not.toContain('OcrVfs')
   })
 
-  it('test_read_project_files_contains_no_forbidden_strings', () => {
-    for (const project of getAllProjects()) {
-      const text = JSON.stringify(project.frontmatter) + project.content
-      expect(findForbidden(text), project.slug).toEqual([])
+  it('test_read_work_files_contains_no_forbidden_strings', () => {
+    // Every file under content/work, personal or from the job, as written:
+    // front matter and body. Labels are numbered, so a failure names no term.
+    const files = readContentFiles('work')
+    expect(files.length).toBeGreaterThan(0)
+    for (const file of files) {
+      expect(findForbidden(file.text), file.id).toEqual([])
     }
   })
 
   it('test_read_bird_map_frontmatter_returns_demo_and_repo_and_fixed_typo', () => {
     const map = getAllProjects().find((project) => project.slug === 'SBBirdMap')!
-    expect(map.frontmatter.githubUrl).toBe('https://github.com/fairy-pitta/SGBirdMap')
-    expect(map.frontmatter.liveUrl).toBe('https://sgbirdsmap.fairy-pitta.net')
-    expect(map.frontmatter.description).not.toContain('interative')
+    expect(map.data.links.code).toBe('https://github.com/fairy-pitta/SGBirdMap')
+    expect(map.data.links.live).toBe('https://sgbirdsmap.fairy-pitta.net')
+    expect(map.data.summary).not.toContain('interative')
   })
 
   it('test_read_portree_frontmatter_returns_qiita_article_link', () => {
     const portree = getAllProjects().find((project) => project.slug === 'Portree')!
-    expect(portree.frontmatter.articleUrl).toBe('https://qiita.com/Pitta/items/4a6537a3450aa6f8f050')
-    expect(portree.frontmatter.articleLabel).toBe('Article on Qiita (Japanese)')
+    expect(portree.data.links.article).toEqual({
+      url: 'https://qiita.com/Pitta/items/4a6537a3450aa6f8f050',
+      label: 'Article on Qiita (Japanese)',
+    })
   })
 
   it('test_read_project_content_contains_no_test_counts', () => {
@@ -204,9 +213,49 @@ describe('runsInTerminal', () => {
 describe('screenTitle', () => {
   it('names_the_shell_for_terminal_tools_and_the_address_for_web_apps', () => {
     expect(screenTitle('Portree', { stack: 'Terminal · Go' })).toBe('zsh — portree')
-    expect(screenTitle('GameOfLife', { stack: 'Browser', liveUrl: 'https://fairy-pitta.github.io/Game-Of-Life/' })).toBe(
+    expect(screenTitle('GameOfLife', { stack: 'Browser', links: { live: 'https://fairy-pitta.github.io/Game-Of-Life/' } })).toBe(
       'fairy-pitta.github.io/Game-Of-Life',
     )
     expect(screenTitle('HotspotMap', { stack: 'Browser' })).toBe('hotspot-map')
+  })
+})
+
+describe('toProjects and toBlogPosts', () => {
+  const work = (id: string, date: string, kind: 'personal' | 'client' = 'personal') =>
+    ({ id, data: { kind, date: new Date(date) } as PersonalWorkData, body: `# ${id}` }) as ContentEntry<PersonalWorkData>
+
+  it('test_build_projects_with_equal_dates_orders_them_by_file_name', () => {
+    const projects = toProjects([work('Zeta', '2025-10-13'), work('Alpha', '2025-10-13'), work('New', '2026-01-01')])
+    expect(projects.map((project) => [project.slug, project.number])).toEqual([
+      ['New', 3],
+      ['Alpha', 2],
+      ['Zeta', 1],
+    ])
+  })
+
+  it('test_build_projects_leaves_out_work_from_the_job_and_keeps_the_body', () => {
+    const projects = toProjects([work('Mine', '2025-01-01'), work('job-thing', '2026-01-01', 'client')])
+    expect(projects.map((project) => project.slug)).toEqual(['Mine'])
+    expect(projects[0].content).toBe('# Mine')
+  })
+
+  it('test_build_posts_leaves_out_drafts_unless_asked', () => {
+    const entry = (id: string, draft?: boolean) => ({
+      id,
+      data: { title: id, date: new Date('2026-01-01'), excerpt: 'x', tags: [], draft },
+      body: '',
+    })
+    expect(toBlogPosts([entry('a'), entry('b', true)]).map((post) => post.slug)).toEqual(['a'])
+    expect(toBlogPosts([entry('a'), entry('b', true)], { includeDrafts: true })).toHaveLength(2)
+  })
+})
+
+describe('jobWhen', () => {
+  it('test_format_current_job_period_returns_since_start', () => {
+    expect(jobWhen('Dec 2023 – Present')).toBe('Current job, since Dec 2023')
+  })
+
+  it('test_format_past_job_period_returns_the_period', () => {
+    expect(jobWhen('May 2022 – Apr 2023')).toBe('During the job, May 2022 – Apr 2023')
   })
 })

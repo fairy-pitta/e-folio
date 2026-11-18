@@ -1,0 +1,54 @@
+---
+import type { Media } from '../lib/media';
+import MediaElement from './MediaElement.astro';
+import Screen from './Screen.astro';
+
+// One tile in a home band's grid; the whole tile is the link. The wrappers
+// (ProjectCard, JobCard) turn their own data into this view model.
+export interface TileScreen {
+  media: Media;
+  variant: 'terminal' | 'browser';
+  title: string;
+  // Above the fold: load eagerly and ahead of other images.
+  priority?: boolean;
+}
+
+export type TileSize = 'wide' | 'half' | 'third';
+
+export interface Props {
+  href: string;
+  // Selected work is all type; a personal project shows its monitor.
+  kind: 'work' | 'project';
+  size: TileSize;
+  kicker?: string;
+  title: string;
+  text: string;
+  // An outcome, set beside the title on a wide tile and under it otherwise.
+  note?: string;
+  // A small grey line under the text, such as a project's status.
+  status?: string;
+  cta: string;
+  screen?: TileScreen;
+}
+
+const { href, kind, size, kicker, title, text, note, status, cta, screen } = Astro.props;
+---
+
+<a class:list={['tile', `tile-${kind}`, `tile-${size}`]} href={href}>
+  <div class="tile-body">
+    {kicker && <p class="tile-kicker">{kicker}</p>}
+    <h3 class="tile-title">{title}</h3>
+    <p class="tile-text">{text}</p>
+    {note && size !== 'wide' && <p class="tile-note">{note}</p>}
+    {status && <p class="tile-status">{status}</p>}
+    <span class="link-more">{cta}</span>
+  </div>
+  {note && size === 'wide' && <p class="tile-note">{note}</p>}
+  {screen && (
+    <span class="tile-media">
+      <Screen variant={screen.variant} title={screen.title} compact>
+        <MediaElement media={screen.media} alt="" priority={screen.priority} />
+      </Screen>
+    </span>
+  )}
+</a>

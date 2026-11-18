@@ -1,17 +1,19 @@
 ---
+kind: personal
 title: "Held–Karp TSP Visualizer"
-description: "Plans the best order to visit birding hotspots, solving the TSP exactly on traffic-aware travel times."
+summary: "Plans the best order to visit birding hotspots, solving the TSP exactly on traffic-aware travel times."
 date: "13 Oct, 2025"
-coverImage: "/projects/held-karp/hk.webp"
-tags: ["Web App", "Next.js", "TypeScript", "Cloudflare Workers", "Algorithms", "TSP"]
-stack: "Browser · Next.js, Cloudflare Workers"
 highlight: "Finds the exact shortest route using real driving times"
+stack: "Browser · Next.js, Cloudflare Workers"
+tags: ["Web App", "Next.js", "TypeScript", "Cloudflare Workers", "Algorithms", "TSP"]
 earlier: true
-githubUrl: "https://github.com/fairy-pitta/hotspot_map"
-gallery: [
-  "/projects/held-karp/hk-2.webp",
-  "/projects/held-karp/hk-3.webp"
-]
+media:
+  cover: "/projects/held-karp/hk.webp"
+  gallery:
+    - "/projects/held-karp/hk-2.webp"
+    - "/projects/held-karp/hk-3.webp"
+links:
+  code: "https://github.com/fairy-pitta/hotspot_map"
 ---
 
 ## Background

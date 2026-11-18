@@ -1,0 +1,10 @@
+Fonts used to draw the OG cards (src/lib/og-image.ts). satori cannot read the
+woff2 files the site ships, so these static TrueType files are committed.
+
+Geist-Bold.ttf        geist-font/Geist/ttf/Geist-Bold.ttf
+GeistMono-Regular.ttf geist-font/GeistMono/ttf/GeistMono-Regular.ttf
+
+Source:  https://github.com/vercel/geist-font/releases/tag/v1.9.2
+Archive: geist-font-v1.9.2.zip
+         sha256 15f066d58dcb99fb10014a49913009fdaf41e464cfb8851a44b44e593c95d3d8
+Licence: SIL Open Font License 1.1, copied from the archive into OFL.txt.

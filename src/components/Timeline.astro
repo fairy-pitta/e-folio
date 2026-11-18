@@ -1,0 +1,57 @@
+---
+// A timeline of jobs or schooling, newest first: the year on the left, a rail
+// with a dot for each entry, and the entry's details, which open on a click.
+// A job's projects are listed under it, each linking to its own page; the
+// list items keep the ids that /about#<id> used to open, so old links land
+// next to the link to the new page.
+import type { HistoryEntry } from '../lib/history';
+
+interface Props {
+  entries: HistoryEntry[];
+  // Which entries start open: the first (the current job) or all of them.
+  open: 'first' | 'all';
+}
+
+const { entries, open } = Astro.props;
+---
+
+<ol class="history">
+  {entries.map((entry, i) => {
+    const sameYear = i > 0 && entries[i - 1].year === entry.year;
+    return (
+      <li class:list={['history-entry', `history-${entry.kind.toLowerCase()}`, { 'history-current': entry.current }]}>
+        <div class="history-when">
+          <span class:list={['history-year', { 'history-year-repeat': sameYear }]}>{entry.year}</span>
+          <span class="history-period">{entry.period}</span>
+        </div>
+        <div class="history-body">
+          <span class="history-kind">{entry.current ? 'Now · ' : ''}{entry.kind}</span>
+          <details class="job" open={open === 'all' || i === 0}>
+            <summary>
+              <span class="role">{entry.title}</span>
+              <span class="history-org">{entry.org}</span>
+            </summary>
+            {entry.bullets.length > 0 && (
+              <ul class="bullets">
+                {entry.bullets.map((bullet) => <li>{bullet}</li>)}
+              </ul>
+            )}
+            {entry.projects && (
+              <ul class="list job-work" aria-label="Projects in this job">
+                {entry.projects.map((project) => (
+                  <li class="row" id={project.id}>
+                    <span class="row-main">
+                      <a href={`/work/${project.id}`}>{project.data.title} →</a>
+                      <span class="job-work-desc">{project.data.summary}</span>
+                    </span>
+                    <span class="row-meta">{project.data.kind === 'internal' ? 'Internal' : 'Client'}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </details>
+        </div>
+      </li>
+    );
+  })}
+</ol>

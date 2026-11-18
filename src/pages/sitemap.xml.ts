@@ -1,15 +1,16 @@
 import type { APIContext } from "astro"
 import { absoluteUrl, indexablePages } from "../lib/site-map"
+import { getAllBlogPosts, getAllProjects, getJobWork } from "../lib/collections"
 
 const escape = (value: string) =>
   value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")
 
 const isoDate = (date: Date) => date.toISOString().slice(0, 10)
 
-export function GET(context: APIContext) {
+export async function GET(context: APIContext) {
   const site = context.site!
 
-  const entries = indexablePages().map((entry) => {
+  const entries = indexablePages(await getJobWork(), await getAllProjects(), await getAllBlogPosts()).map((entry) => {
     const loc = `    <loc>${escape(absoluteUrl(entry.path, site))}</loc>`
     const lastmod = entry.date ? `\n    <lastmod>${isoDate(entry.date)}</lastmod>` : ""
     return `  <url>\n${loc}${lastmod}\n  </url>`

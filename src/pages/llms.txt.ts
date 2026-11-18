@@ -11,10 +11,13 @@ import {
   absoluteUrl,
   blogEntries,
   projectEntries,
+  workEntries,
   type SiteEntry,
 } from "../lib/site-map"
+import { getAllBlogPosts, getAllProjects, getJobWork } from "../lib/collections"
 
-const CONTENTS = "Holds write-ups of personal projects, an About page with the CV, and notes on software engineering."
+const CONTENTS =
+  "Holds case studies of projects from my job, write-ups of personal projects, an About page with the CV, and notes on software engineering."
 
 function link(entry: SiteEntry, site: URL | string): string {
   const url = absoluteUrl(entry.path, site)
@@ -26,7 +29,7 @@ function section(heading: string, entries: SiteEntry[], site: URL | string): str
   return [`## ${heading}`, "", ...entries.map((entry) => link(entry, site)), ""]
 }
 
-export function GET(context: APIContext) {
+export async function GET(context: APIContext) {
   const site = context.site!
 
   const lines = [
@@ -35,8 +38,9 @@ export function GET(context: APIContext) {
     `> ${cv.tagline} ${CONTENTS}`,
     "",
     ...section("Pages", [HOME, ...INDEX_PAGES], site),
-    ...section("Projects", projectEntries(), site),
-    ...section("Writing", blogEntries(), site),
+    ...section("Work", workEntries(await getJobWork()), site),
+    ...section("Projects", projectEntries(await getAllProjects()), site),
+    ...section("Writing", blogEntries(await getAllBlogPosts()), site),
     ...section("Optional", SECONDARY_PAGES, site),
   ]
 

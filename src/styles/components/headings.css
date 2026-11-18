@@ -1,0 +1,44 @@
+/* ---- Headings ---- */
+
+/* Every reading page opens the same way, centred: a short kicker, a large
+   title and a grey lead. Anything else in the header sits below, left aligned. */
+.page-head { text-align: center; }
+.page-kicker {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: var(--space-2) var(--space-3);
+  margin: 0 0 var(--space-3); font-size: var(--text-md); font-weight: var(--weight-heading); letter-spacing: var(--tracking-body);
+}
+.page-title {
+  margin: 0; font-size: var(--text-display); font-weight: var(--weight-display);
+  line-height: var(--leading-display); letter-spacing: var(--tracking-display); text-wrap: balance;
+}
+.lead {
+  margin: var(--space-5) auto 0; max-width: 34em; color: var(--muted);
+  font-size: var(--text-lg); line-height: var(--leading-snug); letter-spacing: var(--tracking-body); text-wrap: pretty;
+}
+.page-highlight {
+  margin: var(--space-4) auto 0; max-width: 36em; color: var(--fg);
+  font-size: var(--text-label); font-weight: var(--weight-medium); line-height: var(--leading-snug);
+}
+.page-head > :not(.page-kicker, .page-title, .lead, .page-highlight, .actions) { text-align: left; }
+.page-head .actions { justify-content: center; }
+.handle { margin-left: .3em; font-weight: var(--weight-regular); color: var(--fg-tertiary); }
+/* In a page title the handle is the grey second line of a two-tone headline. */
+.page-title .handle { display: block; margin-left: 0; font-weight: inherit; }
+
+.section { margin-top: var(--space-8); scroll-margin-top: 72px; }
+/* A reading page's section title: sentence case, the size of a minor headline. */
+.section-title {
+  margin: 0 0 var(--space-5); font-size: var(--text-xl); font-weight: var(--weight-heading);
+  line-height: var(--leading-heading); letter-spacing: var(--tracking-heading);
+}
+
+/* A home band's header: a centred headline and a grey note under it. */
+.section-head { margin: 0 auto var(--space-7); max-width: var(--width-wide); text-align: center; }
+.section-heading {
+  margin: 0; font-size: var(--text-2xl); font-weight: var(--weight-display);
+  line-height: var(--leading-heading); letter-spacing: var(--tracking-display); text-wrap: balance;
+}
+.section-note {
+  margin: var(--space-4) auto 0; max-width: 38em; font-size: var(--text-md); line-height: var(--leading-snug);
+  color: var(--muted); text-wrap: pretty;
+}

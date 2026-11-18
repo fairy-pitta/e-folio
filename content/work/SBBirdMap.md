@@ -1,19 +1,21 @@
 ---
+kind: personal
 title: "SG Bird Observation Map"
-description: "Pick a period and a species, then play bird sightings back over time on a map of Singapore."
+summary: "Pick a period and a species, then play bird sightings back over time on a map of Singapore."
 date: "15 May, 2025"
-coverImage: "/projects/sgbirdsmap/birdmap-demo.mp4"
-tags: ["Web App", "Next.js", "Cloudflare Workers", "D1", "eBird"]
-stack: "Browser · Cloudflare Workers, D1"
 highlight: "About 497,000 observations of 553 species since 2003, updated daily"
-liveUrl: "https://sgbirdsmap.fairy-pitta.net"
-githubUrl: "https://github.com/fairy-pitta/SGBirdMap"
-gallery: [
-  "/projects/sgbirdsmap/map_top.webp",
-  "/projects/sgbirdsmap/map1.webp",
-  "/projects/sgbirdsmap/map2.webp",
-  "/projects/sgbirdsmap/map3.webp"
-]
+stack: "Browser · Cloudflare Workers, D1"
+tags: ["Web App", "Next.js", "Cloudflare Workers", "D1", "eBird"]
+media:
+  cover: "/projects/sgbirdsmap/birdmap-demo.mp4"
+  gallery:
+    - "/projects/sgbirdsmap/map_top.webp"
+    - "/projects/sgbirdsmap/map1.webp"
+    - "/projects/sgbirdsmap/map2.webp"
+    - "/projects/sgbirdsmap/map3.webp"
+links:
+  live: "https://sgbirdsmap.fairy-pitta.net"
+  code: "https://github.com/fairy-pitta/SGBirdMap"
 ---
 
 ## Background

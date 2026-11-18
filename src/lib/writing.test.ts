@@ -4,7 +4,7 @@ import type { BlogPost } from './content'
 
 const post = (slug: string, iso: string): BlogPost => ({
   slug,
-  frontmatter: { title: `Post ${slug}`, date: iso, excerpt: '', tags: [] },
+  data: { title: `Post ${slug}`, date: new Date(`${iso}T00:00:00Z`), excerpt: '', tags: [] },
   content: '',
   date: new Date(`${iso}T00:00:00Z`),
 })

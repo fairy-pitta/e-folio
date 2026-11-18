@@ -1,19 +1,19 @@
 import rss from '@astrojs/rss'
 import type { APIContext } from 'astro'
-import { getAllBlogPosts } from '../lib/content'
+import { getAllBlogPosts } from '../lib/collections'
 import { cv } from '../data/cv'
 
-export function GET(context: APIContext) {
+export async function GET(context: APIContext) {
   return rss({
     title: `${cv.name} — Writing`,
     description: `Notes on software engineering by ${cv.name}.`,
     site: context.site!.toString(),
-    items: getAllBlogPosts().map((post) => ({
-      title: post.frontmatter.title,
+    items: (await getAllBlogPosts()).map((post) => ({
+      title: post.data.title,
       pubDate: post.date,
-      description: post.frontmatter.excerpt,
+      description: post.data.excerpt,
       link: `/blog/${post.slug}/`,
-      categories: post.frontmatter.tags,
+      categories: post.data.tags,
     })),
     customData: '<language>en</language>',
   })

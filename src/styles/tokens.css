@@ -1,0 +1,132 @@
+/* Design tokens: colours (light, system dark, chosen dark), type, spacing,
+   shape and motion. Every colour and size on the site comes from here. */
+
+:root {
+  --fg: #1d1d1f;
+  --muted: #48484c;
+  --faint: #6e6e73;
+  /* The grey half of a two-tone headline. 3.3:1, so large type only (24px and up). */
+  --fg-tertiary: #86868b;
+  --line: #d2d2d7;
+  --bg: #f5f5f7;
+  /* The other band colour; tiles on it take --tile-alt. */
+  --band-alt: #ffffff;
+  --code-bg: #ececf0;
+  --card: #ffffff;
+  --tile-alt: #f5f5f7;
+  --accent: #0066cc;
+  --button: #0071e3;
+  /* Darker on hover: white on #0077ed would be 4.3:1. */
+  --button-hover: #0066cc;
+  --button-fg: #ffffff;
+  --field: #8e8e93;
+  color-scheme: light dark;
+}
+
+/* The toggle sets data-theme on <html>; without a choice the system setting applies. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fg: #f5f5f7;
+    --muted: #a1a1a6;
+    --faint: #8e8e93;
+    --fg-tertiary: #86868b;
+    --line: #424245;
+    --bg: #111113;
+    --band-alt: #000000;
+    --code-bg: #2c2c2e;
+    --card: #1c1c1e;
+    --tile-alt: #1c1c1e;
+    --accent: #2997ff;
+    --button: #0071e3;
+    --button-hover: #0066cc;
+    --button-fg: #ffffff;
+    --field: #6c6c70;
+  }
+}
+
+:root[data-theme="dark"] {
+  --fg: #f5f5f7;
+  --muted: #a1a1a6;
+  --faint: #8e8e93;
+  --fg-tertiary: #86868b;
+  --line: #424245;
+  --bg: #111113;
+  --band-alt: #000000;
+  --code-bg: #2c2c2e;
+  --card: #1c1c1e;
+  --tile-alt: #1c1c1e;
+  --accent: #2997ff;
+  --button: #0071e3;
+  /* Darker on hover: white on #0077ed would be 4.3:1. */
+  --button-hover: #0066cc;
+  --button-fg: #ffffff;
+  --field: #6c6c70;
+  color-scheme: dark;
+}
+
+:root[data-theme="light"] { color-scheme: light; }
+
+/* ---- Type, spacing and shape. Every size on the site comes from here. ---- */
+:root {
+  --sans: "Geist Variable", "Geist", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
+  /* Code and the drawn monitor's title bar only. */
+  --mono: "Geist Mono Variable", "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --text-xs: .75rem;                              /* footer, small print */
+  --text-nav: .8125rem;                           /* the global nav */
+  --text-sm: .875rem;                             /* meta, captions */
+  --text-label: .9375rem;                         /* labels, tile kickers */
+  --text-base: 1.0625rem;                         /* body: 17px */
+  --text-md: 1.3125rem;                           /* leads, minor headings, tile text */
+  --text-lg: clamp(1.25rem, 2vw, 1.5rem);         /* page leads, the hero's sub */
+  --text-xl: clamp(1.5rem, 2.4vw, 1.75rem);       /* tile titles, prose headings */
+  --text-2xl: clamp(2rem, 4.4vw, 3rem);           /* section headlines */
+  --text-figure: clamp(2.25rem, 3.6vw, 2.75rem);      /* the big number in a proof tile */
+  --text-display: clamp(2.5rem, 6vw, 4.5rem);     /* page titles and the hero */
+
+  --leading-display: 1.07;
+  --leading-heading: 1.12;
+  --leading-snug: 1.33;
+  --leading-body: 1.47;
+
+  --tracking-display: -.03em;
+  --tracking-heading: -.022em;
+  --tracking-body: -.01em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-heading: 600;
+  --weight-display: 700;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 40px;
+  --space-7: 64px;
+  --space-8: 96px;
+  --space-9: 128px;
+
+  /* Text columns and tile grids. */
+  --width-text: 760px;
+  --width-wide: 980px;
+  --width-grid: 1200px;
+  --gutter: 24px;
+
+  --radius-pill: 999px;
+  --radius-tile: 28px;
+  --radius-card: 18px;
+  --radius-inset: 12px;
+  --radius-input: 10px;
+
+  --rule: 1px solid var(--line);
+  /* The translucent material behind the global nav. */
+  --material: color-mix(in srgb, var(--band-alt) 72%, transparent);
+  --material-filter: saturate(180%) blur(20px);
+
+  --ease-out: cubic-bezier(.2, .7, .1, 1);
+  --dur-fast: .15s;
+  --dur: .2s;
+  --dur-slow: .3s;
+}

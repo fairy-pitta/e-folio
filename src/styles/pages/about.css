@@ -1,0 +1,58 @@
+/* ---- About: one timeline for jobs and schooling ---- */
+.history { list-style: none; margin: 0; padding: 0; }
+.history-entry { display: grid; grid-template-columns: 9.5em 1fr; gap: 0 18px; }
+.history-when { display: flex; flex-direction: column; align-items: flex-end; text-align: right; padding-top: 2px; }
+.history-year {
+  font-size: var(--text-xl); font-weight: var(--weight-heading); line-height: 1; letter-spacing: var(--tracking-heading);
+  font-variant-numeric: lining-nums tabular-nums;
+}
+.history-year-repeat { color: var(--fg-tertiary); font-size: var(--text-md); padding-top: .4rem; }
+.history-period { margin-top: 6px; font-size: var(--text-sm); color: var(--muted); white-space: nowrap; }
+
+/* The rail: one line through every entry, a dot where each one starts. */
+.history-body { position: relative; padding: 0 0 40px 30px; min-width: 0; }
+.history-body::before, .history-when::before {
+  content: ""; position: absolute; left: 7px; top: 0; bottom: 0; border-left: var(--rule);
+}
+.history-when::before { display: none; }
+.history-entry:first-child .history-body::before { top: 10px; }
+.history-entry:last-child .history-body::before { bottom: auto; height: 10px; }
+.history-entry:last-child .history-body { padding-bottom: 0; }
+.history-body::after {
+  content: ""; position: absolute; left: 0; top: 5px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--accent); border: 2px solid var(--bg); box-shadow: 0 0 0 1px var(--accent);
+}
+.history-study .history-body::after { background: var(--bg); }
+.history-current .history-body::after { box-shadow: 0 0 0 1px var(--accent), 0 0 0 5px color-mix(in srgb, var(--accent) 22%, transparent); }
+.history-kind { display: block; margin-bottom: 2px; }
+.history-current .history-kind { color: var(--accent); }
+.history-org { display: block; font-size: var(--text-label); color: var(--muted); }
+@media (max-width: 560px) {
+  .history-entry { grid-template-columns: 1fr; }
+  .history-when { position: relative; flex-direction: row; align-items: baseline; gap: 10px; text-align: left; padding: 0 0 6px 30px; }
+  .history-when::before { display: block; }
+  .history-entry:first-child .history-when::before { display: none; }
+  .history-year-repeat { padding-top: 0; }
+  .history-body::after { top: 3px; }
+}
+
+.role { font-size: var(--text-md); font-weight: var(--weight-heading); letter-spacing: var(--tracking-heading); color: var(--fg); }
+.job + .job { margin-top: 14px; }
+.job > summary { position: relative; padding-left: 1.2em; cursor: pointer; list-style: none; }
+.job > summary::-webkit-details-marker { display: none; }
+.job > summary::before { content: "+"; position: absolute; left: 0; top: .1em; color: var(--accent); font-size: var(--text-md); line-height: var(--leading-snug); }
+.job[open] > summary::before { content: "−"; }
+.job > .bullets { padding-left: 2.2em; }
+.job > .projects { margin-top: 10px; padding-left: 1.2em; }
+/* A job's projects: one row each, linking to the project's page. */
+.job > .job-work { margin-top: var(--space-3); margin-left: 1.2em; }
+.job-work > li { scroll-margin-top: 96px; }
+.job-work > li:target { border-radius: var(--radius-card); box-shadow: 0 0 0 2px var(--accent); }
+.job-work a { font-weight: var(--weight-medium); }
+.job-work-desc { display: block; font-size: var(--text-label); color: var(--muted); }
+
+.label-links { display: inline-flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-4); }
+
+.about-close { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); padding: var(--space-8) 0 0; text-align: center; }
+.about-close-note { margin: 0; font-size: var(--text-xl); font-weight: var(--weight-heading); letter-spacing: var(--tracking-heading); }
+.about-close .actions { margin: 0; justify-content: center; }

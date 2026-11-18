@@ -1,0 +1,27 @@
+---
+// Every reading page opens the same way, centred: an optional kicker, a
+// large title, a grey lead and, for a piece of work, its highlight. Anything
+// else in the header (a label list, actions) goes in the default slot,
+// numbered on from --i:3.
+interface Props {
+  // Plain text; use the "kicker" slot for richer markup.
+  kicker?: string;
+  // Plain text; use the "title" slot for richer markup.
+  title?: string;
+  // Plain text; use the "lead" slot for richer markup.
+  lead?: string;
+  highlight?: string;
+}
+
+const { kicker, title, lead, highlight } = Astro.props;
+const hasKicker = Boolean(kicker) || Astro.slots.has('kicker');
+const hasLead = Boolean(lead) || Astro.slots.has('lead');
+---
+
+<header class="page-head">
+  {hasKicker && <p class="page-kicker rise" style="--i:0">{kicker}<slot name="kicker" /></p>}
+  <h1 class="page-title rise" style="--i:1"><slot name="title">{title}</slot></h1>
+  {hasLead && <p class="lead rise" style="--i:2">{lead}<slot name="lead" /></p>}
+  {highlight && <p class="page-highlight rise" style="--i:3">{highlight}</p>}
+  <slot />
+</header>

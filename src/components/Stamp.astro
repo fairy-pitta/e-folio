@@ -1,9 +1,12 @@
 ---
+import { statusLabel, type ProjectStatus } from '../lib/content';
+
+// A personal project's status in a small, quiet pill. Only "Live" has a dot.
 interface Props {
-  label: string;
+  status: ProjectStatus;
 }
 
-const { label } = Astro.props;
+const { status } = Astro.props;
 ---
 
-<span class:list={['stamp', `stamp-${label.toLowerCase()}`]}><span class="stamp-dot" aria-hidden="true"></span>{label}</span>
+<span class:list={['stamp', `stamp-${status.toLowerCase()}`]}>{status === 'LIVE' && <span class="stamp-dot" aria-hidden="true"></span>}{statusLabel(status)}</span>

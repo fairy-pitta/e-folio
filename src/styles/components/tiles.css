@@ -1,0 +1,67 @@
+/* ---- Tiles: borderless rounded panels in a grid of mixed sizes ---- */
+/* Six columns, so a row holds one wide tile, two halves or three thirds. */
+.tiles { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 20px; margin: 0; padding: 0; list-style: none; }
+.tiles > * { grid-column: span 6; min-width: 0; }
+.tiles > .tile-half { grid-column: span 3; }
+.tiles > .tile-third { grid-column: span 2; }
+@media (max-width: 1000px) {
+  .tiles > .tile-third { grid-column: span 3; }
+  .tiles > .tile-third:last-child:nth-child(odd) { grid-column: span 6; }
+}
+@media (max-width: 720px) {
+  .tiles > .tile-half, .tiles > .tile-third { grid-column: span 6; }
+}
+
+/* A tile is one link: hovering anywhere grows it a little and underlines its "Learn more". */
+.tile {
+  display: flex; flex-direction: column; height: 100%; padding: 40px;
+  color: var(--fg); text-decoration: none; background: var(--card); border-radius: var(--radius-tile); overflow: hidden;
+  transition: transform var(--dur-slow) var(--ease-out);
+}
+.band-alt .tile { background: var(--tile-alt); }
+.tile-body { display: flex; flex-direction: column; align-items: inherit; }
+.tile-work .tile-body { flex: 1; }
+.tile:hover { text-decoration: none; transform: scale(1.01); }
+.tile-kicker { margin: 0 0 var(--space-2); font-size: var(--text-label); font-weight: var(--weight-heading); color: var(--muted); }
+.tile-title {
+  margin: 0; font-size: var(--text-xl); font-weight: var(--weight-display);
+  line-height: var(--leading-heading); letter-spacing: var(--tracking-heading); text-wrap: balance;
+}
+.tile-text { margin: var(--space-3) 0 0; color: var(--muted); line-height: var(--leading-snug); text-wrap: pretty; }
+.tile-note { margin: var(--space-3) 0 0; font-size: var(--text-label); font-weight: var(--weight-medium); line-height: var(--leading-snug); }
+.tile-status { margin: var(--space-3) 0 0; font-size: var(--text-sm); color: var(--faint); }
+.tile .link-more { margin-top: var(--space-3); }
+@media (max-width: 640px) {
+  .tile { padding: 28px 24px; border-radius: 22px; }
+}
+
+/* Selected work: no pictures, so the type carries the tile. The wide one sets
+   its outcome beside the title, large and grey. */
+.tile-work { min-height: 340px; }
+.tile-work .link-more { margin-top: auto; padding-top: var(--space-5); }
+.tile-work.tile-wide { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-5) var(--space-7); align-items: start; min-height: 380px; padding: 56px; }
+.tile-work.tile-wide .tile-body { height: 100%; }
+.tile-work.tile-wide .tile-title { font-size: var(--text-2xl); letter-spacing: var(--tracking-display); }
+.tile-work.tile-wide .tile-text { font-size: var(--text-md); }
+.tile-work.tile-wide .tile-note {
+  align-self: center; margin: 0; font-size: var(--text-xl); font-weight: var(--weight-heading);
+  line-height: var(--leading-heading); letter-spacing: var(--tracking-heading); color: var(--fg-tertiary);
+}
+@media (max-width: 860px) {
+  /* One column: the outcome moves above the link. */
+  .tile-work.tile-wide { display: flex; padding: 40px; }
+  .tile-work.tile-wide .tile-body { display: contents; }
+  .tile-work.tile-wide .tile-note { align-self: stretch; margin-top: var(--space-5); font-size: var(--text-md); }
+  .tile-work.tile-wide .link-more { order: 2; }
+}
+@media (max-width: 640px) {
+  .tile-work, .tile-work.tile-wide { min-height: 0; padding: 28px 24px; }
+}
+
+/* Personal projects: centred text over the monitor, which fills the tile's foot. */
+.tile-project { align-items: center; text-align: center; padding-bottom: 32px; }
+.tile-project .tile-title { font-size: var(--text-xl); }
+.tile-media { display: block; width: 100%; max-width: 560px; margin-top: auto; padding-top: var(--space-6); }
+.tile-half .tile-media { width: 92%; }
+.tile-media .screen { transition: transform var(--dur-slow) var(--ease-out); }
+.tile-project:hover .tile-media .screen { transform: translateY(-4px); }

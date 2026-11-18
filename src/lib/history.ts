@@ -1,7 +1,7 @@
-// The About page shows jobs and schooling as one timeline, newest first, so
-// overlapping years (research during university) sit next to each other.
+// The About page shows jobs and schooling as two timelines, each newest first.
 
-import type { CvEducation, CvExperience, CvProject } from "../data/cv"
+import type { CvEducation, CvExperience } from "../data/cv"
+import type { JobWork } from "./content"
 import { monthIndex } from "./months"
 
 export interface HistoryEntry {
@@ -10,7 +10,8 @@ export interface HistoryEntry {
   org: string
   period: string
   bullets: string[]
-  projects?: CvProject[]
+  // Projects from content/work done in this job.
+  projects?: JobWork[]
   // Year the entry started, for the timeline's left column.
   year: number
   current: boolean
@@ -25,6 +26,9 @@ export function periodStart(period: string): Date {
   return new Date(Date.UTC(Number(match[2]), month, 1))
 }
 
+// A job with no projects has no projects list at all, as before.
+const withProjects = (projects: JobWork[]) => (projects.length > 0 ? projects : undefined)
+
 type EntryFields = Omit<HistoryEntry, "year" | "current">
 
 function withDates(entry: EntryFields): HistoryEntry {
@@ -35,23 +39,31 @@ function withDates(entry: EntryFields): HistoryEntry {
   }
 }
 
-export function buildHistory(experience: CvExperience[], education: CvEducation[]): HistoryEntry[] {
-  const jobs: EntryFields[] = experience.map((job) => ({
-    kind: "Work",
-    title: job.role,
-    org: job.org,
-    period: job.period,
-    bullets: job.bullets,
-    projects: job.projects,
-  }))
-  const schools: EntryFields[] = education.map((edu) => ({
-    kind: "Study",
-    title: edu.degree,
-    org: `${edu.school}, ${edu.country}`,
-    period: edu.period,
-    bullets: edu.bullets ?? [],
-  }))
-  return [...jobs, ...schools]
-    .sort((a, b) => periodStart(b.period).getTime() - periodStart(a.period).getTime())
+const newestFirst = (a: EntryFields, b: EntryFields) => periodStart(b.period).getTime() - periodStart(a.period).getTime()
+
+export function jobHistory(experience: CvExperience[], work: JobWork[] = []): HistoryEntry[] {
+  return experience
+    .map((job): EntryFields => ({
+      kind: "Work",
+      title: job.role,
+      org: job.org,
+      period: job.period,
+      bullets: job.bullets,
+      projects: job.id ? withProjects(work.filter((project) => project.data.job === job.id)) : undefined,
+    }))
+    .sort(newestFirst)
+    .map(withDates)
+}
+
+export function studyHistory(education: CvEducation[]): HistoryEntry[] {
+  return education
+    .map((edu): EntryFields => ({
+      kind: "Study",
+      title: edu.degree,
+      org: `${edu.school}, ${edu.country}`,
+      period: edu.period,
+      bullets: edu.bullets ?? [],
+    }))
+    .sort(newestFirst)
     .map(withDates)
 }

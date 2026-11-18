@@ -1,0 +1,40 @@
+/* ---- Quiet links: the home page's earlier work and the pager ---- */
+
+/* A grouped .list whose rows are whole links (see LinkRow.astro). */
+.link-list { list-style: none; }
+.link-list > li { display: block; padding: 0; }
+.link-row {
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: baseline; gap: var(--space-1) var(--space-4);
+  min-height: 56px; padding: 16px 20px; color: var(--fg); text-decoration: none;
+}
+.link-row:hover { text-decoration: none; }
+.link-row-title { font-weight: var(--weight-heading); transition: color var(--dur-fast) ease; }
+.link-row-desc { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-label); color: var(--muted); }
+.link-row-meta, .pager-label { font-size: var(--text-sm); color: var(--faint); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.link-row-arrow, .pager-arrow { color: var(--faint); font-size: 1.25em; line-height: 1; transition: transform var(--dur-slow) var(--ease-out), color var(--dur-fast) ease; }
+.link-row:hover .link-row-title, .pager-link:hover .pager-title { color: var(--accent); }
+.link-row:hover .link-row-arrow, .pager-link:hover .pager-arrow { color: var(--accent); transform: translateX(3px); }
+@media (max-width: 640px) {
+  .link-row { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .link-row-desc { grid-column: 1 / -1; grid-row: 2; white-space: normal; }
+}
+
+/* Under each page: the previous and next pages as two rounded tiles,
+   Previous on the left and Next on the right, even when only one exists. */
+.pager { margin-top: var(--space-8); }
+.pager-links { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-4); margin: 0; padding: 0; list-style: none; }
+.pager-link {
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: var(--space-2) var(--space-3);
+  height: 100%; min-height: 132px; padding: 28px; color: var(--fg); text-decoration: none;
+  background: var(--card); border-radius: var(--radius-tile); transition: transform var(--dur-slow) var(--ease-out);
+}
+.pager-link:hover { text-decoration: none; transform: scale(1.01); }
+.pager-label { grid-column: 1 / -1; align-self: start; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.pager-title { font-size: var(--text-md); font-weight: var(--weight-heading); line-height: var(--leading-heading); letter-spacing: var(--tracking-heading); transition: color var(--dur-fast) ease; }
+.pager-next { grid-column: 2; }
+.pager-prev .pager-link:hover .pager-arrow { transform: translateX(-3px); }
+.pager .footer-nav { margin-top: var(--space-6); }
+@media (max-width: 560px) {
+  .pager-links { grid-template-columns: 1fr; }
+  .pager-next { grid-column: auto; }
+}

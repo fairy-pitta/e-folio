@@ -3,7 +3,7 @@
 // pages and their canonical links use.
 
 import { cv } from "../data/cv"
-import { getAllBlogPosts, getAllProjects } from "./content"
+import type { BlogPost, JobWork, Project } from "./content"
 
 export interface SiteEntry {
   path: string
@@ -15,14 +15,15 @@ export interface SiteEntry {
 export const HOME: SiteEntry = {
   path: "/",
   title: cv.name,
-  description: "Work: projects from my job and personal projects, each with a short label and a link to the full write-up.",
+  description:
+    "Work: selected projects from my job, each told as a case study, and personal projects, each with a short label and a link to the full write-up.",
 }
 
 export const INDEX_PAGES: SiteEntry[] = [
   {
     path: "/about/",
     title: "About",
-    description: "Strengths, a history of jobs and schooling with details of projects from my job, certifications and skills.",
+    description: "Strengths, certifications, skills, a history of jobs with links to the projects from my job, education and awards.",
   },
   { path: "/contact/", title: "Contact", description: "Contact form." },
   { path: "/blog/", title: "Writing", description: "Notes on software engineering." },
@@ -34,26 +35,35 @@ export const SECONDARY_PAGES: SiteEntry[] = [
   { path: "/terms/", title: "Terms", description: "Terms of use for this site." },
 ]
 
-export function projectEntries(): SiteEntry[] {
-  return getAllProjects().map((project) => ({
+// Projects from the job: no dates of their own, so no lastmod.
+export function workEntries(work: JobWork[]): SiteEntry[] {
+  return work.map((project) => ({
+    path: `/work/${project.id}/`,
+    title: project.data.title,
+    description: project.data.summary,
+  }))
+}
+
+export function projectEntries(projects: Project[]): SiteEntry[] {
+  return projects.map((project) => ({
     path: `/projects/${project.slug}/`,
-    title: project.frontmatter.title,
-    description: project.frontmatter.description,
+    title: project.data.title,
+    description: project.data.summary,
     date: project.date,
   }))
 }
 
-export function blogEntries(): SiteEntry[] {
-  return getAllBlogPosts().map((post) => ({
+export function blogEntries(posts: BlogPost[]): SiteEntry[] {
+  return posts.map((post) => ({
     path: `/blog/${post.slug}/`,
-    title: post.frontmatter.title,
-    description: post.frontmatter.excerpt,
+    title: post.data.title,
+    description: post.data.excerpt,
     date: post.date,
   }))
 }
 
-export function indexablePages(): SiteEntry[] {
-  return [HOME, ...INDEX_PAGES, ...projectEntries(), ...blogEntries(), ...SECONDARY_PAGES]
+export function indexablePages(work: JobWork[], projects: Project[], posts: BlogPost[]): SiteEntry[] {
+  return [HOME, ...INDEX_PAGES, ...workEntries(work), ...projectEntries(projects), ...blogEntries(posts), ...SECONDARY_PAGES]
 }
 
 export function absoluteUrl(path: string, site: URL | string): string {

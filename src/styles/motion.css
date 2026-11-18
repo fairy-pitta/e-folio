@@ -1,0 +1,15 @@
+/* ---- Motion. Decoration only, so readers who ask for less get none. ---- */
+@media (prefers-reduced-motion: no-preference) {
+  .rise { animation: rise .9s var(--ease-out) both; animation-delay: calc(var(--i, 0) * 70ms); }
+  /* Plain inline spans ignore transforms, so they are made inline blocks. */
+  span.rise { display: inline-block; }
+  .reveal { transition: opacity .8s var(--ease-out), transform .8s var(--ease-out); }
+  .reveal-pending { opacity: 0; transform: translateY(18px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0s !important; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(.45em); filter: blur(8px); }
+  to { opacity: 1; transform: none; filter: none; }
+}

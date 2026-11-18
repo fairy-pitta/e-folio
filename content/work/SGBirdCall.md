@@ -1,18 +1,19 @@
 ---
+kind: personal
 title: "SingBirds Call Quiz"
-description: "A quiz that plays a real recording and its spectrogram, and asks which Singapore bird it is."
+summary: "A quiz that plays a real recording and its spectrogram, and asks which Singapore bird it is."
 date: "Oct 15, 2024"
-coverImage: "/projects/callquiz/CallQuiz_main.webp"
-tags: ["React", "Django", "Birds"]
-stack: "Browser · React, Django"
 highlight: "Recordings from Xeno-canto, with spectrograms made by librosa"
+stack: "Browser · React, Django"
+tags: ["React", "Django", "Birds"]
 earlier: true
-gallery: [
-  "/projects/callquiz/CallQuiz_correct.webp",
-  "/projects/callquiz/CallQuiz_home.webp",
-  "/projects/callquiz/CallQuiz_result.webp",
-  "/projects/callquiz/CallQuiz_top.webp"
-]
+media:
+  cover: "/projects/callquiz/CallQuiz_main.webp"
+  gallery:
+    - "/projects/callquiz/CallQuiz_correct.webp"
+    - "/projects/callquiz/CallQuiz_home.webp"
+    - "/projects/callquiz/CallQuiz_result.webp"
+    - "/projects/callquiz/CallQuiz_top.webp"
 ---
 
 ## About

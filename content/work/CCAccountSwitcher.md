@@ -1,16 +1,18 @@
 ---
+kind: personal
 title: "CC Account Switcher"
-description: "A shell CLI that keeps several Claude Code accounts on one machine and switches between them."
+summary: "A shell CLI that keeps several Claude Code accounts on one machine and switches between them."
 date: "20 Jun, 2026"
-coverImage: "/projects/cc-account-switcher/demo.mp4"
-tags: ["CLI Tool", "Bash", "Claude Code", "Homebrew", "npm"]
+highlight: "Switches Claude Code accounts without signing out; on Homebrew and npm"
 stack: "Terminal · Bash"
-highlight: "A single Bash script, released on Homebrew and npm"
-githubUrl: "https://github.com/fairy-pitta/cc-account-switcher"
-packageUrl: "https://www.npmjs.com/package/@fairy-pitta/cc-account-switcher"
-gallery: [
-  "/projects/cc-account-switcher/install.mp4"
-]
+tags: ["CLI Tool", "Bash", "Claude Code", "Homebrew", "npm"]
+media:
+  cover: "/projects/cc-account-switcher/demo.mp4"
+  gallery:
+    - "/projects/cc-account-switcher/install.mp4"
+links:
+  code: "https://github.com/fairy-pitta/cc-account-switcher"
+  package: "https://www.npmjs.com/package/@fairy-pitta/cc-account-switcher"
 ---
 
 ## Background

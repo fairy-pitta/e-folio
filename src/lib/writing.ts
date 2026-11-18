@@ -10,7 +10,7 @@ export interface WritingItem {
 
 export function toWritingItems(posts: BlogPost[], qiita: QiitaItem[]): WritingItem[] {
   const own = posts.map((post) => ({
-    title: post.frontmatter.title,
+    title: post.data.title,
     href: `/blog/${post.slug}`,
     date: post.date,
     external: false,
